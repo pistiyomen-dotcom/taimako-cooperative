@@ -15,6 +15,7 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show bank details UI
+      - name: Show payment dialog details
         run: |
-          grep -n -A40 -B20 "account number\|Account Number\|bank" www/app.js www/index.html | head -220
+          sed -n '172,215p' www/index.html
+          grep -n "account-number\|accountNumber\|BANK DETAILS\|Bank Details\|ACCOUNT DETAILS\|Account Details" www/app.js www/index.html || true
