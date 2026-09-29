@@ -1,0 +1,6 @@
+{
+  "name":"taimako-deploy-bootstrap",
+  "private":true,
+  "version":"1.0.0",
+  "dependencies":{"adm-zip":"^0.5.16"}
+}
