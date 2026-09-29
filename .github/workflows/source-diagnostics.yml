@@ -12,9 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== CASH CREDIT CSS ==="
-          grep -n -A30 -B10 "cash-credit-tabs\|dialog-actions\|#cashCreditFlexibleTab" www/styles.css
-          echo "=== CASH CREDIT HTML ==="
-          sed -n '168,188p' www/index.html
-          echo "=== CONFIRM HANDLER ==="
-          sed -n '490,510p' www/app.js
+          echo "=== ALL CASH TAB IDS ==="
+          grep -Rni "cashCreditRegularTab\|cashCreditFlexibleTab" www
+          echo "=== ALL MEMBER CONFIRM REFERENCES ==="
+          grep -Rni "confirmCreditMember\|creditMemberConfirm" www
+          echo "=== SECONDARY/PRIMARY/DIALOG CSS ==="
+          grep -n "secondary\|primary\|dialog-actions\|cash-credit-tabs" www/styles.css
