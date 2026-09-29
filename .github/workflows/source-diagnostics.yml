@@ -11,4 +11,10 @@ jobs:
       - uses: actions/checkout@v4
       - run: npm install adm-zip
       - run: node unpack-parts.js
-      - run: sed -n '488,518p' www/app.js
+      - run: |
+          echo "=== CASH FORM OUTPUT ==="
+          sed -n '168,188p' www/index.html
+          echo "=== CASH CONFIRM OUTPUT ==="
+          sed -n '490,520p' www/app.js
+          echo "=== CACHE ==="
+          cat www/sw.js
