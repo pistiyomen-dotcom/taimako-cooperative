@@ -1,1 +1,9 @@
-const fs=require('fs');\nconst AdmZip=require('adm-zip');\nlet data='';\nfor(let i=0;i<6;i++){data+=fs.readFileSync('bundle.part'+i,'utf8').trim();}\nfs.writeFileSync('stage12.zip',Buffer.from(data,'base64'));\nnew AdmZip('stage12.zip').extractAllTo(process.cwd(),true);\nfs.unlinkSync('stage12.zip');\nrequire('./stage14-patch.js');\nconsole.log('TAIMAKO Stage 12 extracted with Stage 14 corrections.');\n
+const fs=require('fs');
+const AdmZip=require('adm-zip');
+let data='';
+for(let i=0;i<6;i++){data+=fs.readFileSync('bundle.part'+i,'utf8').trim();}
+fs.writeFileSync('stage12.zip',Buffer.from(data,'base64'));
+new AdmZip('stage12.zip').extractAllTo(process.cwd(),true);
+fs.unlinkSync('stage12.zip');
+require('./stage14-patch.js');
+console.log('TAIMAKO Stage 12 extracted with Stage 14 corrections.');
