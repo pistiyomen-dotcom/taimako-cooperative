@@ -16,7 +16,7 @@ let app=fs.readFileSync('www/app.js','utf8');
 
 app=app.replace(
   "creditMemberConfirm.innerHTML=memberSummary(data);",
-  "creditMemberConfirm.innerHTML='<div class="search-summary"><div class="identity"><strong>'+escapeHTML(data.account.name)+'</strong><span>'+escapeHTML(data.account.username)+' • '+escapeHTML(roleLabel(data.account.role))+'</span></div></div>';"
+  "creditMemberConfirm.textContent=data.account.name+' ('+data.account.username+')';"
 );
 
 app=app.replace(
@@ -31,8 +31,9 @@ app=app.replace(
 
 const marker="document.getElementById('confirmCreditMember').addEventListener('click', async () => {";
 if(app.includes(marker) && !app.includes("creditUsername').addEventListener('input'")){
-  app=app.replace(marker,
-    "document.getElementById('creditUsername').addEventListener('input',()=>{ creditMemberConfirm.className='member-confirm'; creditMemberConfirm.innerHTML=''; cashCreditError.textContent=''; });\n\n"+marker
+  app=app.replace(
+    marker,
+    "document.getElementById('creditUsername').addEventListener('input',()=>{ creditMemberConfirm.className='member-confirm'; creditMemberConfirm.textContent=''; cashCreditError.textContent=''; });\n\n"+marker
   );
 }
 
