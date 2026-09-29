@@ -12,11 +12,10 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== CREATE ACCOUNT HTML ==="
-          grep -n -A55 -B10 "createAccountDialog" www/index.html
-          echo "=== CREATE ACCOUNT JS ==="
-          grep -n -A110 -B20 "createAccountForm\|setCreateAccountType\|newRole" www/app.js
-          echo "=== CLOSE HANDLERS ==="
-          grep -n -A30 -B10 "data-close" www/app.js
-          echo "=== ADMIN CREATE ROUTE ==="
-          grep -n -A120 -B20 "accounts" server/routes/admin.js
+          echo "=== CREATE UI LOGIC ==="
+          grep -n -A95 -B15 "function setCreateAccountType" www/app.js
+          grep -n -A80 -B15 "createAccountForm.addEventListener" www/app.js
+          echo "=== CLOSE ==="
+          grep -n -A20 -B10 "querySelectorAll.*data-close" www/app.js
+          echo "=== ACCOUNT CREATE ENDPOINT ==="
+          grep -n -A95 -B15 "router.post('/accounts'" server/routes/admin.js
