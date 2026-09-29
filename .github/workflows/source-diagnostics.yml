@@ -15,6 +15,7 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show admin endpoints
+      - name: Show dashboard rendering
         run: |
-          grep -nE "^router\.(get|post|put|patch|delete)\(" server/routes/admin.js
+          grep -n -A45 -B25 "function renderAdmin" www/app.js || true
+          grep -n -A50 -B20 "CREATE ACCOUNT" www/app.js | head -180
