@@ -117,23 +117,25 @@ async function adminRegularYearEndTerms(client, accountId, amount, requestedAt) 
 }
 
 // Replace Stage 45 Regular approval helper with cycle-aware rule.
-const old=`
+if(!ad.includes('request.__regularYearEnd = eligibility.yearEnd')){
+  const oldBlock=`    if (request.source === 'REGULAR') {
       const eligibility = await adminSavingsWithdrawalTerms(client, request.account_id, request.source, amount, balance, request.created_at);
       feePercent = eligibility.feePercent;
       feeAmount = eligibility.feeAmount;
       payoutAmount = eligibility.payoutAmount;
       ruleApplied = eligibility.ruleApplied;
-`;
-const neu=`
+    }`;
+  const newBlock=`    if (request.source === 'REGULAR') {
       const eligibility = await adminRegularYearEndTerms(client, request.account_id, amount, request.created_at);
       feePercent = eligibility.feePercent;
       feeAmount = eligibility.feeAmount;
       payoutAmount = eligibility.payoutAmount;
       ruleApplied = eligibility.ruleApplied;
       request.__regularYearEnd = eligibility.yearEnd ? eligibility.cycleEndYear : null;
-`;
-const regBranch="    if (request.source === 'REGULAR') {\n"+old;
-if(ad.includes(regBranch)){ ad=ad.replace(regBranch,"    if (request.source === 'REGULAR') {\n"+neu); }
+    }`;
+  if(!ad.includes(oldBlock)){ console.error('Stage 46 Regular approval block not found'); process.exit(1); }
+  ad=ad.replace(oldBlock,newBlock);
+}
 
 // Mark year-end entitlement as paid only after the balance deduction succeeds.
 if(!ad.includes('request.__regularYearEnd')){console.error('Stage 46 Regular approval replacement failed');process.exit(1);}
