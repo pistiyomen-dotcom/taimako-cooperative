@@ -28,25 +28,16 @@ if(!account.includes('multer.memoryStorage()')){
 account=account.replace(/\s*if \(req\.file\) fs\.unlink\(req\.file\.path, \(\) => \{\}\);/g,'');
 
 // Replace payment-request INSERT so receipt bytes are stored in PostgreSQL.
-const oldInsert=`
-  const created = await pool.query(
-    \`INSERT INTO payment_requests(reference, account_id, destination, amount, receipt_path, receipt_original_name, receipt_mime_type, note)
-     VALUES($1,$2,$3,$4,$5,$6,$7,$8)
-     RETURNING id, reference, destination, amount, status, created_at\`,
-    [ref('PAY'), req.auth.sub, destination, amount, req.file.path, req.file.originalname, req.file.mimetype, note || null]
-  );
-`;
-const newInsert=`
-  const created = await pool.query(
+if(!account.includes('receipt_data, receipt_original_name')){
+  const insertRe=/const created = await pool\.query\(\s*`INSERT INTO payment_requests\(reference, account_id, destination, amount, receipt_path, receipt_original_name, receipt_mime_type, note\)[\s\S]*?\n\s*\);/m;
+  if(!insertRe.test(account)){ console.error('Stage 34 payment insert target not found'); process.exit(1); }
+  const newInsert=`const created = await pool.query(
     \`INSERT INTO payment_requests(reference, account_id, destination, amount, receipt_path, receipt_data, receipt_original_name, receipt_mime_type, note)
      VALUES($1,$2,$3,$4,NULL,$5,$6,$7,$8)
-     RETURNING id, reference, destination, amount, status, created_at\`,
+     RETURNING id, reference, status, destination, amount, created_at\`,
     [ref('PAY'), req.auth.sub, destination, amount, req.file.buffer, req.file.originalname, req.file.mimetype, note || null]
-  );
-`;
-if(!account.includes('receipt_data, receipt_original_name')){
-  if(!account.includes(oldInsert)){ console.error('Stage 34 payment insert target not found'); process.exit(1); }
-  account=account.replace(oldInsert,newInsert);
+  );`;
+  account=account.replace(insertRe,newInsert);
 }
 fs.writeFileSync(accountPath,account);
 
