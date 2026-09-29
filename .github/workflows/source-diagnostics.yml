@@ -15,8 +15,10 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Exact withdrawal transaction flow
+      - name: Inspect loan source and plan linkage
         run: |
-          sed -n '360,450p' server/routes/admin.js
-          echo "=== MEMBER WITHDRAW REQUEST ==="
-          sed -n '185,260p' server/routes/account.js
+          grep -n -A140 -B30 "loan-applications" server/routes/account.js server/routes/admin.js | head -420
+          echo "=== LOAN SCHEMA ==="
+          grep -n -A80 -B10 "CREATE TABLE IF NOT EXISTS loan" server/db/schema.sql | head -220
+          echo "=== LOAN UI ==="
+          grep -n -A80 -B20 "loanApply" www/index.html www/app.js | head -260
