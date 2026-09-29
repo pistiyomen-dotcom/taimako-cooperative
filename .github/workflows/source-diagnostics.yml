@@ -12,9 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== CASH FORM OUTPUT ==="
-          sed -n '168,188p' www/index.html
-          echo "=== CASH CONFIRM OUTPUT ==="
-          sed -n '490,520p' www/app.js
-          echo "=== CACHE ==="
-          cat www/sw.js
+          echo "=== STATIC SERVER ==="
+          grep -n -A20 -B15 "express.static\|www" server/index.js
+          echo "=== SCRIPT REFERENCES ==="
+          grep -n "app.js\|sw.js" www/index.html www/app.js
+          echo "=== CACHE OUTPUT ==="
+          head -40 www/sw.js
