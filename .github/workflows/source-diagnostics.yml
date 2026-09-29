@@ -15,13 +15,11 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show admin auth wiring
+      - name: Show admin permission integration points
         run: |
-          echo "=== ADMIN ROUTE TOP ==="
-          sed -n '1,90p' server/routes/admin.js
-          echo "=== SERVER MOUNTS ==="
-          sed -n '1,80p' server/index.js
-          echo "=== AUTH MIDDLEWARE ==="
-          sed -n '1,180p' server/middleware/auth.js 2>/dev/null || true
-          echo "=== ADMIN ACCOUNT CREATION ==="
-          grep -nE "create.*admin|role.?=.?admin|role.*admin|admin.*account" server/routes/admin.js | head -80 || true
+          echo "=== ADMIN MIDDLEWARE ==="
+          cat server/middleware/admin.js
+          echo "=== AUTH LOGIN PAYLOAD ==="
+          grep -nE "jwt\.sign|token|role" server/routes/auth.js | head -120
+          echo "=== ADMIN DASHBOARD ACTIONS ==="
+          grep -nE "SAVINGS PLAN SETUP|MONTH-END COMPLIANCE|COMPLIANCE SETTLEMENT|WELFARE PAYOUT|CONSTANT MATURITY|CREATE" www/app.js | head -160
