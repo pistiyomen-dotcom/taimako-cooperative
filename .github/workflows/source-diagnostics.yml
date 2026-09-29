@@ -15,10 +15,10 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Inspect loan source and plan linkage
+      - name: Exact loan schema and approval
         run: |
-          grep -n -A140 -B30 "loan-applications" server/routes/account.js server/routes/admin.js | head -420
-          echo "=== LOAN SCHEMA ==="
-          grep -n -A80 -B10 "CREATE TABLE IF NOT EXISTS loan" server/db/schema.sql | head -220
-          echo "=== LOAN UI ==="
-          grep -n -A80 -B20 "loanApply" www/index.html www/app.js | head -260
+          grep -n -A70 -B5 "CREATE TABLE IF NOT EXISTS loan_applications" server/db/schema.sql
+          grep -n -A70 -B5 "CREATE TABLE IF NOT EXISTS loans" server/db/schema.sql
+          sed -n '391,470p' server/routes/account.js
+          sed -n '500,590p' server/routes/admin.js
+          grep -n -A35 -B10 'id="loanApplyDialog"' www/index.html
