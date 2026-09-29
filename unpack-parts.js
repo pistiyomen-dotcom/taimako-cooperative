@@ -1,0 +1,8 @@
+const fs=require('fs');
+const AdmZip=require('adm-zip');
+let data='';
+for(let i=0;i<6;i++){data+=fs.readFileSync('bundle.part'+i,'utf8').trim();}
+fs.writeFileSync('stage12.zip',Buffer.from(data,'base64'));
+new AdmZip('stage12.zip').extractAllTo(process.cwd(),true);
+fs.unlinkSync('stage12.zip');
+console.log('TAIMAKO Stage 12 extracted.');
