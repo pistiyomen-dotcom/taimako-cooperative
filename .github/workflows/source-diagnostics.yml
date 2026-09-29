@@ -15,7 +15,10 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show withdrawal helper functions
+      - name: Show regular withdrawal and year-end logic
         run: |
-          sed -n '95,180p' server/routes/account.js
-          sed -n '285,350p' server/routes/admin.js
+          grep -n -A120 -B30 "withdrawal" server/routes/account.js | head -320
+          echo "=== ADMIN APPROVAL ==="
+          grep -n -A120 -B20 "withdrawal-requests/:id/approve" server/routes/admin.js | head -280
+          echo "=== REGULAR RULE TEXT ==="
+          grep -n -A40 -B20 "Regular Savings\|REGULAR" www/app.js | head -220
