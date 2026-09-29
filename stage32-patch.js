@@ -75,23 +75,31 @@ function applyAdminPermissionVisibility(){
 `;
 }
 
-// Load permissions after successful Admin login before dashboard render.
-if(!app.includes("currentAdminPermissions=(await api('/api/admin/my-permissions')).permissions")){
-  const marker="currentUser = data.user;";
-  const replacement="currentUser = data.user;\n    if (currentUser?.role === 'admin') { try { currentAdminPermissions=(await api('/api/admin/my-permissions')).permissions; setTimeout(applyAdminPermissionVisibility,0); } catch (_) { currentAdminPermissions=null; } } else { currentAdminPermissions=null; }";
-  if(!app.includes(marker)){ console.error('Stage 32 login currentUser target not found'); process.exit(1); }
-  app=app.replace(marker,replacement);
+// Load permissions lazily whenever an Admin dashboard is present.
+if(!app.includes('let adminPermissionsLoading=false;')){
+  app += `
+let adminPermissionsLoading=false;
+let adminPermissionsUsername=null;
+async function ensureAdminPermissionsLoaded(){
+  if(currentUser?.role!=='admin') { currentAdminPermissions=null; adminPermissionsUsername=null; return; }
+  if(currentAdminPermissions && adminPermissionsUsername===currentUser.username) return;
+  if(adminPermissionsLoading) return;
+  adminPermissionsLoading=true;
+  try{
+    const data=await api('/api/admin/my-permissions');
+    currentAdminPermissions=data.permissions;
+    adminPermissionsUsername=currentUser.username;
+    applyAdminPermissionVisibility();
+  }catch(_){
+    currentAdminPermissions=null;
+  }finally{
+    adminPermissionsLoading=false;
+  }
+}
+`;
 }
 
-// Reset permissions on logout.
-if(!app.includes('currentAdminPermissions = null; // Stage 32')){
-  const logoutMarker="currentUser = null;";
-  const first=app.indexOf(logoutMarker);
-  const second=app.indexOf(logoutMarker, first+1);
-  if(second>=0) app=app.slice(0,second)+"currentUser = null;\n  currentAdminPermissions = null; // Stage 32"+app.slice(second+logoutMarker.length);
-}
-
-if(!app.includes("new MutationObserver(()=>applyAdminPermissionVisibility())")){ app += `\nnew MutationObserver(()=>applyAdminPermissionVisibility()).observe(document.body,{childList:true,subtree:true});\n`; }
+// Permission cache resets automatically when the signed-in username changes.
 fs.writeFileSync(appPath,app);
 
 // Cache bump.
