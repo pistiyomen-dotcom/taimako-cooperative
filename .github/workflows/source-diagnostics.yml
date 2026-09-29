@@ -15,7 +15,7 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show create account handlers
+      - name: Show account link and flexible transfer flow
         run: |
-          grep -n -A55 -B10 "function updateAccountHints" www/app.js
-          grep -n -A60 -B10 "createAccountForm.addEventListener" www/app.js
+          grep -n -A100 -B30 "flexible-transfer\|linked-regular\|account-links\|flexible" server/routes/account.js server/routes/admin.js | head -320
+          grep -n -A90 -B30 "TRANSFER\|linkedRegularInfo\|openTransferDialog" www/app.js www/index.html | head -300
