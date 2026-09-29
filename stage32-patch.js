@@ -60,18 +60,25 @@ function adminActionAllowed(title){
   app += helper;
 }
 
-// Filter Admin dashboard cards before rendering.
-if(!app.includes('adminActionsFiltered')){
-  const old="  actions.forEach(([title, subtitle]) => {";
-  const neu="  const adminActionsFiltered = currentUser?.role==='admin' ? actions.filter(([title])=>adminActionAllowed(title)) : actions;\n  adminActionsFiltered.forEach(([title, subtitle]) => {";
-  if(!app.includes(old)){ console.error('Stage 32 dashboard action loop target not found'); process.exit(1); }
-  app=app.replace(old,neu);
+// Hide unauthorized Admin actions after the dashboard is rendered.
+if(!app.includes('function applyAdminPermissionVisibility()')){
+  app += `
+function applyAdminPermissionVisibility(){
+  if(currentUser?.role!=='admin' || !currentAdminPermissions) return;
+  const titles=['CREATE ACCOUNT','ADMIN PERMISSIONS','CASH CREDIT','PAYMENT REQUESTS','WITHDRAWAL REQUESTS','LOANS','LOAN APPLICATIONS','SAVINGS PLAN SETUP','MONTH-END COMPLIANCE','COMPLIANCE SETTLEMENT','WELFARE PAYOUT','CONSTANT MATURITY','TRANSACTIONS','CONTACT REQUESTS','LINK FLEXIBLE'];
+  document.querySelectorAll('button').forEach(btn=>{
+    const text=(btn.textContent||'').trim().toUpperCase();
+    const title=titles.find(t=>text===t||text.startsWith(t+' '));
+    if(title && !adminActionAllowed(title)) btn.style.display='none';
+  });
+}
+`;
 }
 
 // Load permissions after successful Admin login before dashboard render.
 if(!app.includes("currentAdminPermissions=(await api('/api/admin/my-permissions')).permissions")){
   const marker="currentUser = data.user;";
-  const replacement="currentUser = data.user;\n    if (currentUser?.role === 'admin') { try { currentAdminPermissions=(await api('/api/admin/my-permissions')).permissions; } catch (_) { currentAdminPermissions=null; } } else { currentAdminPermissions=null; }";
+  const replacement="currentUser = data.user;\n    if (currentUser?.role === 'admin') { try { currentAdminPermissions=(await api('/api/admin/my-permissions')).permissions; setTimeout(applyAdminPermissionVisibility,0); } catch (_) { currentAdminPermissions=null; } } else { currentAdminPermissions=null; }";
   if(!app.includes(marker)){ console.error('Stage 32 login currentUser target not found'); process.exit(1); }
   app=app.replace(marker,replacement);
 }
@@ -84,7 +91,7 @@ if(!app.includes('currentAdminPermissions = null; // Stage 32')){
   if(second>=0) app=app.slice(0,second)+"currentUser = null;\n  currentAdminPermissions = null; // Stage 32"+app.slice(second+logoutMarker.length);
 }
 
-fs.writeFileSync(appPath,app);
+if(!app.includes("new MutationObserver(()=>applyAdminPermissionVisibility())")){ app += `\nnew MutationObserver(()=>applyAdminPermissionVisibility()).observe(document.body,{childList:true,subtree:true});\n`; }\nfs.writeFileSync(appPath,app);
 
 // Cache bump.
 const indexPath='www/index.html';
