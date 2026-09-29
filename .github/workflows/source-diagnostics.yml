@@ -15,7 +15,13 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show dashboard rendering
+      - name: Show receipt storage flow
         run: |
-          grep -n -A45 -B25 "function renderAdmin" www/app.js || true
-          grep -n -A50 -B20 "CREATE ACCOUNT" www/app.js | head -180
+          echo "=== PAYMENT REQUEST SCHEMA ==="
+          grep -n -A30 -B5 "payment_requests" server/db/schema.sql
+          echo "=== ACCOUNT UPLOAD ROUTES ==="
+          grep -n -A80 -B30 "payment-requests" server/routes/account.js
+          echo "=== ADMIN RECEIPT ROUTES ==="
+          grep -n -A80 -B20 "payment-requests/:id/receipt" server/routes/admin.js
+          echo "=== MULTER CONFIG ==="
+          grep -Rni "multer\|uploads\|receipt_path\|receipt" server | head -220
