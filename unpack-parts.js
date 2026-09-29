@@ -6,4 +6,5 @@ fs.writeFileSync('stage12.zip',Buffer.from(data,'base64'));
 new AdmZip('stage12.zip').extractAllTo(process.cwd(),true);
 fs.unlinkSync('stage12.zip');
 require('./stage14-patch.js');
+require('./stage15-patch.js');
 console.log('TAIMAKO Stage 12 extracted with Stage 14 corrections.');
