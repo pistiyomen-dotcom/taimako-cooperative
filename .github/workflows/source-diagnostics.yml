@@ -15,7 +15,7 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show payment dialog details
+      - name: Show cash credit flow
         run: |
-          sed -n '172,215p' www/index.html
-          grep -n "account-number\|accountNumber\|BANK DETAILS\|Bank Details\|ACCOUNT DETAILS\|Account Details" www/app.js www/index.html || true
+          sed -n '145,170p' www/index.html
+          sed -n '385,438p' www/app.js
