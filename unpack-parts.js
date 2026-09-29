@@ -9,4 +9,5 @@ require('./stage14-patch.js');
 require('./stage15-patch.js');
 require('./stage16-patch.js');
 require('./stage17-patch.js');
+require('./stage18-patch.js');
 console.log('TAIMAKO source extracted with staged corrections.');
