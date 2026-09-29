@@ -11,13 +11,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: npm install adm-zip
       - run: node unpack-parts.js
-      - name: Verify Stage 50 output and cache
-        run: |
-          echo "=== STAGE50 CHAIN ==="
-          tail -40 stage36-patch.js
-          echo "=== ADMIN SETUP HTML ==="
-          grep -n -A18 -B8 "openAdminSetup\|adminSetupDialog" www/index.html
-          echo "=== ADMIN SETUP JS ==="
-          grep -n -A28 -B8 "openAdminSetup\|adminSetupForm" www/app.js
-          echo "=== SERVICE WORKER ==="
-          cat www/sw.js 2>/dev/null || cat www/service-worker.js 2>/dev/null || true
+      - run: |
+          grep -n -A60 -B15 "loginForm.addEventListener" www/app.js
+          grep -n -A45 -B15 "passwordDialog" www/app.js
