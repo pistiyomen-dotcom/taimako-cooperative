@@ -29,15 +29,19 @@ account=account.replace(/\s*if \(req\.file\) fs\.unlink\(req\.file\.path, \(\) =
 
 // Replace payment-request INSERT so receipt bytes are stored in PostgreSQL.
 if(!account.includes('receipt_data, receipt_original_name')){
-  const insertRe=/const created = await pool\.query\(\s*`INSERT INTO payment_requests\(reference, account_id, destination, amount, receipt_path, receipt_original_name, receipt_mime_type, note\)[\s\S]*?\n\s*\);/m;
-  if(!insertRe.test(account)){ console.error('Stage 34 payment insert target not found'); process.exit(1); }
-  const newInsert=`const created = await pool.query(
-    \`INSERT INTO payment_requests(reference, account_id, destination, amount, receipt_path, receipt_data, receipt_original_name, receipt_mime_type, note)
-     VALUES($1,$2,$3,$4,NULL,$5,$6,$7,$8)
-     RETURNING id, reference, status, destination, amount, created_at\`,
-    [ref('PAY'), req.auth.sub, destination, amount, req.file.buffer, req.file.originalname, req.file.mimetype, note || null]
-  );`;
-  account=account.replace(insertRe,newInsert);
+  const fields='receipt_path, receipt_original_name, receipt_mime_type, note';
+  const fieldsNew='receipt_path, receipt_data, receipt_original_name, receipt_mime_type, note';
+  if(!account.includes(fields)){ console.error('Stage 34 payment fields target not found'); process.exit(1); }
+  account=account.replace(fields,fieldsNew);
+
+  const values='VALUES($1,$2,$3,$4,$5,$6,$7,$8)';
+  const valuesNew='VALUES($1,$2,$3,$4,NULL,$5,$6,$7,$8)';
+  if(!account.includes(values)){ console.error('Stage 34 payment values target not found'); process.exit(1); }
+  account=account.replace(values,valuesNew);
+
+  const argsRe=/\[ref\('PAY'\),\s*req\.auth\.sub,\s*destination,\s*amount,\s*[^,\]]+,\s*req\.file\.originalname,\s*req\.file\.mimetype,\s*note \|\| null\]/m;
+  if(!argsRe.test(account)){ console.error('Stage 34 payment args target not found'); process.exit(1); }
+  account=account.replace(argsRe,"[ref('PAY'), req.auth.sub, destination, amount, req.file.buffer, req.file.originalname, req.file.mimetype, note || null]");
 }
 fs.writeFileSync(accountPath,account);
 
