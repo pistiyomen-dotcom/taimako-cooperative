@@ -11,8 +11,4 @@ jobs:
       - uses: actions/checkout@v4
       - run: npm install adm-zip
       - run: node unpack-parts.js
-      - run: |
-          echo "=== CASH CREDIT HTML ==="
-          grep -n -A35 -B8 "cashCreditDialog" www/index.html
-          echo "=== CASH CREDIT JS ==="
-          grep -n -A130 -B20 "setCashCreditMode\|confirmCreditMember\|cashCreditForm.addEventListener" www/app.js
+      - run: sed -n '488,518p' www/app.js
