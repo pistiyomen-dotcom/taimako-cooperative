@@ -16,17 +16,7 @@ if(!admin.includes("router.get('/savings-plan-progress'")){
 router.get('/savings-plan-progress', async (req, res) => {
   const username=String(req.query.username||'').trim().toUpperCase();
   if(!username) return res.status(400).json({error:'Enter a member username.'});
-  const result=await pool.query(`SELECT a.username,a.full_name,a.role,
-      COALESCE(b.target_balance,0) AS target_balance,
-      COALESCE(b.constant_balance,0) AS constant_balance,
-      COALESCE(b.welfare_balance,0) AS welfare_balance,
-      p.plan_type,p.start_date,p.duration_months,p.target_amount,p.monthly_amount,
-      p.minimum_balance,p.disbursement_months,p.status
-    FROM accounts a
-    LEFT JOIN member_balances b ON b.account_id=a.id
-    LEFT JOIN savings_plans p ON p.account_id=a.id
-    WHERE a.username=$1 AND a.is_active=TRUE
-    ORDER BY p.plan_type`,[username]);
+  const result=await pool.query('SELECT a.username,a.full_name,a.role, COALESCE(b.target_balance,0) AS target_balance, COALESCE(b.constant_balance,0) AS constant_balance, COALESCE(b.welfare_balance,0) AS welfare_balance, p.plan_type,p.start_date,p.duration_months,p.target_amount,p.monthly_amount,p.minimum_balance,p.disbursement_months,p.status FROM accounts a LEFT JOIN member_balances b ON b.account_id=a.id LEFT JOIN savings_plans p ON p.account_id=a.id WHERE a.username=$1 AND a.is_active=TRUE ORDER BY p.plan_type',[username]);
   if(!result.rows.length) return res.status(404).json({error:'Active member account not found.'});
   const first=result.rows[0];
   if(first.role!=='regular') return res.status(400).json({error:'Savings plan progress applies to Regular member accounts.'});
