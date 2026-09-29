@@ -1,22 +1,19 @@
 name: Source diagnostics
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - '.github/workflows/source-diagnostics.yml'
-  workflow_dispatch:
 
 jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install extractor
-        run: npm install adm-zip
-      - name: Extract source
-        run: node unpack-parts.js
-      - name: Exact approval interest block
+      - run: npm install adm-zip
+      - run: node unpack-parts.js
+      - name: Show reconstructed schema
         run: |
-          sed -n '545,625p' server/routes/admin.js
-          echo "=== MEMBER LOAN FORM ==="
-          sed -n '277,289p' www/index.html
+          nl -ba server/db/schema.sql | sed -n '95,165p'
+          nl -ba server/db/schema.sql | sed -n '1,95p'
