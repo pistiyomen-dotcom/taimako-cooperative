@@ -1,15 +1,1 @@
-const fs=require('fs');
-const AdmZip=require('adm-zip');
-let data='';
-for(let i=0;i<6;i++){data+=fs.readFileSync('bundle.part'+i,'utf8').trim();}
-fs.writeFileSync('stage12.zip',Buffer.from(data,'base64'));
-new AdmZip('stage12.zip').extractAllTo(process.cwd(),true);
-fs.unlinkSync('stage12.zip');
-require('./stage14-patch.js');
-require('./stage15-patch.js');
-require('./stage16-patch.js');
-require('./stage17-patch.js');
-require('./stage18-patch.js');
-require('./stage19-patch.js');
-require('./stage20-patch.js');
-console.log('TAIMAKO source extracted with staged corrections.');
+const fs=require('fs');\nconst AdmZip=require('adm-zip');\nlet data='';\nfor(let i=0;i<6;i++){data+=fs.readFileSync('bundle.part'+i,'utf8').trim();}\nfs.writeFileSync('stage12.zip',Buffer.from(data,'base64'));\nnew AdmZip('stage12.zip').extractAllTo(process.cwd(),true);\nfs.unlinkSync('stage12.zip');\nrequire('./stage14-patch.js');\nrequire('./stage15-patch.js');\nrequire('./stage16-patch.js');\nrequire('./stage17-patch.js');\nrequire('./stage18-patch.js');\nrequire('./stage19-patch.js');\nrequire('./stage20-patch.js');\nrequire('./stage21-patch.js');\nconsole.log('TAIMAKO source extracted with staged corrections.');\n
