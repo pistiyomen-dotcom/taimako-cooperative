@@ -6,3 +6,4 @@ fs.writeFileSync(p,s);
 console.log('TAIMAKO Stage 36 duplicate-submit guard applied.');
 
 require('./stage37-patch.js');
+require('./stage37-ui-patch.js');
