@@ -15,13 +15,6 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show receipt storage flow
+      - name: Show bank details UI
         run: |
-          echo "=== PAYMENT REQUEST SCHEMA ==="
-          grep -n -A30 -B5 "payment_requests" server/db/schema.sql
-          echo "=== ACCOUNT UPLOAD ROUTES ==="
-          grep -n -A80 -B30 "payment-requests" server/routes/account.js
-          echo "=== ADMIN RECEIPT ROUTES ==="
-          grep -n -A80 -B20 "payment-requests/:id/receipt" server/routes/admin.js
-          echo "=== MULTER CONFIG ==="
-          grep -Rni "multer\|uploads\|receipt_path\|receipt" server | head -220
+          grep -n -A40 -B20 "account number\|Account Number\|bank" www/app.js www/index.html | head -220
