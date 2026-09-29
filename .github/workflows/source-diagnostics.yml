@@ -15,10 +15,8 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Exact loan schema and approval
+      - name: Exact approval interest block
         run: |
-          grep -n -A70 -B5 "CREATE TABLE IF NOT EXISTS loan_applications" server/db/schema.sql
-          grep -n -A70 -B5 "CREATE TABLE IF NOT EXISTS loans" server/db/schema.sql
-          sed -n '391,470p' server/routes/account.js
-          sed -n '500,590p' server/routes/admin.js
-          grep -n -A35 -B10 'id="loanApplyDialog"' www/index.html
+          sed -n '545,625p' server/routes/admin.js
+          echo "=== MEMBER LOAN FORM ==="
+          sed -n '277,289p' www/index.html
