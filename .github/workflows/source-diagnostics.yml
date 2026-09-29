@@ -15,11 +15,6 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show admin permission integration points
+      - name: Show admin endpoints
         run: |
-          echo "=== ADMIN MIDDLEWARE ==="
-          cat server/middleware/admin.js
-          echo "=== AUTH LOGIN PAYLOAD ==="
-          grep -nE "jwt\.sign|token|role" server/routes/auth.js | head -120
-          echo "=== ADMIN DASHBOARD ACTIONS ==="
-          grep -nE "SAVINGS PLAN SETUP|MONTH-END COMPLIANCE|COMPLIANCE SETTLEMENT|WELFARE PAYOUT|CONSTANT MATURITY|CREATE" www/app.js | head -160
+          grep -nE "^router\.(get|post|put|patch|delete)\(" server/routes/admin.js
