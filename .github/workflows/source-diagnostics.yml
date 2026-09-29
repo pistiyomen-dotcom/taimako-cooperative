@@ -1,11 +1,9 @@
 name: Source diagnostics
-
 on:
   push:
     paths:
       - '.github/workflows/source-diagnostics.yml'
   workflow_dispatch:
-
 jobs:
   inspect:
     runs-on: ubuntu-latest
@@ -13,8 +11,4 @@ jobs:
       - uses: actions/checkout@v4
       - run: npm install adm-zip
       - run: node unpack-parts.js
-      - name: Inspect Flexible transfer destinations
-        run: |
-          grep -n -A90 -B25 "flexible-transfer" server/routes/account.js
-          echo "=== TRANSFER UI ==="
-          grep -n -A80 -B20 "transferDestination\|openTransferDialog\|transferForm" www/index.html www/app.js
+      - run: sed -n '1,180p' server/index.js
