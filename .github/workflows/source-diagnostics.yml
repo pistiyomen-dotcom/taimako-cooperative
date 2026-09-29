@@ -15,9 +15,15 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show finance schema
+      - name: Show finance details
         run: |
-          echo "=== SCHEMA MATCHES ==="
-          grep -nEi "CREATE TABLE.*(ledger|transaction)|ledger|transaction" server/db/schema.sql | head -160 || true
-          echo "=== ROUTE MATCHES ==="
-          grep -RniE "INSERT INTO .*ledger|INSERT INTO .*transaction|FROM .*ledger|FROM .*transaction|transaction history|history" server/routes | head -260 || true
+          echo "=== TRANSACTIONS TABLE ==="
+          sed -n '30,55p' server/db/schema.sql
+          echo "=== ACCOUNT HISTORY ROUTE ==="
+          sed -n '45,85p' server/routes/account.js
+          echo "=== ADMIN CREDIT INSERTS ==="
+          sed -n '130,165p' server/routes/admin.js
+          sed -n '210,245p' server/routes/admin.js
+          sed -n '375,405p' server/routes/admin.js
+          echo "=== ACCOUNT INSERTS ==="
+          sed -n '315,345p' server/routes/account.js
