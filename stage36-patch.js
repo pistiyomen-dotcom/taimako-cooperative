@@ -10,3 +10,4 @@ require('./stage37-ui-patch.js');
 require('./stage38-patch.js');
 require('./stage39-patch.js');
 require('./stage40-patch.js');
+require('./stage41-patch.js');
