@@ -7,5 +7,6 @@ new AdmZip('stage12.zip').extractAllTo(process.cwd(),true);
 fs.unlinkSync('stage12.zip');
 require('./stage14-patch.js');
 require('./stage15-patch.js');
-require('./stage16-patch.js');\nrequire('./stage17-patch.js');
-console.log('TAIMAKO Stage 12 extracted with Stage 14 corrections.');
+require('./stage16-patch.js');
+require('./stage17-patch.js');
+console.log('TAIMAKO source extracted with staged corrections.');
