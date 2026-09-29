@@ -8,3 +8,5 @@ console.log('TAIMAKO Stage 51 cache bumped to v50.');
 require('./stage52-patch.js');
 
 require('./stage54-patch.js');
+
+require('./stage55-patch.js');
