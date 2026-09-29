@@ -15,15 +15,13 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show finance details
+      - name: Show admin auth wiring
         run: |
-          echo "=== TRANSACTIONS TABLE ==="
-          sed -n '30,55p' server/db/schema.sql
-          echo "=== ACCOUNT HISTORY ROUTE ==="
-          sed -n '45,85p' server/routes/account.js
-          echo "=== ADMIN CREDIT INSERTS ==="
-          sed -n '130,165p' server/routes/admin.js
-          sed -n '210,245p' server/routes/admin.js
-          sed -n '375,405p' server/routes/admin.js
-          echo "=== ACCOUNT INSERTS ==="
-          sed -n '315,345p' server/routes/account.js
+          echo "=== ADMIN ROUTE TOP ==="
+          sed -n '1,90p' server/routes/admin.js
+          echo "=== SERVER MOUNTS ==="
+          sed -n '1,80p' server/index.js
+          echo "=== AUTH MIDDLEWARE ==="
+          sed -n '1,180p' server/middleware/auth.js 2>/dev/null || true
+          echo "=== ADMIN ACCOUNT CREATION ==="
+          grep -nE "create.*admin|role.?=.?admin|role.*admin|admin.*account" server/routes/admin.js | head -80 || true
