@@ -39,9 +39,8 @@ if(!account.includes('receipt_data, receipt_original_name')){
   if(!account.includes(values)){ console.error('Stage 34 payment values target not found'); process.exit(1); }
   account=account.replace(values,valuesNew);
 
-  const argsRe=/\[ref\('PAY'\),\s*req\.auth\.sub,\s*destination,\s*amount,\s*[^,\]]+,\s*req\.file\.originalname,\s*req\.file\.mimetype,\s*note \|\| null\]/m;
-  if(!argsRe.test(account)){ console.error('Stage 34 payment args target not found'); process.exit(1); }
-  account=account.replace(argsRe,"[ref('PAY'), req.auth.sub, destination, amount, req.file.buffer, req.file.originalname, req.file.mimetype, note || null]");
+  account=account.replace(/path\.resolve\(req\.file\.path\)/g,'req.file.buffer');
+  account=account.replace(/req\.file\.path/g,'req.file.buffer');
 }
 fs.writeFileSync(accountPath,account);
 
