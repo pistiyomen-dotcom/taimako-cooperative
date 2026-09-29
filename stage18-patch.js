@@ -204,7 +204,7 @@ document.getElementById('savingsPlanForm').addEventListener('submit', async (e)=
       minimumBalance:Number(document.getElementById('planMinimumBalance').value||0),
       disbursementMonths:Number(document.getElementById('planDisbursementMonths').value||0)
     })});
-    success.textContent=`${data.member.name}: ${data.plan.planType} plan saved successfully.`;
+    success.textContent=data.member.name + ': ' + data.plan.planType + ' plan saved successfully.';
     await showCurrentSavingsPlans();
   }catch(err){error.textContent=err.message;}
 });
@@ -214,9 +214,9 @@ async function showCurrentSavingsPlans(){
   const username=document.getElementById('planUsername').value.trim();
   if(!username) return error.textContent='Enter a member username first.';
   try{
-    const data=await api(`/api/admin/savings-plans?username=${encodeURIComponent(username)}`);
+    const data=await api('/api/admin/savings-plans?username=' + encodeURIComponent(username));
     if(!data.plans.length){box.innerHTML='<p class="empty-state">No Target, Constant or Welfare plan has been configured for this member.</p>';return;}
-    box.innerHTML='<div class="mini-grid">'+data.plans.map(p=>`<div><span>${escapeHTML(p.planType)}</span><b>${escapeHTML(p.durationMonths)} months</b><small>Start: ${escapeHTML(String(p.startDate).slice(0,10))}</small></div>`).join('')+'</div>';
+    box.innerHTML='<div class="mini-grid">'+data.plans.map(p=>'<div><span>'+escapeHTML(p.planType)+'</span><b>'+escapeHTML(p.durationMonths)+' months</b><small>Start: '+escapeHTML(String(p.startDate).slice(0,10))+'</small></div>').join('')+'</div>';
   }catch(err){error.textContent=err.message;}
 }
 document.getElementById('loadSavingsPlans').addEventListener('click', showCurrentSavingsPlans);
