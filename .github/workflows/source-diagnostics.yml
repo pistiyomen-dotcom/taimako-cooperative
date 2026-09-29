@@ -15,6 +15,7 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show create account flow
+      - name: Show create account handlers
         run: |
-          grep -n -A70 -B20 "createAccountDialog\|createAccountForm\|accountRole\|Create Account" www/index.html www/app.js | head -260
+          grep -n -A55 -B10 "function updateAccountHints" www/app.js
+          grep -n -A60 -B10 "createAccountForm.addEventListener" www/app.js
