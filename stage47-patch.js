@@ -1,18 +1,42 @@
 const fs=require('fs');
 
 let schema=fs.readFileSync('server/db/schema.sql','utf8');
-if(!schema.includes('loan_product VARCHAR(20)')){
-  schema=schema.replace(
+
+// Clean any misplaced Stage 47 columns from withdrawal_requests first.
+schema=schema.replace(
+  "  requested_amount NUMERIC(14,2) NOT NULL CHECK (requested_amount > 0),\n  loan_product VARCHAR(20) NOT NULL DEFAULT 'REGULAR' CHECK (loan_product IN ('REGULAR','TARGET','CONSTANT')),\n  interest_rate NUMERIC(6,3) NOT NULL DEFAULT 5\n  fee_percent NUMERIC(5,2),",
+  "  requested_amount NUMERIC(14,2) NOT NULL CHECK (requested_amount > 0),\n  fee_percent NUMERIC(5,2),"
+);
+
+// Add loan fields only inside loan_applications.
+const appStart=schema.indexOf('CREATE TABLE IF NOT EXISTS loan_applications (');
+const appEnd=schema.indexOf('\n);', appStart);
+if(appStart<0||appEnd<0){console.error('Stage 47 loan_applications table not found');process.exit(1);}
+let appBlock=schema.slice(appStart,appEnd+3);
+if(!appBlock.includes('loan_product VARCHAR(20)')){
+  appBlock=appBlock.replace(
     '  requested_amount NUMERIC(14,2) NOT NULL CHECK (requested_amount > 0),',
-    "  requested_amount NUMERIC(14,2) NOT NULL CHECK (requested_amount > 0),\n  loan_product VARCHAR(20) NOT NULL DEFAULT 'REGULAR' CHECK (loan_product IN ('REGULAR','TARGET','CONSTANT')),\n  interest_rate NUMERIC(6,3) NOT NULL DEFAULT 5"
+    "  requested_amount NUMERIC(14,2) NOT NULL CHECK (requested_amount > 0),\n  loan_product VARCHAR(20) NOT NULL DEFAULT 'REGULAR' CHECK (loan_product IN ('REGULAR','TARGET','CONSTANT')),\n  interest_rate NUMERIC(6,3) NOT NULL DEFAULT 5,"
   );
+  schema=schema.slice(0,appStart)+appBlock+schema.slice(appEnd+3);
 }
-if(!schema.includes('loan_product VARCHAR(20) NOT NULL DEFAULT \'REGULAR\' CHECK (loan_product IN (\'REGULAR\',\'TARGET\',\'CONSTANT\'))') || (schema.match(/loan_product VARCHAR\(20\)/g)||[]).length<2){
-  schema=schema.replace(
+
+// Add loan fields only inside loans.
+const loansStart=schema.indexOf('CREATE TABLE IF NOT EXISTS loans (');
+const loansEnd=schema.indexOf('\n);', loansStart);
+if(loansStart<0||loansEnd<0){console.error('Stage 47 loans table not found');process.exit(1);}
+let loansBlock=schema.slice(loansStart,loansEnd+3);
+if(!loansBlock.includes('loan_product VARCHAR(20)')){
+  loansBlock=loansBlock.replace(
     '  approved_principal NUMERIC(14,2) NOT NULL CHECK (approved_principal > 0),',
-    "  approved_principal NUMERIC(14,2) NOT NULL CHECK (approved_principal > 0),\n  loan_product VARCHAR(20) NOT NULL DEFAULT 'REGULAR' CHECK (loan_product IN ('REGULAR','TARGET','CONSTANT')),\n  interest_rate NUMERIC(6,3) NOT NULL DEFAULT 5"
+    "  approved_principal NUMERIC(14,2) NOT NULL CHECK (approved_principal > 0),\n  loan_product VARCHAR(20) NOT NULL DEFAULT 'REGULAR' CHECK (loan_product IN ('REGULAR','TARGET','CONSTANT')),\n  interest_rate NUMERIC(6,3) NOT NULL DEFAULT 5,"
   );
+  schema=schema.slice(0,loansStart)+loansBlock+schema.slice(loansEnd+3);
+} else {
+  loansBlock=loansBlock.replace("interest_rate NUMERIC(6,3) NOT NULL DEFAULT 5\n  base_interest","interest_rate NUMERIC(6,3) NOT NULL DEFAULT 5,\n  base_interest");
+  schema=schema.slice(0,loansStart)+loansBlock+schema.slice(loansEnd+3);
 }
+
 fs.writeFileSync('server/db/schema.sql',schema);
 
 let a=fs.readFileSync('server/routes/account.js','utf8');
