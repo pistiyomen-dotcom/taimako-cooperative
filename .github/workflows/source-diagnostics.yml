@@ -12,6 +12,7 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          grep -n -A22 -B4 "Create Account" www/index.html
-          grep -n -A45 -B5 "function updateAccountHints" www/app.js
-          grep -n -A28 -B5 "linkedRegularUsername" server/routes/admin.js
+          echo "=== CASH CREDIT HTML ==="
+          grep -n -A35 -B8 "cashCreditDialog" www/index.html
+          echo "=== CASH CREDIT JS ==="
+          grep -n -A130 -B20 "setCashCreditMode\|confirmCreditMember\|cashCreditForm.addEventListener" www/app.js
