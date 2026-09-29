@@ -15,7 +15,6 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show cash credit flow
+      - name: Show create account flow
         run: |
-          sed -n '145,170p' www/index.html
-          sed -n '385,438p' www/app.js
+          grep -n -A70 -B20 "createAccountDialog\|createAccountForm\|accountRole\|Create Account" www/index.html www/app.js | head -260
