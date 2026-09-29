@@ -91,7 +91,8 @@ if(!app.includes('currentAdminPermissions = null; // Stage 32')){
   if(second>=0) app=app.slice(0,second)+"currentUser = null;\n  currentAdminPermissions = null; // Stage 32"+app.slice(second+logoutMarker.length);
 }
 
-if(!app.includes("new MutationObserver(()=>applyAdminPermissionVisibility())")){ app += `\nnew MutationObserver(()=>applyAdminPermissionVisibility()).observe(document.body,{childList:true,subtree:true});\n`; }\nfs.writeFileSync(appPath,app);
+if(!app.includes("new MutationObserver(()=>applyAdminPermissionVisibility())")){ app += `\nnew MutationObserver(()=>applyAdminPermissionVisibility()).observe(document.body,{childList:true,subtree:true});\n`; }
+fs.writeFileSync(appPath,app);
 
 // Cache bump.
 const indexPath='www/index.html';
