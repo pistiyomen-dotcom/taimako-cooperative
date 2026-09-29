@@ -15,7 +15,11 @@ jobs:
         run: npm install adm-zip
       - name: Extract source
         run: node unpack-parts.js
-      - name: Show account link and flexible transfer flow
+      - name: Exact linked-account transfer source
         run: |
-          grep -n -A100 -B30 "flexible-transfer\|linked-regular\|account-links\|flexible" server/routes/account.js server/routes/admin.js | head -320
-          grep -n -A90 -B30 "TRANSFER\|linkedRegularInfo\|openTransferDialog" www/app.js www/index.html | head -300
+          grep -n -A110 -B20 "router.post('/flexible-transfer'" server/routes/account.js
+          grep -n -A70 -B15 "router.get('/linked-regular'" server/routes/account.js
+          grep -n -A70 -B20 "router.post('/account-links'" server/routes/admin.js
+          grep -n -A20 -B5 "CREATE TABLE IF NOT EXISTS account_links" server/db/schema.sql
+          sed -n '604,635p' www/app.js
+          grep -n -A30 -B10 'id="transferDialog"' www/index.html
