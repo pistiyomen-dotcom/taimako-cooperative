@@ -79,10 +79,10 @@ router.post('/savings-compliance-close-month', async (req,res) => {
 
 router.get('/savings-compliance-charges', async (req,res) => {
   const username=String(req.query.username||'').trim().toUpperCase();
-  const params=[];
-  let where="WHERE c.status IN ('due','paid','waived')";
-  if(username){ params.push(username); where+=' AND a.username=$'+params.length; }
-  const result=await pool.query("SELECT c.id,a.username,a.full_name,c.plan_type,c.period_month,c.required_amount,c.contributed_amount,c.shortfall_amount,c.charge_rate,c.charge_amount,c.status,c.assessed_at,c.settled_at,c.note FROM savings_compliance_charges c JOIN accounts a ON a.id=c.account_id "+where+" ORDER BY c.period_month DESC,a.username,c.plan_type LIMIT 500",params);
+  const selectSql="SELECT c.id,a.username,a.full_name,c.plan_type,c.period_month,c.required_amount,c.contributed_amount,c.shortfall_amount,c.charge_rate,c.charge_amount,c.status,c.assessed_at,c.settled_at,c.note FROM savings_compliance_charges c JOIN accounts a ON a.id=c.account_id ";
+  const result=username
+    ? await pool.query(selectSql+"WHERE c.status IN ('due','paid','waived') AND a.username=$1 ORDER BY c.period_month DESC,a.username,c.plan_type LIMIT 500",[username])
+    : await pool.query(selectSql+"WHERE c.status IN ('due','paid','waived') ORDER BY c.period_month DESC,a.username,c.plan_type LIMIT 500");
   res.json({charges:result.rows});
 });
 `;
