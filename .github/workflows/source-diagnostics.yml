@@ -1,0 +1,23 @@
+name: Source diagnostics
+
+on:
+  push:
+    paths:
+      - '.github/workflows/source-diagnostics.yml'
+  workflow_dispatch:
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install extractor
+        run: npm install adm-zip
+      - name: Extract source
+        run: node unpack-parts.js
+      - name: Show finance schema
+        run: |
+          echo "=== SCHEMA MATCHES ==="
+          grep -nEi "CREATE TABLE.*(ledger|transaction)|ledger|transaction" server/db/schema.sql | head -160 || true
+          echo "=== ROUTE MATCHES ==="
+          grep -RniE "INSERT INTO .*ledger|INSERT INTO .*transaction|FROM .*ledger|FROM .*transaction|transaction history|history" server/routes | head -260 || true
