@@ -12,9 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== LOAN SERVICE ==="
-          sed -n '1,320p' server/services-loans.js || true
-          echo "=== LOAN APPROVAL ==="
-          grep -n -A120 -B30 "loan.*approve\|approved_principal\|base_interest\|due_date\|last_accrual_date" server/routes/admin.js | head -520 || true
-          echo "=== MEMBER LOAN DASHBOARD ==="
-          grep -n -A80 -B30 "LOAN INTEREST\|PAYMENT DUE DATE\|ACTIVE LOAN\|loanInterest\|loanDueDate" www/app.js server/routes/account.js | head -420 || true
+          echo "=== ACCOUNT ME ROUTE ==="
+          grep -n -A120 -B40 "router.get('/me'\|router.get(\"/me\"\|/api/account/me" server/routes/account.js www/app.js | head -520 || true
+          echo "=== LOAN SERVICE IMPORTS ==="
+          grep -n -A20 -B20 "services-loans\|accrueOverdueForAccount\|syncActiveLoanForAccount" server/routes/account.js server/routes/auth.js server/routes/admin.js | head -420 || true
+          echo "=== REFRESH ACCOUNT UI ==="
+          grep -n -A80 -B30 "async function refreshAccount\|refreshAccount =" www/app.js | head -320 || true
