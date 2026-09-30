@@ -6,7 +6,7 @@ const fs=require('fs');
 // This deliberately uses cash_credit permission so Confirm does not depend on manage_accounts.
 let admin=fs.readFileSync('server/routes/admin.js','utf8');
 if(!admin.includes("router.get('/cash-credit/member'")){
-  const route=String.raw\`
+  const route=String.raw`
 router.get('/cash-credit/member', requireAdminPermission('cash_credit'), async (req,res)=>{
   const username=String(req.query.username||'').trim().toUpperCase();
   const accountType=String(req.query.account||'').trim().toUpperCase();
@@ -27,7 +27,7 @@ router.get('/cash-credit/member', requireAdminPermission('cash_credit'), async (
 
   res.json({member:{username:member.username,name:member.full_name,role:member.role,account:accountType}});
 });
-\`;
+`;
   admin=admin.replace('\nmodule.exports = router;',route+'\nmodule.exports = router;');
   fs.writeFileSync('server/routes/admin.js',admin);
 }
@@ -35,7 +35,7 @@ router.get('/cash-credit/member', requireAdminPermission('cash_credit'), async (
 // 2) Fresh Cash Credit dialog.
 let html=fs.readFileSync('www/index.html','utf8');
 if(!html.includes('id="cashCreditV66Dialog"')){
-  const dialog=String.raw\`
+  const dialog=String.raw`
   <dialog id="cashCreditV66Dialog">
     <form class="dialog-card" id="cashCreditV66Form" autocomplete="off">
       <div class="dialog-head">
@@ -77,7 +77,7 @@ if(!html.includes('id="cashCreditV66Dialog"')){
       </div>
     </form>
   </dialog>
-\`;
+`;
   html=html.replace('</body>',dialog+'\n</body>');
 }
 
@@ -104,7 +104,7 @@ app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/,"serviceWorker.re
 fs.writeFileSync('www/app.js',app);
 
 // 4) Standalone client behavior. It does not reuse the removed Manual Cash Credit code.
-const client=String.raw\`(() => {
+const client=String.raw`(() => {
   function getSession(){
     try { return JSON.parse(sessionStorage.getItem('tmcs-session') || '{}'); }
     catch(_){ return {}; }
@@ -270,7 +270,7 @@ const client=String.raw\`(() => {
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
-})();\`;
+})();`;
 fs.writeFileSync('www/cash-credit-v66.js',client);
 
 // 5) Force a fresh PWA cache.
