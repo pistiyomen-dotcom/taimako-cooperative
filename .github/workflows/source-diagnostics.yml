@@ -12,9 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== ALL LOAN APPROVAL ROUTES ==="
-          grep -n -A140 -B40 "loan-applications.*approve\|loan.*approve\|loan_disbursement" server/routes/admin.js | head -700 || true
-          echo "=== FRONTEND LOAN APPROVAL CALLS ==="
-          grep -n -A100 -B30 "loan-applications\|APPROVE LOAN\|approveLoan\|loan approval" www/app.js | head -520 || true
-          echo "=== LOANS TABLE SCHEMA ==="
-          grep -n -A80 -B20 "CREATE TABLE IF NOT EXISTS loans" server/db/schema.sql | head -220 || true
+          echo "=== MEMBER APPLY LOAN FORM ==="
+          grep -n -A140 -B40 "loanApplyForm\|APPLY FOR LOAN\|loan-applications" www/app.js www/index.html | head -700 || true
+          echo "=== MEMBER LOAN SUBMIT ROUTE ==="
+          grep -n -A180 -B40 "router.post('/loan-applications'\|INSERT INTO loan_applications" server/routes/account.js | head -700 || true
+          echo "=== ADMIN PENDING LOANS ==="
+          grep -n -A140 -B40 "loadPendingLoans\|loan-applications?status=pending" www/app.js server/routes/admin.js | head -700 || true
