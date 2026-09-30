@@ -12,11 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== CONFIG JS ==="
-          cat www/config.js || true
-          echo "=== API BASE USAGE ==="
-          grep -n -A12 -B8 "API_BASE" www/app.js www/config.js | head -120 || true
-          echo "=== SERVICE WORKER CACHE ==="
-          head -80 www/sw.js || true
-          echo "=== HTML VERSION TAGS ==="
-          grep -n "app.js?v\|dashboard-refresh.js?v\|cash-credit-v66.js?v" www/index.html || true
+          echo "=== MEMBER LOAN ROUTE EXACT ==="
+          sed -n '430,570p' server/routes/account.js || true
+          echo "=== ADMIN LOAN LIST EXACT ==="
+          sed -n '550,640p' server/routes/admin.js || true
+          echo "=== LOAN APPLICATION SCHEMA ==="
+          sed -n '100,150p' server/db/schema.sql || true
