@@ -12,9 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== LOAN FORM HTML ==="
-          grep -n -A120 -B30 "id=\"loanApplyForm\"\|id=\"loanProduct\"\|id=\"loanAmount\"\|loanApplyDialog" www/index.html | head -420 || true
-          echo "=== LOAN SUBMIT JS ==="
-          grep -n -A80 -B30 "loanApplyForm.addEventListener" www/app.js | head -220 || true
-          echo "=== ACCOUNT LOAN POST ROUTE ==="
-          grep -n -A220 -B30 "router.post('/loan-applications'" server/routes/account.js | head -520 || true
+          echo "=== CONFIG JS ==="
+          cat www/config.js || true
+          echo "=== API BASE USAGE ==="
+          grep -n -A12 -B8 "API_BASE" www/app.js www/config.js | head -120 || true
+          echo "=== SERVICE WORKER CACHE ==="
+          head -80 www/sw.js || true
+          echo "=== HTML VERSION TAGS ==="
+          grep -n "app.js?v\|dashboard-refresh.js?v\|cash-credit-v66.js?v" www/index.html || true
