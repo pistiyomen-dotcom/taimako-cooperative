@@ -32,3 +32,5 @@ require('./stage64-patch.js');
 require('./stage65-patch.js');
 
 require('./stage66-patch.js');
+
+require('./stage67-patch.js');
