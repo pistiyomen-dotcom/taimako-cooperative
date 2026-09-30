@@ -103,3 +103,5 @@ jobs:
 # Stage 83 legacy active loan reconciliation trigger
 
 # Stage 84 pending loan approvals trigger
+
+# Stage 85 loans section only trigger
