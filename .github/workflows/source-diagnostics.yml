@@ -12,8 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== CASH HANDLERS ==="
-          sed -n '485,520p' www/app.js
-          sed -n '1105,1135p' www/app.js
-          echo "=== SYNTAX CHECK ==="
-          node --check www/app.js
+          echo "=== EVENT BINDINGS BEFORE CASH ==="
+          sed -n '1,490p' www/app.js | grep -n "addEventListener"
+          echo "=== REMOVED CREATE TAB REFERENCES ==="
+          grep -n "createRegularTab\|createFlexibleTab" www/app.js www/index.html || true
+          echo "=== TOP-LEVEL GETELEMENT IDS ==="
+          sed -n '1,490p' www/app.js | grep -n "getElementById"
