@@ -12,9 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== CASH CREDIT ROUTE ==="
-          grep -n -A140 -B20 "cash-credit" server/routes/admin.js
-          echo "=== BALANCE HELPERS ==="
-          grep -Rni -A80 -B20 "member_balances\|credit.*balance\|UPDATE member_balances" server | head -260
-          echo "=== DASHBOARD ME ==="
-          grep -n -A120 -B20 "router.get('/me'\|/api/account/me" server/routes/account.js
+          echo "=== CASH ROUTE END ==="
+          sed -n '175,210p' server/routes/admin.js
+          echo "=== DASHBOARD REFRESH ==="
+          grep -n -A30 -B15 "refreshAccount\|renderApp()" www/app.js | head -180
+          echo "=== MEMBER DASHBOARD RENDER ==="
+          grep -n -A80 -B20 "dashboardCards\|TOTAL SAVINGS\|REGULAR" www/app.js | head -220
