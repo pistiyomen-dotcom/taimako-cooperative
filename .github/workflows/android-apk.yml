@@ -95,3 +95,5 @@ jobs:
 # Stage 79 admin audit log trigger
 
 # Stage 80 mandatory credential change trigger
+
+# Stage 81 active loan interest trigger
