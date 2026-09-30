@@ -22,3 +22,5 @@ require('./stage59-patch.js');
 require('./stage60-patch.js');
 
 require('./stage61-patch.js');
+
+require('./stage62-patch.js');
