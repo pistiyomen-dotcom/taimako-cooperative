@@ -12,9 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== ACCOUNT ME ROUTE ==="
-          grep -n -A120 -B40 "router.get('/me'\|router.get(\"/me\"\|/api/account/me" server/routes/account.js www/app.js | head -520 || true
-          echo "=== LOAN SERVICE IMPORTS ==="
-          grep -n -A20 -B20 "services-loans\|accrueOverdueForAccount\|syncActiveLoanForAccount" server/routes/account.js server/routes/auth.js server/routes/admin.js | head -420 || true
-          echo "=== REFRESH ACCOUNT UI ==="
-          grep -n -A80 -B30 "async function refreshAccount\|refreshAccount =" www/app.js | head -320 || true
+          echo "=== ALL LOAN APPROVAL ROUTES ==="
+          grep -n -A140 -B40 "loan-applications.*approve\|loan.*approve\|loan_disbursement" server/routes/admin.js | head -700 || true
+          echo "=== FRONTEND LOAN APPROVAL CALLS ==="
+          grep -n -A100 -B30 "loan-applications\|APPROVE LOAN\|approveLoan\|loan approval" www/app.js | head -520 || true
+          echo "=== LOANS TABLE SCHEMA ==="
+          grep -n -A80 -B20 "CREATE TABLE IF NOT EXISTS loans" server/db/schema.sql | head -220 || true
