@@ -93,3 +93,5 @@ jobs:
 # Stage 78 admin sum balance trigger
 
 # Stage 79 admin audit log trigger
+
+# Stage 80 mandatory credential change trigger
