@@ -12,9 +12,8 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== ALL CASH TAB IDS ==="
-          grep -Rni "cashCreditRegularTab\|cashCreditFlexibleTab" www
-          echo "=== ALL MEMBER CONFIRM REFERENCES ==="
-          grep -Rni "confirmCreditMember\|creditMemberConfirm" www
-          echo "=== SECONDARY/PRIMARY/DIALOG CSS ==="
-          grep -n "secondary\|primary\|dialog-actions\|cash-credit-tabs" www/styles.css
+          echo "=== CASH HANDLERS ==="
+          sed -n '485,520p' www/app.js
+          sed -n '1105,1135p' www/app.js
+          echo "=== SYNTAX CHECK ==="
+          node --check www/app.js
