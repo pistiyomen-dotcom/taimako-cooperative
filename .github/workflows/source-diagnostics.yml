@@ -12,9 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== CASH ROUTE END ==="
-          sed -n '175,210p' server/routes/admin.js
-          echo "=== DASHBOARD REFRESH ==="
-          grep -n -A30 -B15 "refreshAccount\|renderApp()" www/app.js | head -180
-          echo "=== MEMBER DASHBOARD RENDER ==="
-          grep -n -A80 -B20 "dashboardCards\|TOTAL SAVINGS\|REGULAR" www/app.js | head -220
+          echo "=== AUTH ROUTES ==="
+          grep -n -A80 -B20 "login\|change-password\|change.*password\|must_change_password\|mustChangePassword" server/routes/*.js | head -420 || true
+          echo "=== ACCOUNT CREATE ==="
+          grep -n -A100 -B30 "create-account\|INSERT INTO accounts\|temporaryPassword\|must_change_password" server/routes/admin.js | head -420 || true
+          echo "=== LOGIN UI ==="
+          grep -n -A100 -B30 "loginForm\|loginDialog\|mustChange\|changePassword\|change.*PIN\|password" www/app.js | head -500 || true
+          echo "=== LOGIN HTML ==="
+          grep -n -A80 -B20 "loginDialog\|password\|PIN" www/index.html | head -350 || true
