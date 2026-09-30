@@ -12,9 +12,4 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== EVENT BINDINGS BEFORE CASH ==="
-          sed -n '1,490p' www/app.js | grep -n "addEventListener"
-          echo "=== REMOVED CREATE TAB REFERENCES ==="
-          grep -n "createRegularTab\|createFlexibleTab" www/app.js www/index.html || true
-          echo "=== TOP-LEVEL GETELEMENT IDS ==="
-          sed -n '1,490p' www/app.js | grep -n "getElementById"
+          grep -n -A35 -B10 "async function api\|function api\|localStorage\|sessionStorage" www/app.js | head -120
