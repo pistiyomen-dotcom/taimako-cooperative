@@ -12,11 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== AUTH ROUTES ==="
-          grep -n -A80 -B20 "login\|change-password\|change.*password\|must_change_password\|mustChangePassword" server/routes/*.js | head -420 || true
-          echo "=== ACCOUNT CREATE ==="
-          grep -n -A100 -B30 "create-account\|INSERT INTO accounts\|temporaryPassword\|must_change_password" server/routes/admin.js | head -420 || true
-          echo "=== LOGIN UI ==="
-          grep -n -A100 -B30 "loginForm\|loginDialog\|mustChange\|changePassword\|change.*PIN\|password" www/app.js | head -500 || true
-          echo "=== LOGIN HTML ==="
-          grep -n -A80 -B20 "loginDialog\|password\|PIN" www/index.html | head -350 || true
+          echo "=== LOAN SERVICE ==="
+          sed -n '1,320p' server/services-loans.js || true
+          echo "=== LOAN APPROVAL ==="
+          grep -n -A120 -B30 "loan.*approve\|approved_principal\|base_interest\|due_date\|last_accrual_date" server/routes/admin.js | head -520 || true
+          echo "=== MEMBER LOAN DASHBOARD ==="
+          grep -n -A80 -B30 "LOAN INTEREST\|PAYMENT DUE DATE\|ACTIVE LOAN\|loanInterest\|loanDueDate" www/app.js server/routes/account.js | head -420 || true
