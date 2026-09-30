@@ -58,3 +58,5 @@ require('./stage77-patch.js');
 require('./stage78-patch.js');
 
 require('./stage79-patch.js');
+
+require('./stage80-patch.js');
