@@ -5,8 +5,8 @@ html=html.replace(
   '<button class="primary" id="loanSubmitBtn" type="submit">SUBMIT LOAN APPLICATION</button>',
   '<button class="primary" id="loanSubmitBtn" type="button">SUBMIT LOAN APPLICATION</button>'
 );
-html=html.replace(/app\.js\?v=\d+/g,'app.js?v=90');
-html=html.replace(/styles\.css\?v=\d+/g,'styles.css?v=90');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=91');
+html=html.replace(/styles\.css\?v=\d+/g,'styles.css?v=91');
 html=html.replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=90');
 fs.writeFileSync('www/index.html',html);
 
@@ -57,6 +57,31 @@ app=app.slice(0,start)+replacement+app.slice(end);
 app=app.replace(/if\(submitBtn\) submitBtn\.disabled=true;/g,'');
 app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=90'");
 fs.writeFileSync('www/app.js',app);
+
+
+const independentLoanSubmit = [
+  "(function(){",
+  "  function q(id){return document.getElementById(id);}",
+  "  async function sendLoan(ev){",
+  "    if(ev){ev.preventDefault();ev.stopImmediatePropagation();}",
+  "    var btn=q('loanSubmitBtn'),err=q('loanApplyError'),ok=q('loanApplySuccess');",
+  "    if(!btn||!err||!ok)return;",
+  "    err.textContent=''; ok.textContent='SENDING LOAN APPLICATION…'; btn.disabled=true;",
+  "    try{",
+  "      var amount=Number(q('loanAmount').value);",
+  "      if(!Number.isFinite(amount)||amount<=0)throw new Error('Enter a valid loan amount.');",
+  "      var payload={amount:amount,loanProduct:q('loanProduct').value,guarantorUsername:q('loanGuarantor').value,purpose:q('loanPurpose').value};",
+  "      var data=await api('/api/account/loan-applications',{method:'POST',cache:'no-store',body:JSON.stringify(payload)});",
+  "      var a=data.application||{};",
+  "      ok.textContent='SENT SUCCESSFULLY: '+(a.reference||'Loan application submitted')+'.';",
+  "    }catch(ex){ok.textContent='';err.textContent='APPLICATION NOT SENT: '+(ex.message||String(ex));}",
+  "    finally{btn.disabled=false;}",
+  "  }",
+  "  function bind(){var btn=q('loanSubmitBtn');if(btn){btn.disabled=false;btn.addEventListener('click',sendLoan,true);}}",
+  "  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();",
+  "})();"
+].join("\n");
+fs.writeFileSync('www/loan-submit-v91.js', independentLoanSubmit);
 
 let account=fs.readFileSync('server/routes/account.js','utf8');
 account=account.replace(
