@@ -12,5 +12,4 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          sed -n '790,840p' www/app.js
-          sed -n '840,875p' www/app.js
+          sed -n '1,120p' www/app.js
