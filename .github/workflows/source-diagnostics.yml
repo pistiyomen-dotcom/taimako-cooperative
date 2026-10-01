@@ -12,7 +12,8 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== LOAN POST FULL START ==="
-          sed -n '340,455p' server/routes/account.js || true
-          echo "=== LOAN UI ERROR STYLE ==="
-          grep -n -A25 -B10 "form-error\|form-success" www/styles.css | head -180 || true
+          echo "=== DB INIT / MIGRATION PATTERNS ==="
+          sed -n '1,220p' server/db/index.js 2>/dev/null || true
+          sed -n '1,260p' server/db/init.js 2>/dev/null || true
+          echo "=== LOAN RELATED STARTUP / META TABLES ==="
+          grep -Rni "app_meta\|migration\|schema_migrations\|loan_principal\|loan_due_date" server | head -320 || true
