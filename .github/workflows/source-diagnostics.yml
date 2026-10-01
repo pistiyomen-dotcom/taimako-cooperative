@@ -12,11 +12,4 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== LOAN SUBMISSION ==="
-          grep -n -A180 -B30 "loan-applications" server/routes/account.js | head -520 || true
-          echo "=== ADMIN LOAN APPROVAL ==="
-          grep -n -A260 -B40 "loan-applications.*approve\|approve.*loan\|self_backed_limit\|guarantor_required\|borrower_savings_at_application" server/routes/admin.js | head -760 || true
-          echo "=== LOAN SERVICE SAVINGS ==="
-          sed -n '1,280p' server/services-loans.js || true
-          echo "=== MEMBER LOAN FORM RULE ==="
-          grep -n -A100 -B30 "submitFreshLoanV96\|needsGuarantor\|freshLoanTotalSavings" www/app.js | head -420 || true
+          grep -n -A240 -B50 "router.post('/loan-applications/:id/approve'\|approvedAmount\|guarantorRequired = Number" server/routes/admin.js | head -700 || true
