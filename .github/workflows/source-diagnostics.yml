@@ -12,9 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== SETTINGS UI ==="
-          grep -n -A120 -B20 "openAdminSettingsV101\|saveAdminSettings\|minimumShareSetting\|registrationFeeSetting" www/app.js www/index.html | head -360 || true
-          echo "=== SETTINGS API ==="
-          grep -n -A120 -B20 "router.get('/settings'\|router.put('/settings'" server/routes/admin.js | head -320 || true
-          echo "=== SETTINGS SCHEMA ==="
-          grep -n -A40 -B10 "cooperative_settings" server/db/schema.sql || true
+          echo "ACCOUNT"
+          sed -n '25,90p' server/routes/account.js || true
+          echo "DASHBOARD"
+          sed -n '300,370p' www/app.js || true
+          echo "STABILIZER"
+          grep -n -A100 -B10 "stabilizeMemberDashboardV100" www/app.js || true
