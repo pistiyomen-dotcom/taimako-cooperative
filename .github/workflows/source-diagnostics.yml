@@ -12,9 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "ACCOUNT"
-          sed -n '25,90p' server/routes/account.js || true
-          echo "DASHBOARD"
-          sed -n '300,370p' www/app.js || true
-          echo "STABILIZER"
-          grep -n -A100 -B10 "stabilizeMemberDashboardV100" www/app.js || true
+          echo "=== ADMIN DASHBOARD CARDS ==="
+          sed -n '290,345p' www/app.js || true
+          echo "=== CASH CREDIT ROUTES ==="
+          grep -n -A220 -B20 "cash-credit" server/routes/admin.js | head -520 || true
+          echo "=== CASH CREDIT V66 ==="
+          sed -n '1,320p' www/cash-credit-v66.js || true
+          echo "=== SUMMARY / ADMIN TOTALS ==="
+          grep -n -A180 -B20 "summary-report\|SUMMARY REPORT\|membership_card\|flexible_card\|application_form" server/routes/admin.js www/app.js | head -520 || true
