@@ -12,11 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== ADMIN DASHBOARD ==="
-          sed -n '267,345p' www/app.js || true
+          echo "=== ADMIN ROUTE TOP ==="
+          sed -n '1,90p' server/routes/admin.js || true
           echo "=== ADMIN ACTION ==="
           grep -n -A120 -B10 "function adminAction" www/app.js | head -260 || true
-          echo "=== SCHEMA HEAD ==="
-          sed -n '1,260p' server/db/schema.sql || true
-          echo "=== ACCOUNT ME ==="
-          sed -n '20,65p' server/routes/account.js || true
+          echo "=== DIALOG AREA ==="
+          grep -n -A120 -B20 "summaryReportDialog\|adminPermissionsDialog" www/index.html | head -320 || true
+          echo "=== SCHEMA END ==="
+          tail -120 server/db/schema.sql || true
