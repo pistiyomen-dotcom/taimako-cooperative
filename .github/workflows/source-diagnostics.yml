@@ -12,11 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== ADMIN ROUTE TOP ==="
-          sed -n '1,90p' server/routes/admin.js || true
-          echo "=== ADMIN ACTION ==="
-          grep -n -A120 -B10 "function adminAction" www/app.js | head -260 || true
-          echo "=== DIALOG AREA ==="
-          grep -n -A120 -B20 "summaryReportDialog\|adminPermissionsDialog" www/index.html | head -320 || true
-          echo "=== SCHEMA END ==="
-          tail -120 server/db/schema.sql || true
+          echo "=== SETTINGS UI ==="
+          grep -n -A120 -B20 "openAdminSettingsV101\|saveAdminSettings\|minimumShareSetting\|registrationFeeSetting" www/app.js www/index.html | head -360 || true
+          echo "=== SETTINGS API ==="
+          grep -n -A120 -B20 "router.get('/settings'\|router.put('/settings'" server/routes/admin.js | head -320 || true
+          echo "=== SETTINGS SCHEMA ==="
+          grep -n -A40 -B10 "cooperative_settings" server/db/schema.sql || true
