@@ -12,4 +12,7 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          grep -n -A240 -B50 "router.post('/loan-applications/:id/approve'\|approvedAmount\|guarantorRequired = Number" server/routes/admin.js | head -700 || true
+          echo "=== LOAN FORM HTML ==="
+          grep -n -A90 -B20 "loanGuarantorV94\|loanAmountV94\|loanGuarantorLabelV94" www/index.html | head -260 || true
+          echo "=== LOAN FORM LOGIC ==="
+          grep -n -A170 -B30 "updateLoanGuarantorV94\|openLoanApplyV94\|loanAmountV94" www/app.js | head -420 || true
