@@ -208,6 +208,12 @@ const migration=`
     const client=await pool.connect();
     try{
       await client.query('BEGIN');
+      await client.query("ALTER TABLE loan_applications ADD COLUMN IF NOT EXISTS loan_product VARCHAR(20) NOT NULL DEFAULT 'REGULAR'");
+      await client.query("ALTER TABLE loan_applications ADD COLUMN IF NOT EXISTS interest_rate NUMERIC(6,3) NOT NULL DEFAULT 5");
+      await client.query("ALTER TABLE loans ADD COLUMN IF NOT EXISTS loan_product VARCHAR(20) NOT NULL DEFAULT 'REGULAR'");
+      await client.query("ALTER TABLE loans ADD COLUMN IF NOT EXISTS interest_rate NUMERIC(6,3) NOT NULL DEFAULT 5");
+      await client.query("ALTER TABLE loans ADD COLUMN IF NOT EXISTS overdue_interest_accrued NUMERIC(14,2) NOT NULL DEFAULT 0");
+      await client.query("ALTER TABLE loans ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ");
       await client.query('ALTER TABLE loan_applications DROP CONSTRAINT IF EXISTS loan_applications_loan_product_check');
       await client.query("ALTER TABLE loan_applications ADD CONSTRAINT loan_applications_loan_product_check CHECK (loan_product IN ('REGULAR','TARGET','CONSTANT','WELFARE'))");
       await client.query('ALTER TABLE loans DROP CONSTRAINT IF EXISTS loans_loan_product_check');
