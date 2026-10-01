@@ -12,11 +12,4 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== ADMIN ACTION ==="
-          grep -n -A140 -B25 "function adminAction" www/app.js | head -320 || true
-          echo "=== LOAD PENDING LOANS ==="
-          grep -n -A180 -B15 "async function loadPendingLoans" www/app.js | head -420 || true
-          echo "=== FRESH LOAN FORM HANDLER ==="
-          grep -n -A160 -B20 "loanApplyFormV94" www/app.js | head -360 || true
-          echo "=== ADMIN LOANS HTML ==="
-          grep -n -A40 -B10 "loansAdminDialog" www/index.html | head -160 || true
+          sed -n '900,1010p' www/app.js || true
