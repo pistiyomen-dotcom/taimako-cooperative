@@ -12,9 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== ADMIN LOAN LIST APPROVE DECLINE ==="
-          grep -n -A260 -B20 "router.get('/loan-applications" server/routes/admin.js | head -560 || true
-          echo "=== ADMIN LOAN APPROVE ==="
-          grep -n -A220 -B20 "loan-applications/:id/approve" server/routes/admin.js | head -500 || true
-          echo "=== ADMIN LOAN DECLINE ==="
-          grep -n -A120 -B20 "loan-applications/:id/reject\|loan-applications/:id/decline" server/routes/admin.js | head -320 || true
+          echo "=== ADMIN ACTION ==="
+          grep -n -A140 -B25 "function adminAction" www/app.js | head -320 || true
+          echo "=== LOAD PENDING LOANS ==="
+          grep -n -A180 -B15 "async function loadPendingLoans" www/app.js | head -420 || true
+          echo "=== FRESH LOAN FORM HANDLER ==="
+          grep -n -A160 -B20 "loanApplyFormV94" www/app.js | head -360 || true
+          echo "=== ADMIN LOANS HTML ==="
+          grep -n -A40 -B10 "loansAdminDialog" www/index.html | head -160 || true
