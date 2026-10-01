@@ -12,9 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== SERVER INDEX ==="
-          cat server/index.js || true
-          echo "=== PACKAGE ==="
-          cat package.json || true
-          echo "=== DB POOL ==="
-          cat server/db/pool.js || true
+          echo "=== STAGE106 SERVER HOOK ==="
+          grep -n -A70 -B20 "MANAGEMENT_MONTH_END_SCHEDULER\|processManagementMonthEnd\|app.listen" server/index.js || true
+          echo "=== STAGE106 SERVICE ==="
+          sed -n '1,260p' server/services-management.js || true
+          echo "=== STAGE106 ADMIN CARDS ==="
+          grep -n -A28 -B8 "MANAGEMENT BALANCE\|APPLICATION FORM" www/app.js | head -220 || true
