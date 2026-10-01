@@ -12,7 +12,6 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== LOANS SCHEMA ==="
-          grep -n -A90 -B15 "CREATE TABLE IF NOT EXISTS loans" server/db/schema.sql || true
-          echo "=== LOAN APPLICATION SCHEMA ==="
-          grep -n -A70 -B10 "CREATE TABLE IF NOT EXISTS loan_applications" server/db/schema.sql || true
+          grep -n "loanSubmitBtn" www/index.html www/app.js www/styles.css || true
+          grep -n "pointer-events" www/styles.css | head -80 || true
+          grep -n "disabled" www/styles.css | head -120 || true
