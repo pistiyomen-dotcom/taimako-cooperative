@@ -12,13 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== DIVIDEND / BALANCE SCHEMA ==="
-          grep -Rni -A80 -B20 "dividend\|loan_interest\|cooperative_financials\|management_fee_transfers" server/db server | head -700 || true
-          echo "=== TRANSACTIONS SCHEMA ==="
-          grep -n -A80 -B20 "CREATE TABLE IF NOT EXISTS transactions" server/db/schema.sql || true
-          echo "=== MEMBER DASHBOARD DIVIDEND ==="
-          grep -n -A80 -B20 "DIVIDEND" www/app.js | head -260 || true
-          echo "=== CASH INTEREST TRANSACTIONS ==="
-          grep -Rni -A100 -B30 "destination.*INTEREST\|loan_interest" server/routes/admin.js server/routes/account.js | head -520 || true
-          echo "=== MANAGEMENT SERVICE ==="
-          cat server/services-management.js || true
+          echo "=== LOAN SUBMISSION ==="
+          grep -n -A180 -B30 "loan-applications" server/routes/account.js | head -520 || true
+          echo "=== ADMIN LOAN APPROVAL ==="
+          grep -n -A260 -B40 "loan-applications.*approve\|approve.*loan\|self_backed_limit\|guarantor_required\|borrower_savings_at_application" server/routes/admin.js | head -760 || true
+          echo "=== LOAN SERVICE SAVINGS ==="
+          sed -n '1,280p' server/services-loans.js || true
+          echo "=== MEMBER LOAN FORM RULE ==="
+          grep -n -A100 -B30 "submitFreshLoanV96\|needsGuarantor\|freshLoanTotalSavings" www/app.js | head -420 || true
