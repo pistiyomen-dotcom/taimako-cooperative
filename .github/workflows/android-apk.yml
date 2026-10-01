@@ -117,3 +117,5 @@ jobs:
 # Stage 89 fresh loan rules trigger
 
 # Stage 89 production schema fix trigger
+
+# Stage 90 direct loan submit trigger
