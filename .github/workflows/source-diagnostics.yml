@@ -12,4 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          sed -n '840,930p' www/app.js || true
+          echo "=== STAGE96 LOAN HTML ==="
+          grep -n -A28 -B8 "loanApplyDialogV94" www/index.html | head -120 || true
+          echo "=== DIRECT BUTTON FUNCTION ==="
+          grep -n -A90 -B10 "submitFreshLoanV96" www/app.js | head -220 || true
+          echo "=== ANY OLD LOAN FORM SUBMIT LISTENER ==="
+          grep -n "loanApplyFormV94.*submit\|type=\"submit\".*loanSubmitV94" www/app.js www/index.html || true
