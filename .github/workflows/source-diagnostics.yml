@@ -12,6 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          sed -n '1,260p' www/cash-credit-v66.js || true
-          sed -n '177,300p' server/routes/admin.js || true
-          grep -n -A80 -B20 "APPLICATION FORM" server/routes/admin.js www/cash-credit-v66.js || true
+          echo "=== SERVER STARTUP ==="
+          sed -n '1,260p' server/index.js || true
+          echo "=== DB INIT / MIGRATIONS ==="
+          grep -Rni -A100 -B20 "schema.sql\|migration\|setInterval\|cron\|node-cron" server | head -520 || true
+          echo "=== ACCOUNT ME ADMIN TOTALS ==="
+          grep -n -A110 -B30 "adminFeeTotals" server/routes/account.js || true
+          echo "=== ADMIN DASHBOARD CURRENT ==="
+          sed -n '325,380p' www/app.js || true
