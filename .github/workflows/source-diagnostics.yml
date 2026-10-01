@@ -12,9 +12,7 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== REFRESH CALL 760-890 ==="
-          sed -n '760,890p' www/app.js || true
-          echo "=== MONTH LABEL OBSERVER ==="
-          sed -n '1248,1272p' www/app.js || true
-          echo "=== ACTIVE LOAN REFERENCES ==="
-          grep -n -A20 -B20 "ACTIVE LOAN\|loanDueDate\|loanPrincipal" www/app.js || true
+          echo "=== DASHBOARD CARD CSS ==="
+          grep -n -A35 -B15 "dashboard-card" www/styles.css | head -220 || true
+          echo "=== VALUE TEXT CSS ==="
+          grep -n -A20 -B10 "dashboard-grid.*p\|dashboard-card p\|opacity\|overflow" www/styles.css | head -280 || true
