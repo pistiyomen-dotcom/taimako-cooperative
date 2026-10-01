@@ -12,7 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== DASHBOARD CARD CSS ==="
-          grep -n -A35 -B15 "dashboard-card" www/styles.css | head -220 || true
-          echo "=== VALUE TEXT CSS ==="
-          grep -n -A20 -B10 "dashboard-grid.*p\|dashboard-card p\|opacity\|overflow" www/styles.css | head -280 || true
+          echo "=== ADMIN DASHBOARD ==="
+          sed -n '267,345p' www/app.js || true
+          echo "=== ADMIN ACTION ==="
+          grep -n -A120 -B10 "function adminAction" www/app.js | head -260 || true
+          echo "=== SCHEMA HEAD ==="
+          sed -n '1,260p' server/db/schema.sql || true
+          echo "=== ACCOUNT ME ==="
+          sed -n '20,65p' server/routes/account.js || true
