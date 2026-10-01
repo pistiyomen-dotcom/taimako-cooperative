@@ -12,6 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          grep -n "loanSubmitBtn" www/index.html www/app.js www/styles.css || true
-          grep -n "pointer-events" www/styles.css | head -80 || true
-          grep -n "disabled" www/styles.css | head -120 || true
+          echo "=== LOAN FORM CONTEXT ==="
+          sed -n '235,315p' www/index.html || true
+          echo "=== DIALOG / FORM CSS ==="
+          grep -n -A12 -B8 "dialog\|loanApply\|loanSubmitBtn\|form-actions\|modal" www/styles.css | head -320 || true
+          echo "=== BUTTON RULES ==="
+          grep -n -A8 -B8 "button\|\.primary" www/styles.css | head -260 || true
+          echo "=== LOAN DIALOG JS ==="
+          sed -n '770,875p' www/app.js || true
