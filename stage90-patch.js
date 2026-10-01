@@ -54,6 +54,7 @@ loanSubmitBtn.addEventListener('click', async () => {
 `;
 
 app=app.slice(0,start)+replacement+app.slice(end);
+app=app.replace(/if\(submitBtn\) submitBtn\.disabled=true;/g,'');
 app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=90'");
 fs.writeFileSync('www/app.js',app);
 
