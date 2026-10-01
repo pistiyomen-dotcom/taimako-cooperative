@@ -12,9 +12,7 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== MEMBER LOAN ROUTE EXACT ==="
-          sed -n '430,570p' server/routes/account.js || true
-          echo "=== ADMIN LOAN LIST EXACT ==="
-          sed -n '550,640p' server/routes/admin.js || true
-          echo "=== LOAN APPLICATION SCHEMA ==="
-          sed -n '100,150p' server/db/schema.sql || true
+          echo "=== LOAN POST FULL START ==="
+          sed -n '340,455p' server/routes/account.js || true
+          echo "=== LOAN UI ERROR STYLE ==="
+          grep -n -A25 -B10 "form-error\|form-success" www/styles.css | head -180 || true
