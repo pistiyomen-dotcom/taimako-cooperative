@@ -12,11 +12,5 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== LOAN FORM CONTEXT ==="
-          sed -n '235,315p' www/index.html || true
-          echo "=== DIALOG / FORM CSS ==="
-          grep -n -A12 -B8 "dialog\|loanApply\|loanSubmitBtn\|form-actions\|modal" www/styles.css | head -320 || true
-          echo "=== BUTTON RULES ==="
-          grep -n -A8 -B8 "button\|\.primary" www/styles.css | head -260 || true
-          echo "=== LOAN DIALOG JS ==="
-          sed -n '770,875p' www/app.js || true
+          sed -n '790,840p' www/app.js
+          sed -n '840,875p' www/app.js
