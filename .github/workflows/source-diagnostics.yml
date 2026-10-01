@@ -12,7 +12,17 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== MEMBER LOAN ACTION ==="
-          grep -n -A12 -B12 "APPLY FOR LOAN\|loanApplyDialog\|openLoanApplyDialog" www/index.html www/app.js | head -320 || true
-          echo "=== LOAN DOM REFERENCES ==="
-          grep -n "loanApply" www/app.js | head -120 || true
+          echo "=== MEMBER DASHBOARD ACTIONS ==="
+          sed -n '220,280p' www/app.js || true
+          echo "=== CURRENT LOAN ROUTES ==="
+          grep -n -A220 -B20 "loan-applications" server/routes/account.js | head -520 || true
+          echo "=== ADMIN LOAN ROUTES ==="
+          grep -n -A260 -B30 "loan-applications" server/routes/admin.js | head -620 || true
+          echo "=== PAYMENT APPROVAL ==="
+          grep -n -A180 -B30 "payment-requests/:id/approve" server/routes/admin.js | head -420 || true
+          echo "=== CASH CREDIT ==="
+          grep -n -A180 -B30 "cash-credit" server/routes/admin.js | head -460 || true
+          echo "=== LOAN SERVICE ==="
+          sed -n '1,260p' server/services-loans.js || true
+          echo "=== SCHEMA LOANS ==="
+          grep -n -A110 -B10 "CREATE TABLE IF NOT EXISTS loan_applications\|CREATE TABLE IF NOT EXISTS loans" server/db/schema.sql || true
