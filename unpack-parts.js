@@ -27,4 +27,4 @@ require('./stage32-patch.js');
 require('./stage33-patch.js');
 require('./stage34-patch.js');
 require('./stage36-patch.js');
-console.log('TAIMAKO source extracted with staged corrections and Stage 105 admin fee dashboards.');
+console.log('TAIMAKO source extracted with staged corrections and Stage 106 management balance.');
