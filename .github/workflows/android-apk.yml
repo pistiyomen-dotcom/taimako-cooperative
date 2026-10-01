@@ -115,3 +115,5 @@ jobs:
 # Stage 88 reset all member loan dashboard values
 
 # Stage 89 fresh loan rules trigger
+
+# Stage 89 production schema fix trigger
