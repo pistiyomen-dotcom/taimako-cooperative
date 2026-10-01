@@ -12,7 +12,5 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== LOAN FORM HTML ==="
-          grep -n -A90 -B20 "loanGuarantorV94\|loanAmountV94\|loanGuarantorLabelV94" www/index.html | head -260 || true
-          echo "=== LOAN FORM LOGIC ==="
-          grep -n -A170 -B30 "updateLoanGuarantorV94\|openLoanApplyV94\|loanAmountV94" www/app.js | head -420 || true
+          sed -n '230,305p' www/app.js || true
+          sed -n '180,245p' www/index.html || true
