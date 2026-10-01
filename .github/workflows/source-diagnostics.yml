@@ -12,4 +12,7 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          sed -n '1,120p' www/app.js
+          echo "=== MEMBER LOAN ACTION ==="
+          grep -n -A12 -B12 "APPLY FOR LOAN\|loanApplyDialog\|openLoanApplyDialog" www/index.html www/app.js | head -320 || true
+          echo "=== LOAN DOM REFERENCES ==="
+          grep -n "loanApply" www/app.js | head -120 || true
