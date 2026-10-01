@@ -12,9 +12,13 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== DASHBOARD CARD BUILD ==="
-          grep -n -A170 -B30 "function dashboardCards\|function renderDashboard\|function renderApp" www/app.js | head -520 || true
-          echo "=== REFRESH TIMERS ==="
-          grep -n -A80 -B20 "setInterval\|setTimeout\|refreshAccount\|renderDashboard\|renderApp" www/app.js | head -520 || true
-          echo "=== CARD MUTATIONS ==="
-          grep -n -A100 -B20 "querySelectorAll.*dashboard\|textContent.*TOTAL SAVINGS\|ACTIVE LOAN\|PAYMENT DUE DATE\|SAVINGS'" www/app.js | head -420 || true
+          echo "=== ALL TIMERS ==="
+          grep -n "setInterval\|setTimeout" www/app.js || true
+          echo "=== ALL OBSERVERS ==="
+          grep -n -A30 -B10 "MutationObserver\|observe(" www/app.js || true
+          echo "=== ALL RENDER CALLS ==="
+          grep -n "renderDashboard()\|renderApp()\|refreshAccount()" www/app.js || true
+          echo "=== ALL DASHBOARD CARD TEXT MUTATIONS ==="
+          grep -n "dashboard-card\|dashboard-grid\|dashboardContent" www/app.js || true
+          echo "=== EXTRA SCRIPTS ==="
+          tail -80 www/index.html || true
