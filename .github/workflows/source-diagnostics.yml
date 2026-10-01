@@ -12,8 +12,7 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== DB INIT / MIGRATION PATTERNS ==="
-          sed -n '1,220p' server/db/index.js 2>/dev/null || true
-          sed -n '1,260p' server/db/init.js 2>/dev/null || true
-          echo "=== LOAN RELATED STARTUP / META TABLES ==="
-          grep -Rni "app_meta\|migration\|schema_migrations\|loan_principal\|loan_due_date" server | head -320 || true
+          echo "=== SERVER STARTUP ==="
+          sed -n '1,240p' server/index.js || true
+          echo "=== SYSTEM MIGRATION PATTERN ==="
+          sed -n '45,135p' server/routes/public.js || true
