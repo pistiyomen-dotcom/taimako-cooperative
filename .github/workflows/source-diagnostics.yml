@@ -12,9 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== STAGE96 LOAN HTML ==="
-          grep -n -A28 -B8 "loanApplyDialogV94" www/index.html | head -120 || true
-          echo "=== DIRECT BUTTON FUNCTION ==="
-          grep -n -A90 -B10 "submitFreshLoanV96" www/app.js | head -220 || true
-          echo "=== ANY OLD LOAN FORM SUBMIT LISTENER ==="
-          grep -n "loanApplyFormV94.*submit\|type=\"submit\".*loanSubmitV94" www/app.js www/index.html || true
+          echo "=== ACCOUNT ME ROUTE ==="
+          grep -n -A180 -B20 "router.get('/me" server/routes/account.js | head -360 || true
+          echo "=== BALANCE SERIALIZATION ==="
+          grep -Rni -A80 -B20 "totalSavings\|numberOfShares\|loanPrincipal\|loanInterest" server | head -520 || true
+          echo "=== DASHBOARD TOTAL SAVINGS ==="
+          grep -n -A80 -B20 "TOTAL SAVINGS\|freshLoanTotalSavingsV94" www/app.js | head -260 || true
