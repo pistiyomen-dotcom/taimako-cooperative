@@ -12,17 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== MEMBER DASHBOARD ACTIONS ==="
-          sed -n '220,280p' www/app.js || true
-          echo "=== CURRENT LOAN ROUTES ==="
-          grep -n -A220 -B20 "loan-applications" server/routes/account.js | head -520 || true
-          echo "=== ADMIN LOAN ROUTES ==="
-          grep -n -A260 -B30 "loan-applications" server/routes/admin.js | head -620 || true
-          echo "=== PAYMENT APPROVAL ==="
-          grep -n -A180 -B30 "payment-requests/:id/approve" server/routes/admin.js | head -420 || true
-          echo "=== CASH CREDIT ==="
-          grep -n -A180 -B30 "cash-credit" server/routes/admin.js | head -460 || true
-          echo "=== LOAN SERVICE ==="
-          sed -n '1,260p' server/services-loans.js || true
-          echo "=== SCHEMA LOANS ==="
-          grep -n -A110 -B10 "CREATE TABLE IF NOT EXISTS loan_applications\|CREATE TABLE IF NOT EXISTS loans" server/db/schema.sql || true
+          echo "=== ADMIN LOAN LIST APPROVE DECLINE ==="
+          grep -n -A260 -B20 "router.get('/loan-applications" server/routes/admin.js | head -560 || true
+          echo "=== ADMIN LOAN APPROVE ==="
+          grep -n -A220 -B20 "loan-applications/:id/approve" server/routes/admin.js | head -500 || true
+          echo "=== ADMIN LOAN DECLINE ==="
+          grep -n -A120 -B20 "loan-applications/:id/reject\|loan-applications/:id/decline" server/routes/admin.js | head -320 || true
