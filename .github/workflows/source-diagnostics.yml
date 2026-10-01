@@ -12,11 +12,7 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== PAYMENT APPROVAL EXACT ==="
-          grep -n "router.post('/payment-requests/:id/approve" server/routes/admin.js || true
-          sed -n '260,380p' server/routes/admin.js || true
-          echo "=== CASH CREDIT EXACT ==="
-          grep -n "cash-credit" server/routes/admin.js || true
-          sed -n '1060,1165p' server/routes/admin.js || true
-          echo "=== LOAN APPROVE EXACT ==="
-          sed -n '575,640p' server/routes/admin.js || true
+          echo "=== LOANS SCHEMA ==="
+          grep -n -A90 -B15 "CREATE TABLE IF NOT EXISTS loans" server/db/schema.sql || true
+          echo "=== LOAN APPLICATION SCHEMA ==="
+          grep -n -A70 -B10 "CREATE TABLE IF NOT EXISTS loan_applications" server/db/schema.sql || true
