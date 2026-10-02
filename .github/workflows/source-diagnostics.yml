@@ -12,9 +12,9 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== RESET DIALOG HTML ==="
-          grep -n -A120 -B15 "adminResetDialog" www/index.html || true
-          echo "=== RESET LOGIC ==="
-          grep -n -A260 -B20 "openAdminResetV111\|confirmResetCredentialAccountV111\|confirmDeleteAccountV111" www/app.js | head -620 || true
-          echo "=== BUTTON CSS ==="
-          grep -n -A60 -B20 "\.secondary\|button\.secondary\|\.danger\|dialog-card button" www/styles.css | head -320 || true
+          echo "=== RESET HTML ==="
+          grep -n -A120 -B20 "adminResetDialog\|resetCredentialConfirm\|deleteAccountConfirm\|resetTemporaryCredential\|deleteAccountUsername" www/index.html | head -360 || true
+          echo "=== RESET CSS ==="
+          grep -n -A120 -B20 "reset-section\|secondary\|danger\|dialog-card" www/styles.css | head -360 || true
+          echo "=== RESET JS ==="
+          grep -n -A220 -B20 "openAdminResetV111\|confirmResetCredentialAccountV111\|confirmDeleteAccountV111\|resetCredentialV111\|deleteAccountV111" www/app.js | head -520 || true
