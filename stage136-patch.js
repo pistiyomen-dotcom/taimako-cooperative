@@ -3,7 +3,7 @@ const fs=require('fs');
 let index=fs.readFileSync('server/index.js','utf8');
 
 if(!index.includes("stage136_backfill_bank_transfer_audit")){
-  const marker="  app.listen(port, () => console.log(`TAIMAKO server listening on port ${port}`));";
+  const marker="app.listen(port, () => {";
   if(!index.includes(marker)){console.error('Stage 136 startup marker missing');process.exit(1);}
 
   const migration=[
