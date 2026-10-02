@@ -9,11 +9,11 @@ const end=routeEnd>routeStart?routeEnd:admin.length;
 let route=admin.slice(routeStart,end);
 
 if(!route.includes("PAYMENT_REQUEST_APPROVED")){
-  const marker="res.json({ request: updated.rows[0] });";
-  if(!route.includes(marker)){console.error('Stage 134 approval response marker not found');process.exit(1);}
+  const marker="    await client.query('COMMIT');";
+  if(!route.includes(marker)){console.error('Stage 134 approval commit marker not found');process.exit(1);}
   route=route.replace(
     marker,
-    "await writeAdminAudit(client,req,'PAYMENT_REQUEST_APPROVED','payment_request',request.id,request.username,{destination:request.destination,amount:Number(request.amount),reference:request.reference});\n    "+marker
+    "    await writeAdminAudit(client,req,'PAYMENT_REQUEST_APPROVED','payment_request',request.id,request.username,{destination:request.destination,amount:Number(request.amount),reference:request.reference});\n"+marker
   );
   admin=admin.slice(0,routeStart)+route+admin.slice(end);
 }
