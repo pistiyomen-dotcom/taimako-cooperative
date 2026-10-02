@@ -119,3 +119,4 @@ require('./stage129-patch.js');
 require('./stage131-patch.js');
 require('./stage132-patch.js');
 require('./stage133-diagnostic.js');
+require('./stage134-patch.js');
