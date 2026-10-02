@@ -12,12 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== ACCOUNT SCHEMA / FKS ==="
-          grep -n -A160 -B20 "CREATE TABLE IF NOT EXISTS accounts" server/db/schema.sql || true
+          echo "=== ACCOUNTS TABLE ==="
+          grep -n -A55 -B5 "CREATE TABLE IF NOT EXISTS accounts" server/db/schema.sql || true
+          echo "=== FKS TO ACCOUNTS ==="
           grep -n "REFERENCES accounts" server/db/schema.sql || true
-          echo "=== PASSWORD CHANGE / AUTH ==="
-          grep -Rni -A130 -B20 "must_change_password\|change-password\|password_hash\|pin" server/routes/auth.js server/routes/admin.js | head -700 || true
-          echo "=== CREATE ACCOUNT ==="
-          grep -n -A220 -B30 "router.post('/accounts'" server/routes/admin.js | head -520 || true
-          echo "=== ADMIN DASHBOARD ACTION ==="
-          grep -n -A170 -B20 "function adminAction" www/app.js | head -360 || true
+          echo "=== AUTH LOGIN CHANGE ==="
+          grep -n -A130 -B20 "router.post('/login'\|router.post('/change-password'" server/routes/auth.js || true
+          echo "=== ADMIN ACCOUNT LOOKUP ==="
+          grep -n -A100 -B20 "router.get('/accounts\|router.post('/accounts" server/routes/admin.js | head -420 || true
