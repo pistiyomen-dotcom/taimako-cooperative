@@ -2,7 +2,7 @@ const fs=require('fs');
 
 let index=fs.readFileSync('server/index.js','utf8');
 if(!index.includes("/api/public/bank-details")){
-  const marker="  app.listen(port, () => console.log(\`TAIMAKO server listening on port \${port}\`));";
+  const markerMatch=index.match(/app\.listen\s*\(/);
   const route=`
   app.get('/api/public/bank-details', (_req,res)=>{
     res.json({
@@ -12,8 +12,11 @@ if(!index.includes("/api/public/bank-details")){
     });
   });
 `;
-  if(!index.includes(marker)){console.error('Stage 113 server marker missing');process.exit(1);}
-  index=index.replace(marker,route+'\n'+marker);
+  if(markerMatch){
+    index=index.slice(0,markerMatch.index)+route+'\n'+index.slice(markerMatch.index);
+  }else{
+    console.warn('Stage 113 server marker not found; bank-details route skipped.');
+  }
   fs.writeFileSync('server/index.js',index);
 }
 
