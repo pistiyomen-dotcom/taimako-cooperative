@@ -12,6 +12,12 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          grep -n -A55 -B8 "function updateLoanGuarantorV94" www/app.js || true
-          grep -n -A8 -B4 "loanAmountV94.*addEventListener" www/app.js || true
-          grep -n -A18 -B6 "id=\"loanGuarantorV94\"" www/index.html || true
+          echo "=== ACCOUNT SCHEMA / FKS ==="
+          grep -n -A160 -B20 "CREATE TABLE IF NOT EXISTS accounts" server/db/schema.sql || true
+          grep -n "REFERENCES accounts" server/db/schema.sql || true
+          echo "=== PASSWORD CHANGE / AUTH ==="
+          grep -Rni -A130 -B20 "must_change_password\|change-password\|password_hash\|pin" server/routes/auth.js server/routes/admin.js | head -700 || true
+          echo "=== CREATE ACCOUNT ==="
+          grep -n -A220 -B30 "router.post('/accounts'" server/routes/admin.js | head -520 || true
+          echo "=== ADMIN DASHBOARD ACTION ==="
+          grep -n -A170 -B20 "function adminAction" www/app.js | head -360 || true
