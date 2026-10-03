@@ -8,8 +8,11 @@ admin=admin.replace(
 fs.writeFileSync('server/routes/admin.js',admin);
 
 let app=fs.readFileSync('www/app.js','utf8');
-const oldMeta=`<div class="approval-meta"><span>${escapeHTML(transactionDirection(tx.transaction_type))}</span><span>Destination: <b>${escapeHTML(tx.destination || '—')}</b></span><span>Status: ${escapeHTML(tx.status)}</span><span>${new Date(tx.created_at).toLocaleString()}</span></div>`;
-const newMeta=`<div class="approval-meta"><span>${escapeHTML(transactionDirection(tx.transaction_type))}</span><span>Destination: <b>${escapeHTML(tx.destination || '—')}</b></span><span>Status: ${escapeHTML(tx.status)}</span>${adminMode ? `<span>Action by: <b>${escapeHTML(tx.created_by_name || tx.created_by_username || 'SYSTEM')}</b></span>` : ''}<span>${new Date(tx.created_at).toLocaleString()}</span></div>`;
+
+const oldMeta='<div class="approval-meta"><span>${escapeHTML(transactionDirection(tx.transaction_type))}</span><span>Destination: <b>${escapeHTML(tx.destination || \'—\')}</b></span><span>Status: ${escapeHTML(tx.status)}</span><span>${new Date(tx.created_at).toLocaleString()}</span></div>';
+
+const newMeta='<div class="approval-meta"><span>${escapeHTML(transactionDirection(tx.transaction_type))}</span><span>Destination: <b>${escapeHTML(tx.destination || \'—\')}</b></span><span>Status: ${escapeHTML(tx.status)}</span>${adminMode ? `<span>Action by: <b>${escapeHTML(tx.created_by_name || tx.created_by_username || \'SYSTEM\')}</b></span>` : \'\'}<span>${new Date(tx.created_at).toLocaleString()}</span></div>';
+
 if(!app.includes(oldMeta)){console.error('Stage 141 transaction meta marker missing');process.exit(1);}
 app=app.replace(oldMeta,newMeta);
 
