@@ -195,14 +195,16 @@ document.getElementById('savePublicInformation')?.addEventListener('click',async
 }
 
 /* use override when a public service tile is opened */
-const displayMarker="serviceDialogBody.innerHTML = serviceContent[service] || '<p>Information is being prepared.</p>';";
-if(app.includes(displayMarker)){
-  app=app.replace(
-    displayMarker,
-    "serviceDialogBody.innerHTML = tmcsPublicInfoOverridesV146[service] ? publicInfoTextToHtmlV146(tmcsPublicInfoOverridesV146[service]) : (serviceContent[service] || '<p>Information is being prepared.</p>');"
-  );
-}else if(!app.includes('tmcsPublicInfoOverridesV146[service]')){
-  console.error('Stage 146 service display marker missing');process.exit(1);
+if(!app.includes('tmcsPublicInfoOverridesV146[')){
+  const displayPos=app.indexOf('serviceDialogBody.innerHTML');
+  if(displayPos<0){console.error('Stage 146 service display assignment missing');process.exit(1);}
+  const displayEnd=app.indexOf('\n',displayPos);
+  const displayLine=app.slice(displayPos,displayEnd>displayPos?displayEnd:app.length);
+  const keyMatch=displayLine.match(/serviceContent\[([^\]]+)\]/);
+  if(!keyMatch){console.error('Stage 146 service content key missing');process.exit(1);}
+  const keyExpr=keyMatch[1];
+  const replacement="serviceDialogBody.innerHTML = tmcsPublicInfoOverridesV146["+keyExpr+"] ? publicInfoTextToHtmlV146(tmcsPublicInfoOverridesV146["+keyExpr+"]) : (serviceContent["+keyExpr+"] || '<p>Information is being prepared.</p>');";
+  app=app.replace(displayLine,replacement);
 }
 
 app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=146'");
