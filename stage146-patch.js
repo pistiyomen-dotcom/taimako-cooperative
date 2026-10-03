@@ -33,11 +33,7 @@ router.put('/public-information/:key', requireAdminPermission('manage_accounts')
   if(!content) return res.status(400).json({error:'Public information cannot be empty.'});
   if(content.length>12000) return res.status(400).json({error:'Public information is too long.'});
   const result=await pool.query(
-    `INSERT INTO public_information(section_key,content_text,updated_by_account_id,updated_at)
-     VALUES($1,$2,$3,NOW())
-     ON CONFLICT(section_key) DO UPDATE
-     SET content_text=EXCLUDED.content_text,updated_by_account_id=EXCLUDED.updated_by_account_id,updated_at=NOW()
-     RETURNING section_key,content_text,updated_at`,
+    "INSERT INTO public_information(section_key,content_text,updated_by_account_id,updated_at) VALUES($1,$2,$3,NOW()) ON CONFLICT(section_key) DO UPDATE SET content_text=EXCLUDED.content_text,updated_by_account_id=EXCLUDED.updated_by_account_id,updated_at=NOW() RETURNING section_key,content_text,updated_at",
     [key,content,req.auth.sub]
   );
   await writeAdminAudit(pool,req,'UPDATE_PUBLIC_INFORMATION','public_information',key,null,{section:key});
