@@ -135,3 +135,4 @@ require('./stage146-patch.js');
 require('./stage147-diagnostic.js');
 require('./stage148-patch.js');
 require('./stage149-patch.js');
+require('./stage150-diagnostic.js');
