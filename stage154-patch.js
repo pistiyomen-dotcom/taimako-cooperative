@@ -25,17 +25,17 @@ const newItems="    [tmcsMonthName(0).slice(0,3)+' APPLICATION FORM',naira(b.app
 if(!app.includes(oldItems)){console.error('Stage 154 BALANCES items marker missing');process.exit(1);}
 app=app.replace(oldItems,newItems);
 
-app=app.replace(/serviceWorker\\.register\\('\\.\\/sw\\.js\\?v=\\d+'/, "serviceWorker.register('./sw.js?v=154'");
+app=app.replace("serviceWorker.register('./sw.js?v=153'","serviceWorker.register('./sw.js?v=154'");
 fs.writeFileSync('www/app.js',app);
 
 let html=fs.readFileSync('www/index.html','utf8');
-html=html.replace(/app\\.js\\?v=\\d+/g,'app.js?v=154');
-html=html.replace(/styles\\.css\\?v=\\d+/g,'styles.css?v=154');
-html=html.replace(/bank-transfer-v129\\.js\\?v=\\d+/g,'bank-transfer-v129.js?v=154');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=154');
+html=html.replace(/styles\.css\?v=\d+/g,'styles.css?v=154');
+html=html.replace(/bank-transfer-v129\.js\?v=\d+/g,'bank-transfer-v129.js?v=154');
 fs.writeFileSync('www/index.html',html);
 
 let sw=fs.readFileSync('www/sw.js','utf8');
-sw=sw.replace(/const CACHE = 'taimako-v\\d+';/,"const CACHE = 'taimako-v154';");
+sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v154';");
 fs.writeFileSync('www/sw.js',sw);
 
 console.log('TAIMAKO Stage 154 previous-month PROFIT INTEREST SHARES tiles applied.');
