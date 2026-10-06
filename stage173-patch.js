@@ -12,43 +12,53 @@ if(!schema.includes('ALTER TABLE savings_plans ADD COLUMN IF NOT EXISTS end_date
 let admin=fs.readFileSync('server/routes/admin.js','utf8');
 if(!admin.includes("router.post('/setup-savings-plan'")){
   const marker="router.get('/savings-plans'";
-  const route="
-router.post('/setup-savings-plan', requireAdminPermission('manage_accounts'), async (req,res)=>{\n"+
-"  const username=String(req.body?.username||'').trim().toUpperCase();\n"+
-"  const planType=String(req.body?.planType||'').trim().toUpperCase();\n"+
-"  const startDate=String(req.body?.startDate||'').trim();\n"+
-"  const endDate=String(req.body?.endDate||'').trim();\n"+
-"  const plannedRaw=req.body?.plannedAmount;\n"+
-"  const monthlyRaw=req.body?.monthlyRequiredSavings;\n"+
-"  const plannedAmount=(plannedRaw===''||plannedRaw==null)?null:Number(plannedRaw);\n"+
-"  const monthlyAmount=(monthlyRaw===''||monthlyRaw==null)?null:Number(monthlyRaw);\n"+
-"  if(!username) return res.status(400).json({error:'Enter member username.'});\n"+
-"  if(!['TARGET','CONSTANT','WELFARE'].includes(planType)) return res.status(400).json({error:'Select TARGET, CONSTANT or WELFARE.'});\n"+
-"  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(startDate)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(endDate)) return res.status(400).json({error:'Select valid start and end dates.'});\n"+
-"  const start=new Date(startDate+'T00:00:00Z'), end=new Date(endDate+'T00:00:00Z');\n"+
-"  if(!(end>start)) return res.status(400).json({error:'End date must be after start date.'});\n"+
-"  if(planType!=='WELFARE'){\n"+
-"    if(!Number.isFinite(plannedAmount)||plannedAmount<=0) return res.status(400).json({error:'Planned amount is required for '+planType+'.'});\n"+
-"    if(!Number.isFinite(monthlyAmount)||monthlyAmount<=0) return res.status(400).json({error:'Monthly required savings is required for '+planType+'.'});\n"+
-"  }\n"+
-"  if(planType==='WELFARE'){\n"+
-"    if(plannedAmount!=null&&(!Number.isFinite(plannedAmount)||plannedAmount<=0)) return res.status(400).json({error:'Enter a valid planned amount or leave it blank.'});\n"+
-"    if(monthlyAmount!=null&&(!Number.isFinite(monthlyAmount)||monthlyAmount<=0)) return res.status(400).json({error:'Enter a valid monthly required savings or leave it blank.'});\n"+
-"  }\n"+
-"  const memberResult=await pool.query('SELECT id,username,full_name,role,is_active FROM accounts WHERE username=$1',[username]);\n"+
-"  const member=memberResult.rows[0];\n"+
-"  if(!member||!member.is_active) return res.status(404).json({error:'Active member account not found.'});\n"+
-"  if(member.role!=='regular') return res.status(400).json({error:'SETUP is for Regular member accounts.'});\n"+
-"  let months=(end.getUTCFullYear()-start.getUTCFullYear())*12+(end.getUTCMonth()-start.getUTCMonth());\n"+
-"  if(end.getUTCDate()>=start.getUTCDate()) months+=1;\n"+
-"  if(months<1) months=1;\n"+
-"  const result=await pool.query(\n"+
-"    \"INSERT INTO savings_plans(account_id,plan_type,start_date,end_date,duration_months,target_amount,planned_amount,monthly_amount,minimum_balance,disbursement_months,status,created_by_account_id) VALUES($1,$2,$3,$4,$5,$6,$6,$7,NULL,NULL,'active',$8) ON CONFLICT(account_id,plan_type) DO UPDATE SET start_date=EXCLUDED.start_date,end_date=EXCLUDED.end_date,duration_months=EXCLUDED.duration_months,target_amount=EXCLUDED.target_amount,planned_amount=EXCLUDED.planned_amount,monthly_amount=EXCLUDED.monthly_amount,status='active',created_by_account_id=EXCLUDED.created_by_account_id,updated_at=NOW() RETURNING plan_type,start_date,end_date,duration_months,planned_amount,monthly_amount,status\",\n"+
-"    [member.id,planType,startDate,endDate,months,plannedAmount,monthlyAmount,req.auth.sub]\n"+
-"  );\n"+
-"  await writeAdminAudit(pool,req,'CREATE_SAVINGS_SETUP','savings_plan',planType,username,{planType,startDate,endDate,plannedAmount,monthlyRequiredSavings:monthlyAmount});\n"+
-"  res.json({member:{username:member.username,name:member.full_name},plan:result.rows[0]});\n"+
-"});\n\n";
+  const route=`
+router.post('/setup-savings-plan', requireAdminPermission('manage_accounts'), async (req,res)=>{
+  const username=String(req.body?.username||'').trim().toUpperCase();
+  const planType=String(req.body?.planType||'').trim().toUpperCase();
+  const startDate=String(req.body?.startDate||'').trim();
+  const endDate=String(req.body?.endDate||'').trim();
+  const plannedRaw=req.body?.plannedAmount;
+  const monthlyRaw=req.body?.monthlyRequiredSavings;
+  const plannedAmount=(plannedRaw===''||plannedRaw==null)?null:Number(plannedRaw);
+  const monthlyAmount=(monthlyRaw===''||monthlyRaw==null)?null:Number(monthlyRaw);
+
+  if(!username) return res.status(400).json({error:'Enter member username.'});
+  if(!['TARGET','CONSTANT','WELFARE'].includes(planType)) return res.status(400).json({error:'Select TARGET, CONSTANT or WELFARE.'});
+  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(startDate)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(endDate)) return res.status(400).json({error:'Select valid start and end dates.'});
+
+  const start=new Date(startDate+'T00:00:00Z');
+  const end=new Date(endDate+'T00:00:00Z');
+  if(!(end>start)) return res.status(400).json({error:'End date must be after start date.'});
+
+  if(planType!=='WELFARE'){
+    if(!Number.isFinite(plannedAmount)||plannedAmount<=0) return res.status(400).json({error:'Planned amount is required for '+planType+'.'});
+    if(!Number.isFinite(monthlyAmount)||monthlyAmount<=0) return res.status(400).json({error:'Monthly required savings is required for '+planType+'.'});
+  }
+  if(planType==='WELFARE'){
+    if(plannedAmount!=null&&(!Number.isFinite(plannedAmount)||plannedAmount<=0)) return res.status(400).json({error:'Enter a valid planned amount or leave it blank.'});
+    if(monthlyAmount!=null&&(!Number.isFinite(monthlyAmount)||monthlyAmount<=0)) return res.status(400).json({error:'Enter a valid monthly required savings or leave it blank.'});
+  }
+
+  const memberResult=await pool.query('SELECT id,username,full_name,role,is_active FROM accounts WHERE username=$1',[username]);
+  const member=memberResult.rows[0];
+  if(!member||!member.is_active) return res.status(404).json({error:'Active member account not found.'});
+  if(member.role!=='regular') return res.status(400).json({error:'SETUP is for Regular member accounts.'});
+
+  let months=(end.getUTCFullYear()-start.getUTCFullYear())*12+(end.getUTCMonth()-start.getUTCMonth());
+  if(end.getUTCDate()>=start.getUTCDate()) months+=1;
+  if(months<1) months=1;
+
+  const result=await pool.query(
+    "INSERT INTO savings_plans(account_id,plan_type,start_date,end_date,duration_months,target_amount,planned_amount,monthly_amount,minimum_balance,disbursement_months,status,created_by_account_id) VALUES($1,$2,$3,$4,$5,$6,$6,$7,NULL,NULL,'active',$8) ON CONFLICT(account_id,plan_type) DO UPDATE SET start_date=EXCLUDED.start_date,end_date=EXCLUDED.end_date,duration_months=EXCLUDED.duration_months,target_amount=EXCLUDED.target_amount,planned_amount=EXCLUDED.planned_amount,monthly_amount=EXCLUDED.monthly_amount,status='active',created_by_account_id=EXCLUDED.created_by_account_id,updated_at=NOW() RETURNING plan_type,start_date,end_date,duration_months,planned_amount,monthly_amount,status",
+    [member.id,planType,startDate,endDate,months,plannedAmount,monthlyAmount,req.auth.sub]
+  );
+
+  await writeAdminAudit(pool,req,'CREATE_SAVINGS_SETUP','savings_plan',planType,username,{planType,startDate,endDate,plannedAmount,monthlyRequiredSavings:monthlyAmount});
+  res.json({member:{username:member.username,name:member.full_name},plan:result.rows[0]});
+});
+
+`;
   if(!admin.includes(marker)){console.error('Stage 173 savings plans route marker missing');process.exit(1);}
   admin=admin.replace(marker,route+marker);
 }
