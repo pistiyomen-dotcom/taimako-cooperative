@@ -3,10 +3,7 @@ const fs=require('fs');
 /* ---------- database additions ---------- */
 let schema=fs.readFileSync('server/db/schema.sql','utf8');
 if(!schema.includes('ALTER TABLE savings_plans ADD COLUMN IF NOT EXISTS end_date')){
-  const add="
-ALTER TABLE savings_plans ADD COLUMN IF NOT EXISTS end_date DATE;
-ALTER TABLE savings_plans ADD COLUMN IF NOT EXISTS planned_amount NUMERIC(14,2);
-";
+  const add="\nALTER TABLE savings_plans ADD COLUMN IF NOT EXISTS end_date DATE;\nALTER TABLE savings_plans ADD COLUMN IF NOT EXISTS planned_amount NUMERIC(14,2);\n";
   schema=schema.replace('\nCOMMIT;',add+'\nCOMMIT;');
   fs.writeFileSync('server/db/schema.sql',schema);
 }
