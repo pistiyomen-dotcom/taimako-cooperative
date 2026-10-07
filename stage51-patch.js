@@ -168,3 +168,4 @@ require('./stage179-patch.js');
 require('./stage180-patch.js');
 require('./stage181-patch.js');
 require('./stage182-patch.js');
+require('./stage183-patch.js');
