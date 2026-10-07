@@ -1,31 +1,36 @@
 const fs=require('fs');
 
-let app=fs.readFileSync('www/app.js','utf8');
+/* Expose previous-month shares per savings type */
+let account=fs.readFileSync('server/routes/account.js','utf8');
 
-/* Add PREVIOUS MONTH immediately after previous-month savings in all savings detail layouts */
-const targetOld="[previous+' SAVINGS',naira(data.previousMonthSavings||0)],\n      [previous+' DIVIDEND',naira(data.previousMonthDividend||0)],";
-const targetNew="[previous+' SAVINGS',naira(data.previousMonthSavings||0)],\n      ['PREVIOUS MONTH',''],\n      [previous+' DIVIDEND',naira(data.previousMonthDividend||0)],";
+const oldObj="savingsTypeBreakdownV169[type]={currentMonthSavings:monthly.current,numberOfShares:currentShares,previousMonthSavings:monthly.previous,previousMonthDividend:previousDividend,totalBalance:typeBalanceMap[type]||0,dividendBalance:Number((dividendBalanceByTypeV171[type]||0).toFixed(2))};";
+const newObj="savingsTypeBreakdownV169[type]={currentMonthSavings:monthly.current,numberOfShares:currentShares,previousMonthSavings:monthly.previous,previousMonthShares:previousSharesByType[type]||0,previousMonthDividend:previousDividend,totalBalance:typeBalanceMap[type]||0,dividendBalance:Number((dividendBalanceByTypeV171[type]||0).toFixed(2))};";
 
-let count=0;
-while(app.includes(targetOld)){
-  app=app.replace(targetOld,targetNew);
-  count++;
-}
-if(count<2){
-  console.error('Stage 184 previous-month savings markers incomplete: '+count);
+if(account.includes(oldObj)){
+  account=account.replace(oldObj,newObj);
+}else if(!account.includes('previousMonthShares:previousSharesByType[type]||0')){
+  console.error('Stage 184 savings breakdown marker missing');
   process.exit(1);
 }
+fs.writeFileSync('server/routes/account.js',account);
 
-/* Hide the empty value line for the PREVIOUS MONTH label tile */
-if(!app.includes("title === 'PREVIOUS MONTH'")){
-  const marker="const p=document.createElement('p');p.textContent=value;";
-  if(app.includes(marker)){
-    app=app.replace(marker,marker+"if(title==='PREVIOUS MONTH') p.style.display='none';");
-  }else{
-    const marker2="const p = document.createElement('p'); p.textContent = value;";
-    if(!app.includes(marker2)){console.error('Stage 184 detail card renderer marker missing');process.exit(1);}
-    app=app.replace(marker2,marker2+"\n    if(title==='PREVIOUS MONTH') p.style.display='none';");
-  }
+/* Insert calendar-based previous-month shares immediately after previous-month savings */
+let app=fs.readFileSync('www/app.js','utf8');
+
+const genericOld="      ['PREVIOUS MONTH',''],\n";
+if(app.includes(genericOld)) app=app.replaceAll(genericOld,'');
+
+const oldPair="      [previous+' SAVINGS',naira(data.previousMonthSavings||0)],\n      [previous+' DIVIDEND',naira(data.previousMonthDividend||0)],";
+const newPair="      [previous+' SAVINGS',naira(data.previousMonthSavings||0)],\n      [previous+' SHARES',String(Number(data.previousMonthShares||0))],\n      [previous+' DIVIDEND',naira(data.previousMonthDividend||0)],";
+
+let count=0;
+while(app.includes(oldPair)){
+  app=app.replace(oldPair,newPair);
+  count++;
+}
+if(count<2 && !app.includes("[previous+' SHARES',String(Number(data.previousMonthShares||0))]")){
+  console.error('Stage 184 previous-month savings markers missing');
+  process.exit(1);
 }
 
 app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=184'");
@@ -41,4 +46,4 @@ let sw=fs.readFileSync('www/sw.js','utf8');
 sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v184';");
 fs.writeFileSync('www/sw.js',sw);
 
-console.log('TAIMAKO Stage 184 PREVIOUS MONTH tiles inserted in Regular savings accounts.');
+console.log('TAIMAKO Stage 184 calendar-based previous-month SHARES tiles applied.');
