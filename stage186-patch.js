@@ -90,18 +90,10 @@ if(!account.includes('dividendTypeCreditsV186')){
   const dividendTypeMapV186=Object.fromEntries(dividendTypeCreditsV186.rows.map(r=>[r.savings_type,{balance:money(r.dividend_balance),previous:money(r.previous_dividend)}]));
 `;
   account=account.replace(marker,code+marker);
-  const afterLoop="  }\n  return res.json({";
-  const pos=account.lastIndexOf(afterLoop);
-  if(pos<0){console.error('Stage 186 member response pre-marker missing');process.exit(1);}
-  const override=`  for(const type of ['REGULAR','TARGET','CONSTANT','WELFARE']){
-    const d=dividendTypeMapV186[type]||{balance:0,previous:0};
-    if(savingsTypeBreakdownV169[type]){
-      savingsTypeBreakdownV169[type].previousMonthDividend=d.previous;
-      savingsTypeBreakdownV169[type].dividendBalance=d.balance;
-    }
-  }
-`;
-  account=account.slice(0,pos)+override+account.slice(pos);
+  const oldBreakdown="savingsTypeBreakdownV169[type]={currentMonthSavings:monthly.current,numberOfShares:currentShares,previousMonthSavings:monthly.previous,previousMonthShares:previousSharesByType[type]||0,previousMonthDividend:previousDividend,totalBalance:typeBalanceMap[type]||0,dividendBalance:Number((dividendBalanceByTypeV171[type]||0).toFixed(2))};";
+  const newBreakdown="savingsTypeBreakdownV169[type]={currentMonthSavings:monthly.current,numberOfShares:currentShares,previousMonthSavings:monthly.previous,previousMonthShares:previousSharesByType[type]||0,previousMonthDividend:(dividendTypeMapV186[type]&&dividendTypeMapV186[type].previous!==undefined?dividendTypeMapV186[type].previous:previousDividend),totalBalance:typeBalanceMap[type]||0,dividendBalance:(dividendTypeMapV186[type]&&dividendTypeMapV186[type].balance!==undefined?dividendTypeMapV186[type].balance:Number((dividendBalanceByTypeV171[type]||0).toFixed(2)))};";
+  if(!account.includes(oldBreakdown)){console.error('Stage 186 member breakdown object marker missing');process.exit(1);}
+  account=account.replace(oldBreakdown,newBreakdown);
 }
 fs.writeFileSync('server/routes/account.js',account);
 
