@@ -57,9 +57,9 @@ if(!admin.includes('ADVANCE_SAVING_MERGE_V190')){
 fs.writeFileSync('server/routes/admin.js',admin);
 
 let html=fs.readFileSync('www/index.html','utf8');
-html=html.replace(/app\\.js\\?v=\\d+/g,'app.js?v=190');
-html=html.replace(/styles\\.css\\?v=\\d+/g,'styles.css?v=190');
-html=html.replace(/bank-transfer-v129\\.js\\?v=\\d+/g,'bank-transfer-v129.js?v=190');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=190');
+html=html.replace(/styles\.css\?v=\d+/g,'styles.css?v=190');
+html=html.replace(/bank-transfer-v129\.js\?v=\d+/g,'bank-transfer-v129.js?v=190');
 fs.writeFileSync('www/index.html',html);
 
 let app=fs.readFileSync('www/app.js','utf8');
@@ -67,11 +67,11 @@ app=app.replace(
   'The full approved amount goes to the selected savings balance. Monthly savings and shares will follow the selected start month and share count.',
   'The full approved amount goes to the selected savings balance. If you already have active Advance Saving, the new approved payment will merge with it from your selected start month, complete any partly funded month first, then continue forward.'
 );
-app=app.replace(/serviceWorker\\.register\\('\\.\\/sw\\.js\\?v=\\d+'/, "serviceWorker.register('./sw.js?v=190'");
+app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=190'");
 fs.writeFileSync('www/app.js',app);
 
 let sw=fs.readFileSync('www/sw.js','utf8');
-sw=sw.replace(/const CACHE = 'taimako-v\\d+';/,"const CACHE = 'taimako-v190';");
+sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v190';");
 fs.writeFileSync('www/sw.js',sw);
 
 console.log('TAIMAKO Stage 190 Advance Saving merge/top-up workflow applied.');
