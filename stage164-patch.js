@@ -30,7 +30,6 @@ const oldCards=`    ['REGISTRATION', registrationDone ? '✓' : naira(b.registra
 
 const newCards=`    ['REGISTRATION', registrationDone ? '✓' : naira(b.registration)],
     ['SAVINGS', 'Open savings balances'],
-    ['ADVANCE SAVING', 'Open advance savings payment form'],
     ['BALANCES', 'Open savings, shares and dividend balances'], ['ACTIVE LOAN', activeLoanText],
     ['LOAN INTEREST', naira(b.loanInterest)]
 `;
@@ -76,8 +75,7 @@ if(!app.includes("user.role === 'regular' && title === 'SAVINGS'")){
   const lineEnd=app.indexOf('\n',i);
   const line=app.slice(i,lineEnd);
   const savingsAction="if (user.role === 'regular' && title === 'SAVINGS') { card.classList.add('admin-action-card'); card.tabIndex=0; card.setAttribute('role','button'); card.addEventListener('click', openMemberSavingsV164); card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openMemberSavingsV164(); }); }";
-  const advanceAction="if (user.role === 'regular' && title === 'ADVANCE SAVING') { card.classList.add('admin-action-card'); card.tabIndex=0; card.setAttribute('role','button'); card.addEventListener('click', openAdvanceSavingV189); card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openAdvanceSavingV189(); }); }";
-  app=app.replace(line,savingsAction+'\n    '+advanceAction+'\n    '+line);
+  app=app.replace(line,savingsAction+'\n    '+line);
 }
 
 app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=164'");
@@ -87,4 +85,4 @@ let sw=fs.readFileSync('www/sw.js','utf8');
 sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v164';");
 fs.writeFileSync('www/sw.js',sw);
 
-console.log('TAIMAKO Stage 164 member SAVINGS and ADVANCE SAVING action tiles applied.');
+console.log('TAIMAKO Stage 164 member SAVINGS action tile applied.');
