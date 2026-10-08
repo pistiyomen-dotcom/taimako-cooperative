@@ -14,6 +14,7 @@ const newCards=`    ['REGISTRATION', registrationDone ? '✓' : naira(b.registra
     ['CONSTANT', naira(b.constant)],
     ['WELFARE', naira(b.welfare)],
     ['FLEXIBLE', naira(b.flexible)],
+    ['ADVANCE SAVING', 'Open advance savings payment form'],
     ['BALANCES', 'Open savings, shares and dividend balances'],
     ['LOAN', 'Open active loan and loan interest']
 `;
@@ -23,6 +24,16 @@ if(!app.includes(oldCards)){
   process.exit(1);
 }
 app=app.replace(oldCards,newCards);
+
+if(!app.includes("user.role === 'regular' && title === 'ADVANCE SAVING'")){
+  const actionMarker="if (user.role === 'regular' && title === 'BALANCES') { card.classList.add('admin-action-card');";
+  const i=app.indexOf(actionMarker);
+  if(i<0){console.error('Stage 167 BALANCES action marker missing');process.exit(1);}
+  const lineEnd=app.indexOf('\n',i);
+  const line=app.slice(i,lineEnd);
+  const advanceAction="if (user.role === 'regular' && title === 'ADVANCE SAVING') { card.classList.add('admin-action-card'); card.tabIndex=0; card.setAttribute('role','button'); card.addEventListener('click', openAdvanceSavingV189); card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openAdvanceSavingV189(); }); }";
+  app=app.replace(line,advanceAction+'\n    '+line);
+}
 
 /* SAVINGS is no longer an action tile */
 app=app.replace(/\n\s*if \(user\.role === 'regular' && title === 'SAVINGS'\) \{[^\n]*\}/g,'');
@@ -40,4 +51,4 @@ let sw=fs.readFileSync('www/sw.js','utf8');
 sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v167';");
 fs.writeFileSync('www/sw.js',sw);
 
-console.log('TAIMAKO Stage 167 member SAVINGS action removed and savings tiles restored.');
+console.log('TAIMAKO Stage 167 savings tiles restored with ADVANCE SAVING action.');
