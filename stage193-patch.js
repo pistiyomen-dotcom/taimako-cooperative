@@ -172,7 +172,7 @@ if(!html.includes('id="advanceCashCreditV193Dialog"')){
       <div class="dialog-head"><h3>ADVANCE CASH CREDIT</h3><button type="button" class="icon-btn" data-close="advanceCashCreditV193Dialog" aria-label="Close">×</button></div>
 
       <label>Username
-        <input id="advanceCashCreditUsernameV193" placeholder="ENTER 5-DIGIT USERNAME" inputmode="numeric" maxlength="5" autocomplete="off" required />
+        <input id="advanceCashCreditUsernameV193" placeholder="ENTER USERNAME (MAX 5 DIGITS)" inputmode="numeric" maxlength="5" autocomplete="off" required />
       </label>
       <div style="margin:8px 0 10px"><button type="button" class="primary" id="advanceCashCreditConfirmV193" style="width:auto;min-width:120px">CONFIRM</button></div>
       <div id="advanceCashCreditMemberV193" class="member-confirm" style="display:none;margin:8px 0 14px;font-size:17px;font-weight:800;color:#075d32"></div>
@@ -261,7 +261,12 @@ document.getElementById('advanceCashCreditUsernameV193')?.addEventListener('inpu
   const error=document.getElementById('advanceCashCreditErrorV193'); if(error) error.textContent='';
 });
 
-document.getElementById('advanceCashCreditConfirmV193')?.addEventListener('click',async()=>{
+document.addEventListener('click',async(event)=>{
+  const clicked=event.target?.closest?.('#advanceCashCreditConfirmV193');
+  if(!clicked) return;
+  event.preventDefault();
+  event.stopPropagation();
+
   const username=document.getElementById('advanceCashCreditUsernameV193')?.value.trim()||'';
   const error=document.getElementById('advanceCashCreditErrorV193');
   const success=document.getElementById('advanceCashCreditSuccessV193');
@@ -269,13 +274,18 @@ document.getElementById('advanceCashCreditConfirmV193')?.addEventListener('click
   const type=document.getElementById('advanceCashCreditTypeV193');
   if(error) error.textContent=''; if(success) success.textContent='';
   clearAdvanceCashCreditConfirmationV193();
-  if(!/^\d{5}$/.test(username)){if(error) error.textContent='Regular username must be exactly 5 digits.';return;}
+  if(!/^\d{1,5}$/.test(username)){if(error) error.textContent='Regular username must contain digits only, maximum 5 digits.';return;}
 
-  const button=document.getElementById('advanceCashCreditConfirmV193');
+  const button=clicked;
   const old=button?.textContent||'CONFIRM';
   try{
     if(button){button.disabled=true;button.textContent='CONFIRMING...';}
-    const data=await api('/api/admin/advance-cash-credit/member?username='+encodeURIComponent(username),{cache:'no-store'});
+    const response=await fetch((typeof API_BASE!=='undefined'?API_BASE:'')+'/api/admin/advance-cash-credit/member?username='+encodeURIComponent(username),{
+      headers:{Authorization:'Bearer '+state.token},
+      cache:'no-store'
+    });
+    let data={}; try{data=await response.json();}catch(_){}
+    if(!response.ok) throw new Error(data.error||('Confirmation failed ('+response.status+').'));
     advanceCashCreditConfirmedV193=username;
     if(member){member.textContent=data.member.name+' - '+data.member.username;member.style.display='block';}
     if(type){type.disabled=false;type.focus();}
@@ -299,7 +309,7 @@ document.addEventListener('submit',async(event)=>{
   const button=document.getElementById('advanceCashCreditPostV193');
   if(error) error.textContent=''; if(success) success.textContent='';
 
-  if(!/^\d{5}$/.test(username)){if(error) error.textContent='Enter a valid 5-digit username.';return;}
+  if(!/^\d{1,5}$/.test(username)){if(error) error.textContent='Enter a valid Regular username using digits only, maximum 5 digits.';return;}
   if(advanceCashCreditConfirmedV193!==username){if(error) error.textContent='Confirm the member before posting Advance Cash Credit.';return;}
   if(!destination){if(error) error.textContent='Select a main savings account.';return;}
   if(!Number(amount)||Number(amount)<=0){if(error) error.textContent='Enter an amount greater than zero.';return;}
