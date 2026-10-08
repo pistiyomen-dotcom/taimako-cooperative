@@ -31,7 +31,7 @@ const oldCards=`    ['REGISTRATION', registrationDone ? '✓' : naira(b.registra
 
 const newCards=`    ['REGISTRATION', registrationDone ? '✓' : naira(b.registration)], ['REGULAR', naira(b.regular)], ['TARGET', naira(b.target)],
     ['CONSTANT', naira(b.constant)], ['WELFARE', naira(b.welfare)], ['FLEXIBLE', naira(b.flexible)],
-    ['BALANCES', 'Open savings, shares and dividend balances'], ['ACTIVE LOAN', activeLoanText],
+    ['ADVANCE SAVING', 'Open advance savings payment form'], ['BALANCES', 'Open savings, shares and dividend balances'], ['ACTIVE LOAN', activeLoanText],
     ['LOAN INTEREST', naira(b.loanInterest)]
 `;
 
@@ -75,7 +75,8 @@ function openMemberBalancesV159(){
 const actionMarker="if(title === 'ACTIVE LOAN') p.style.whiteSpace='pre-line';";
 if(!app.includes("user.role === 'regular' && title === 'BALANCES'")){
   if(!app.includes(actionMarker)){console.error('Stage 159 member action marker missing');process.exit(1);}
-  app=app.replace(actionMarker,actionMarker+"\n    if (user.role === 'regular' && title === 'BALANCES') { card.classList.add('admin-action-card'); card.tabIndex=0; card.setAttribute('role','button'); card.addEventListener('click', openMemberBalancesV159); card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openMemberBalancesV159(); }); }");
+  app=app.replace(actionMarker,actionMarker+"\n    if (user.role === 'regular' && title === 'ADVANCE SAVING') { card.classList.add('admin-action-card'); card.tabIndex=0; card.setAttribute('role','button'); card.addEventListener('click', openAdvanceSavingV189); card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openAdvanceSavingV189(); }); }
+    if (user.role === 'regular' && title === 'BALANCES') { card.classList.add('admin-action-card'); card.tabIndex=0; card.setAttribute('role','button'); card.addEventListener('click', openMemberBalancesV159); card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openMemberBalancesV159(); }); }");
 }
 
 app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=159'");
@@ -85,4 +86,4 @@ let sw=fs.readFileSync('www/sw.js','utf8');
 sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v159';");
 fs.writeFileSync('www/sw.js',sw);
 
-console.log('TAIMAKO Stage 159 member BALANCES action tile applied.');
+console.log('TAIMAKO Stage 159 member BALANCES and ADVANCE SAVING action tiles applied.');
