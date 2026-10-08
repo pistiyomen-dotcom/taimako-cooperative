@@ -213,14 +213,17 @@ function openAdvanceSavingV189(){
   openDialog(document.getElementById('advanceSavingDialogV189'));
 }
 
-const advanceSavingCopyV189=document.getElementById('advanceSavingCopyV189');
-advanceSavingCopyV189?.addEventListener('click',async()=>{
+document.addEventListener('click',async(event)=>{
+  const copy=event.target?.closest?.('#advanceSavingCopyV189');
+  if(!copy) return;
+  event.preventDefault();
+  event.stopPropagation();
   const value=document.getElementById('advanceSavingNumberV189')?.textContent?.trim()||'';
   if(!value) return;
   let ok=false;
   try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(value);ok=true;}}catch(_){}
-  if(!ok){const ta=document.createElement('textarea');ta.value=value;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{ok=document.execCommand('copy');}catch(_){}ta.remove();}
-  if(ok){const old=advanceSavingCopyV189.textContent;advanceSavingCopyV189.textContent='✓';setTimeout(()=>advanceSavingCopyV189.textContent=old,1200);}
+  if(!ok){const ta=document.createElement('textarea');ta.value=value;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,ta.value.length);try{ok=document.execCommand('copy');}catch(_){}ta.remove();}
+  if(ok){const old=copy.textContent;copy.textContent='✓';setTimeout(()=>copy.textContent=old,1200);}
 });
 // ADVANCE_SAVING_COPY_V189
 
