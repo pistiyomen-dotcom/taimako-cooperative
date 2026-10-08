@@ -35,7 +35,8 @@ router.get('/advance-cash-credit/member', requireAdminPermission('cash_credit'),
   );
   if(!result.rowCount || !result.rows[0].is_active) return res.status(404).json({error:'Active member account not found.'});
   const member=result.rows[0];
-  if(String(member.role||'').toLowerCase()!=='regular') return res.status(400).json({error:'Advance Cash Credit is available only for Regular members.'});
+  const role=String(member.role||'').toLowerCase();
+  if(!['regular','flexible'].includes(role)) return res.status(400).json({error:'Advance Cash Credit is available only for Regular or Flexible members.'});
   res.json({member:{id:member.id,username:member.username,name:member.full_name,role:member.role}});
 });
 
@@ -76,9 +77,14 @@ router.post('/advance-cash-credit', requireAdminPermission('cash_credit'), advan
       return res.status(404).json({error:'Active member account not found.'});
     }
     const member=found.rows[0];
-    if(String(member.role||'').toLowerCase()!=='regular'){
+    const memberRole=String(member.role||'').toLowerCase();
+    if(!['regular','flexible'].includes(memberRole)){
       await client.query('ROLLBACK');
-      return res.status(400).json({error:'Advance Cash Credit is available only for Regular members.'});
+      return res.status(400).json({error:'Advance Cash Credit is available only for Regular or Flexible members.'});
+    }
+    if(memberRole==='flexible' && destination!=='FLEXIBLE'){
+      await client.query('ROLLBACK');
+      return res.status(400).json({error:'Flexible saver can receive Advance Cash Credit only to FLEXIBLE.'});
     }
 
     const minimumResult=await client.query("SELECT numeric_value FROM cooperative_settings WHERE setting_key='minimum_share_per_month'");
@@ -172,7 +178,7 @@ if(!html.includes('id="advanceCashCreditV193Dialog"')){
       <div class="dialog-head"><h3>ADVANCE CASH CREDIT</h3><button type="button" class="icon-btn" data-close="advanceCashCreditV193Dialog" aria-label="Close">×</button></div>
 
       <label>Username
-        <input id="advanceCashCreditUsernameV193" placeholder="ENTER USERNAME (MAX 5 DIGITS)" inputmode="numeric" maxlength="5" autocomplete="off" required />
+        <input id="advanceCashCreditUsernameV193" placeholder="REGULAR: up to 5 digits • FLEXIBLE: F + 3 digits" inputmode="text" maxlength="5" autocomplete="off" required style="text-transform:uppercase" />
       </label>
       <div style="margin:8px 0 10px"><button type="button" class="primary" id="advanceCashCreditConfirmV193" style="width:auto;min-width:120px">CONFIRM</button></div>
       <div id="advanceCashCreditMemberV193" class="member-confirm" style="display:none;margin:8px 0 14px;font-size:17px;font-weight:800;color:#075d32"></div>
@@ -239,7 +245,7 @@ function clearAdvanceCashCreditConfirmationV193(){
   const member=document.getElementById('advanceCashCreditMemberV193');
   const type=document.getElementById('advanceCashCreditTypeV193');
   if(member){member.textContent='';member.style.display='none';}
-  if(type){type.value='';type.disabled=true;}
+  if(type){type.value='';type.disabled=true;[...type.options].forEach(option=>option.disabled=false);}
 }
 
 function openAdvanceCashCreditV193(){
@@ -256,7 +262,13 @@ function openAdvanceCashCreditV193(){
 }
 
 document.getElementById('advanceCashCreditUsernameV193')?.addEventListener('input',(event)=>{
-  event.target.value=event.target.value.replace(/\D/g,'').slice(0,5);
+  let value=String(event.target.value||'').toUpperCase();
+  if(value.startsWith('F')){
+    value='F'+value.slice(1).replace(/\D/g,'').slice(0,3);
+  }else{
+    value=value.replace(/\D/g,'').slice(0,5);
+  }
+  event.target.value=value;
   clearAdvanceCashCreditConfirmationV193();
   const error=document.getElementById('advanceCashCreditErrorV193'); if(error) error.textContent='';
 });
@@ -274,7 +286,7 @@ document.addEventListener('click',async(event)=>{
   const type=document.getElementById('advanceCashCreditTypeV193');
   if(error) error.textContent=''; if(success) success.textContent='';
   clearAdvanceCashCreditConfirmationV193();
-  if(!/^\d{1,5}$/.test(username)){if(error) error.textContent='Regular username must contain digits only, maximum 5 digits.';return;}
+  if(!(/^(?:\d{1,5}|F\d{3})$/.test(username))){if(error) error.textContent='Enter a valid Regular username (up to 5 digits) or Flexible username (F + 3 digits).';return;}
 
   const button=clicked;
   const old=button?.textContent||'CONFIRM';
@@ -288,7 +300,16 @@ document.addEventListener('click',async(event)=>{
     if(!response.ok) throw new Error(data.error||('Confirmation failed ('+response.status+').'));
     advanceCashCreditConfirmedV193=username;
     if(member){member.textContent=data.member.name+' - '+data.member.username;member.style.display='block';}
-    if(type){type.disabled=false;type.focus();}
+    if(type){
+      const flexibleMember=String(data.member.role||'').toLowerCase()==='flexible';
+      [...type.options].forEach(option=>{
+        if(!option.value) return;
+        option.disabled=flexibleMember && option.value!=='FLEXIBLE';
+      });
+      type.disabled=false;
+      type.value=flexibleMember?'FLEXIBLE':'';
+      type.focus();
+    }
   }catch(e){if(error) error.textContent=e.message||'Unable to confirm member.';}
   finally{if(button){button.disabled=false;button.textContent=old;}}
 });
@@ -309,7 +330,7 @@ document.addEventListener('submit',async(event)=>{
   const button=document.getElementById('advanceCashCreditPostV193');
   if(error) error.textContent=''; if(success) success.textContent='';
 
-  if(!/^\d{1,5}$/.test(username)){if(error) error.textContent='Enter a valid Regular username using digits only, maximum 5 digits.';return;}
+  if(!(/^(?:\d{1,5}|F\d{3})$/.test(username))){if(error) error.textContent='Enter a valid Regular username (up to 5 digits) or Flexible username (F + 3 digits).';return;}
   if(advanceCashCreditConfirmedV193!==username){if(error) error.textContent='Confirm the member before posting Advance Cash Credit.';return;}
   if(!destination){if(error) error.textContent='Select a main savings account.';return;}
   if(!Number(amount)||Number(amount)<=0){if(error) error.textContent='Enter an amount greater than zero.';return;}
