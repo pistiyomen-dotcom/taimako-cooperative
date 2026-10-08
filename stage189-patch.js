@@ -183,10 +183,12 @@ fs.writeFileSync('www/index.html',html);
 
 let app=fs.readFileSync('www/app.js','utf8');
 if(!app.includes("['ADVANCE SAVING', '']")){
-  const marker="    ['FLEXIBLE', ''],\n    ['BALANCES', 'Open savings, shares and dividend balances'],";
-  const replacement="    ['FLEXIBLE', ''],\n    ['ADVANCE SAVING', ''],\n    ['BALANCES', 'Open savings, shares and dividend balances'],";
-  if(!app.includes(marker)){console.error('Stage 189 dashboard card marker missing');process.exit(1);}
-  app=app.replace(marker,replacement);
+  const marker="['FLEXIBLE', '']";
+  const pos=app.indexOf(marker);
+  if(pos<0){console.error('Stage 189 FLEXIBLE dashboard card marker missing');process.exit(1);}
+  const lineEnd=app.indexOf('\n',pos);
+  if(lineEnd<0){console.error('Stage 189 FLEXIBLE dashboard line end missing');process.exit(1);}
+  app=app.slice(0,lineEnd+1)+"    ['ADVANCE SAVING', ''],\n"+app.slice(lineEnd+1);
 }
 
 if(!app.includes('function openAdvanceSavingV189')){
