@@ -1,6 +1,18 @@
 const fs=require('fs');
 
-/* ---------- Admin API ---------- */
+/* ---------- Allow FLEXIBLE in advance allocation schedule ---------- */
+let schema=fs.readFileSync('server/db/schema.sql','utf8');
+if(!schema.includes('ADVANCE_FLEXIBLE_V194')){
+  const sql=`
+-- ADVANCE_FLEXIBLE_V194
+ALTER TABLE advance_saving_allocations DROP CONSTRAINT IF EXISTS advance_saving_allocations_savings_type_check;
+ALTER TABLE advance_saving_allocations ADD CONSTRAINT advance_saving_allocations_savings_type_check CHECK (savings_type IN ('REGULAR','TARGET','CONSTANT','WELFARE','FLEXIBLE'));
+`;
+  schema=schema.replace('\nCOMMIT;',sql+'\nCOMMIT;');
+  fs.writeFileSync('server/db/schema.sql',schema);
+}
+
+ /* ---------- Admin API ---------- */
 let admin=fs.readFileSync('server/routes/admin.js','utf8');
 
 if(!admin.includes("const multerV193=require('multer');")){
@@ -35,7 +47,7 @@ router.post('/advance-cash-credit', requireAdminPermission('cash_credit'), advan
   const shareCount=Number(req.body?.shareCount);
 
   if(!username) return res.status(400).json({error:'Enter username.'});
-  if(!['REGULAR','TARGET','CONSTANT','WELFARE'].includes(destination)) return res.status(400).json({error:'Select REGULAR, TARGET, CONSTANT or WELFARE.'});
+  if(!['REGULAR','TARGET','CONSTANT','WELFARE','FLEXIBLE'].includes(destination)) return res.status(400).json({error:'Select REGULAR, TARGET, CONSTANT, WELFARE or FLEXIBLE.'});
   if(!Number.isFinite(amount)||amount<=0) return res.status(400).json({error:'Enter an amount greater than zero.'});
   if(!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) return res.status(400).json({error:'Select a valid date.'});
   if(!Number.isInteger(shareCount)||shareCount<=0) return res.status(400).json({error:'Number of shares must be a whole number greater than zero.'});
@@ -77,7 +89,7 @@ router.post('/advance-cash-credit', requireAdminPermission('cash_credit'), advan
       return res.status(400).json({error:'Amount must cover at least '+shareCount+' share(s) for the first selected month.'});
     }
 
-    const columnMap={REGULAR:'regular',TARGET:'target',CONSTANT:'constant',WELFARE:'welfare'};
+    const columnMap={REGULAR:'regular',TARGET:'target',CONSTANT:'constant',WELFARE:'welfare',FLEXIBLE:'flexible'};
     const column=columnMap[destination];
     await client.query('INSERT INTO member_balances(account_id) VALUES($1) ON CONFLICT(account_id) DO NOTHING',[member.id]);
     await client.query('UPDATE member_balances SET '+column+'='+column+'+$1,updated_at=NOW() WHERE account_id=$2',[amount,member.id]);
@@ -171,7 +183,7 @@ if(!html.includes('id="advanceCashCreditV193Dialog"')){
           <option value="REGULAR">REGULAR</option>
           <option value="TARGET">TARGET</option>
           <option value="CONSTANT">CONSTANT</option>
-          <option value="WELFARE">WELFARE</option>
+          <option value="WELFARE">WELFARE</option>\n          <option value="FLEXIBLE">FLEXIBLE</option>
         </select>
       </label>
 
