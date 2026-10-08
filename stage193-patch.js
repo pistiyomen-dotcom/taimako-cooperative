@@ -292,16 +292,17 @@ document.addEventListener('click',async(event)=>{
   const old=button?.textContent||'CONFIRM';
   try{
     if(button){button.disabled=true;button.textContent='CONFIRMING...';}
-    const response=await fetch((typeof API_BASE!=='undefined'?API_BASE:'')+'/api/admin/advance-cash-credit/member?username='+encodeURIComponent(username),{
+    const accountType=username.startsWith('F')?'FLEXIBLE':'REGULAR';
+    const response=await fetch((typeof API_BASE!=='undefined'?API_BASE:'')+'/api/admin/cash-credit-v68/member?account='+encodeURIComponent(accountType)+'&username='+encodeURIComponent(username),{
       headers:{Authorization:'Bearer '+state.token},
       cache:'no-store'
     });
     let data={}; try{data=await response.json();}catch(_){}
     if(!response.ok) throw new Error(data.error||('Confirmation failed ('+response.status+').'));
     advanceCashCreditConfirmedV193=username;
-    if(member){member.textContent=data.member.name+' - '+data.member.username;member.style.display='block';}
+    if(member){member.textContent=data.account.name+' - '+data.account.username;member.style.display='block';}
     if(type){
-      const flexibleMember=String(data.member.role||'').toLowerCase()==='flexible';
+      const flexibleMember=accountType==='FLEXIBLE';
       [...type.options].forEach(option=>{
         if(!option.value) return;
         option.disabled=flexibleMember && option.value!=='FLEXIBLE';
@@ -372,11 +373,11 @@ document.addEventListener('submit',async(event)=>{
   app=app.replace(marker,code+marker);
 }
 
-app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=193'");
+app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=194'");
 fs.writeFileSync('www/app.js',app);
 
 let sw=fs.readFileSync('www/sw.js','utf8');
-sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v193';");
+sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v194';");
 fs.writeFileSync('www/sw.js',sw);
 
 console.log('TAIMAKO Stage 193 ADVANCE CASH CREDIT Admin workflow applied.');
