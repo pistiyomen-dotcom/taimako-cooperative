@@ -171,3 +171,4 @@ require('./stage182-patch.js');
 require('./stage183-patch.js');
 require('./stage184-patch.js');
 require('./stage187-patch.js');
+require('./stage188-diagnostic.js');
