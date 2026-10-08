@@ -75,8 +75,7 @@ function openMemberBalancesV159(){
 const actionMarker="if(title === 'ACTIVE LOAN') p.style.whiteSpace='pre-line';";
 if(!app.includes("user.role === 'regular' && title === 'BALANCES'")){
   if(!app.includes(actionMarker)){console.error('Stage 159 member action marker missing');process.exit(1);}
-  app=app.replace(actionMarker,actionMarker+"\n    if (user.role === 'regular' && title === 'ADVANCE SAVING') { card.classList.add('admin-action-card'); card.tabIndex=0; card.setAttribute('role','button'); card.addEventListener('click', openAdvanceSavingV189); card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openAdvanceSavingV189(); }); }
-    if (user.role === 'regular' && title === 'BALANCES') { card.classList.add('admin-action-card'); card.tabIndex=0; card.setAttribute('role','button'); card.addEventListener('click', openMemberBalancesV159); card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openMemberBalancesV159(); }); }");
+  app=app.replace(actionMarker,actionMarker+"\n    if (user.role === 'regular' && title === 'ADVANCE SAVING') { card.classList.add('admin-action-card'); card.tabIndex=0; card.setAttribute('role','button'); card.addEventListener('click', openAdvanceSavingV189); card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openAdvanceSavingV189(); }); }\n    if (user.role === 'regular' && title === 'BALANCES') { card.classList.add('admin-action-card'); card.tabIndex=0; card.setAttribute('role','button'); card.addEventListener('click', openMemberBalancesV159); card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openMemberBalancesV159(); }); }");
 }
 
 app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=159'");
