@@ -60,4 +60,4 @@ if(!originalStatement.includes('memberLookupFreshGrid(bal)'))throw Error('Unexpe
 const updated="if(r) r.innerHTML='<div class=\"member-confirm show\" style=\"display:block;margin:8px 0 14px\"><b>'+escapeHTML(name)+' - '+escapeHTML(a.username)+'</b><br><small>'+escapeHTML(role)+' • '+escapeHTML(status)+'</small></div>'+(a.is_active===false?'':'<button type=\"button\" id=\"tmcsOpenMemberV210\" class=\"primary\">OPEN MEMBER ACCOUNT</button>')";
 app=app.slice(0,start)+updated+app.slice(next);
 fs.writeFileSync('www/app.js',app);
-console.log('Development-only assisted Member Search interface installed. Mount API router separately after DB migration; not ready for release.');
+console.log('Development-only assisted Member Search interface staged. Mount API router separately after DB migration; not ready for release.');
