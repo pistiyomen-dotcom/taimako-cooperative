@@ -19,7 +19,7 @@
       if(!response.ok) throw Error(body.error||'Unable to complete request');
       return body;
     }
-    function showError(err){root.querySelector('[data-assist-error]').textContent=err.message||String(err);}
+    function showError(err){const target=root.querySelector('[data-assist-error]');if(target)target.textContent=err.message||String(err);}
     async function open(username){
       root.innerHTML='<p>Opening assisted account...</p>';
       try{
@@ -27,6 +27,10 @@
         sessionToken=started.token;
         await refresh();
       }catch(err){
+        if(sessionToken){
+          try{await request('/end',{method:'POST'});}catch(_){}
+          sessionToken=null;
+        }
         root.innerHTML='<p role="alert" data-assist-error></p>';
         showError(err);
       }
