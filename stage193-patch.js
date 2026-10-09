@@ -26,6 +26,33 @@ if(!admin.includes("const multerV193=require('multer');")){
 
 if(!admin.includes("router.get('/advance-cash-credit/member'")){
   const routes=String.raw`
+
+router.get('/advance-cash-credit-confirm-v197', requireAdminPermission('cash_credit'), async (req,res)=>{
+  const username=String(req.query.username||'').trim().toUpperCase();
+  if(!username) return res.status(400).json({error:'Enter username.'});
+
+  const isFlexible=/^F\d{3}$/.test(username);
+  const isRegular=/^\d{1,5}$/.test(username);
+  if(!isFlexible && !isRegular){
+    return res.status(400).json({error:'Enter a valid Regular username or Flexible username in F + 3 digits format.'});
+  }
+
+  const result=await pool.query(
+    "SELECT id,username,full_name,role,is_active FROM accounts WHERE UPPER(username)=UPPER($1) LIMIT 1",
+    [username]
+  );
+  if(!result.rowCount || !result.rows[0].is_active){
+    return res.status(404).json({error:'Active account not found.'});
+  }
+
+  const account=result.rows[0];
+  const role=String(account.role||'').toLowerCase();
+  if(isFlexible && role!=='flexible') return res.status(400).json({error:'This username is not a Flexible account.'});
+  if(isRegular && role!=='regular') return res.status(400).json({error:'This username is not a Regular account.'});
+
+  res.json({account:{id:account.id,username:account.username,name:account.full_name,role:account.role,type:isFlexible?'FLEXIBLE':'REGULAR'}});
+});
+
 router.get('/advance-cash-credit/member', requireAdminPermission('cash_credit'), async (req,res)=>{
   const username=String(req.query.username||'').trim().toUpperCase();
   if(!username) return res.status(400).json({error:'Enter username.'});
@@ -209,10 +236,10 @@ if(!html.includes('id="advanceCashCreditV193Dialog"')){
   if(!html.includes(marker)){console.error('Stage 193 dialog marker missing');process.exit(1);}
   html=html.replace(marker,dialog+marker);
 }
-html=html.replace(/app\.js\?v=\d+/g,'app.js?v=193');
-html=html.replace(/styles\.css\?v=\d+/g,'styles.css?v=193');
-html=html.replace(/bank-transfer-v129\.js\?v=\d+/g,'bank-transfer-v129.js?v=193');
-html=html.replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=193');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=197');
+html=html.replace(/styles\.css\?v=\d+/g,'styles.css?v=197');
+html=html.replace(/bank-transfer-v129\.js\?v=\d+/g,'bank-transfer-v129.js?v=197');
+html=html.replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=197');
 fs.writeFileSync('www/index.html',html);
 
 /* ---------- Admin tile + client ---------- */
@@ -293,7 +320,7 @@ document.addEventListener('click',async(event)=>{
   try{
     if(button){button.disabled=true;button.textContent='CONFIRMING...';}
     const accountType=username.startsWith('F')?'FLEXIBLE':'REGULAR';
-    const response=await fetch((typeof API_BASE!=='undefined'?API_BASE:'')+'/api/admin/cash-credit-v68/member?account='+encodeURIComponent(accountType)+'&username='+encodeURIComponent(username),{
+    const response=await fetch((typeof API_BASE!=='undefined'?API_BASE:'')+'/api/admin/advance-cash-credit-confirm-v197?username='+encodeURIComponent(username),{
       headers:{Authorization:'Bearer '+state.token},
       cache:'no-store'
     });
@@ -302,7 +329,7 @@ document.addEventListener('click',async(event)=>{
     advanceCashCreditConfirmedV193=username;
     if(member){member.textContent=data.account.name+' - '+data.account.username;member.style.display='block';}
     if(type){
-      const flexibleMember=accountType==='FLEXIBLE';
+      const flexibleMember=String(data.account?.type||'').toUpperCase()==='FLEXIBLE';
       [...type.options].forEach(option=>{
         if(!option.value) return;
         option.disabled=flexibleMember && option.value!=='FLEXIBLE';
