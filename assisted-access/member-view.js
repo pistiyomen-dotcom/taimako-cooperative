@@ -47,9 +47,23 @@
         '<p>Administrator-assisted view. Financial actions are not yet enabled.</p>'+
         '<div class="mini-grid">'+rows.map(([name,value])=>'<div><span>'+esc(name)+'</span><b>'+esc(money(value))+'</b></div>').join('')+'</div>'+
         '<p>ACTIVE LOAN: '+esc(money(b.loan_principal))+' | INTEREST: '+esc(money(b.loan_interest))+'</p>'+
+        '<div data-assist-history aria-live="polite"></div>'+
         '<p role="alert" data-assist-error></p>'+
+        '<button type="button" data-assist-history-button>ACTIVITY HISTORY</button> '+
         '<button type="button" data-assist-refresh>REFRESH</button> '+
         '<button type="button" data-assist-return>RETURN TO ADMIN</button></section>';
+      root.querySelector('[data-assist-history-button]').addEventListener('click',async()=>{
+        const target=root.querySelector('[data-assist-history]');
+        try{
+          target.textContent='Loading activity history...';
+          const history=await request('/history');
+          const actions=Array.isArray(history.actions)?history.actions:[];
+          target.innerHTML='<h4>ADMIN-ASSISTED ACTIVITY HISTORY</h4>'+
+            (actions.length?'<ul>'+actions.map(a=>'<li><strong>'+esc(a.action_code)+'</strong> — '+esc(a.performed_by)+
+            ' — '+esc(a.created_at)+' (Ref: '+esc(a.transaction_id||'—')+')</li>').join('')+'</ul>'
+            :'<p>No administrator-assisted activity recorded.</p>');
+        }catch(error){target.textContent=error.message||'Unable to load history';}
+      });
       root.querySelector('[data-assist-refresh]').addEventListener('click',()=>refresh().catch(showError));
       root.querySelector('[data-assist-return]').addEventListener('click',()=>close().catch(showError));
     }
