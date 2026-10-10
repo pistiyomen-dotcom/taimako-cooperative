@@ -198,3 +198,5 @@ require('./stage211-create-account-persist-username.js');
 require('./stage212-create-account-dialog-restore.js');
 
 require('./stage213-create-account-role-reminders.js');
+
+require('./stage214-create-account-role-switch-order.js');
