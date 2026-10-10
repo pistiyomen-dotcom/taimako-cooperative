@@ -34,3 +34,12 @@ jobs:
       - name: Inspect scoped informational elements
         run: |
           grep -in -C 4 -E 'One secure system|Built for both mobile|Stage 10 development|connectionStatus|Shared server connected|function renderApp|dashboardContent.append' www/index.html www/app.js | tail -115 || true
+
+      - name: Verify current welcome message typography
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const html=fs.readFileSync('www/index.html','utf8');
+          for(const value of ['>Welcome</span>','>to</span>','>TMCS LTD</span>','>a cooperative movement</span>','>for achieving</span>','>financial independence</span>',"font-family:'Aclonica'","font-family:'Kingthings Petrock'","clamp(1.9rem,7.3vw,3.35rem)"]){if(!html.includes(value))throw Error('Welcome typography missing: '+value);}
+          console.log('PASS: Enlarged six-line welcome message and both font families present.');
+          NODE
