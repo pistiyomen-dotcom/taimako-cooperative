@@ -192,3 +192,5 @@ require('./stage208-setup-confirm-fix.js');
 require('./stage209-create-account-username.js');
 
 require('./stage210-create-account-name-caps.js');
+
+require('./stage211-create-account-persist-username.js');
