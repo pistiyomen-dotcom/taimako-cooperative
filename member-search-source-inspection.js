@@ -14,3 +14,11 @@ for(const file of files){
   if(i>=0)console.log(src.slice(Math.max(0,i-200),Math.min(src.length,i+2500)).replace(/(password|token|secret)(.{0,20})/gi,'[redacted]'));
  }
 }
+
+const auth=fs.readFileSync('server/middleware/auth.js','utf8');
+console.log('AUTH MIDDLEWARE SOURCE',auth.replace(/(password|secret|token)(.{0,20})/gi,'[credential-ref]'));
+const app=fs.readFileSync('www/app.js','utf8');
+for(const p of ['async function api(path','function renderDashboard()','function renderApp()','function dashboardCards(role)']){
+ const i=app.indexOf(p);
+ console.log('FUNCTION',p,'OFFSET',i,'BODY',i>=0?app.slice(i,i+1200).replace(/(password|secret|token)(.{0,20})/gi,'[credential-ref]'):'not found');
+}
