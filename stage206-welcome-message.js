@@ -1,0 +1,12 @@
+const fs=require('fs');
+const path='www/index.html';
+let html=fs.readFileSync(path,'utf8');
+const old='<h2>Wellcome to TMCS LTD a cooperative movement for achieving financial independence.</h2>';
+if(!html.includes(old))throw new Error('Public welcome message not found: refusing unrelated changes');
+const updated='<h2 class="tmcs-welcome-title-v206"><span class="tmcs-welcome-lead-v206">Welcome to TMCS LTD</span><span class="tmcs-welcome-italic-v206">a cooperative movement</span><span class="tmcs-welcome-italic-v206">for achieving</span><span class="tmcs-welcome-italic-v206">financial independence.</span></h2>';
+html=html.replace(old,updated);
+const css='<style>\n@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&display=swap");\n.tmcs-welcome-title-v206 .tmcs-welcome-lead-v206,.tmcs-welcome-title-v206 .tmcs-welcome-italic-v206{display:block;}\n.tmcs-welcome-title-v206 .tmcs-welcome-italic-v206{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-weight:700;letter-spacing:.012em;line-height:1.12;}\n</style>\n';
+if(!html.includes('</head>'))throw Error('Head tag missing');
+html=html.replace('</head>',css+'</head>');
+fs.writeFileSync(path,html);
+console.log('Public welcome message updated with four exact lines and distinctive italic serif font.');
