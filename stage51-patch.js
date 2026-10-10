@@ -190,3 +190,5 @@ require('./stage207-admin-information.js');
 require('./stage208-setup-confirm-fix.js');
 
 require('./stage209-create-account-username.js');
+
+require('./stage210-create-account-name-caps.js');
