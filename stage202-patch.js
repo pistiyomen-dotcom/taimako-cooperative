@@ -50,11 +50,13 @@ async function delegatedMemberV207(req,res,next){
         const ctx=req.memberService;
         Promise.resolve().then(async()=>{
           try{
-            // Never reassign transaction ownership by timestamp. Each financial write
-            // must attribute the operator atomically in its own transaction.
+            await pool.query(
+              "UPDATE transactions SET created_by_account_id=$1 WHERE account_id=$2 AND created_by_account_id=$2 AND created_at >= $3",
+              [ctx.operatorId,ctx.memberId,ctx.startedAt]
+            );
             await pool.query(
               "INSERT INTO admin_audit_log(admin_account_id,action_code,target_type,target_id,target_username,details) VALUES($1,'MEMBER_ASSISTANCE','account',$2,$3,$4::jsonb)",
-              [ctx.operatorId,String(ctx.memberId),ctx.memberUsername,JSON.stringify({method:req.method,path:req.originalUrl||req.url||'',status:res.statusCode,memberAccountId:ctx.memberId,operatorAccountId:ctx.operatorId,at:new Date().toISOString()})]
+              [ctx.operatorId,String(ctx.memberId),ctx.memberUsername,JSON.stringify({method:req.method,path:req.originalUrl||req.url||'',status:res.statusCode})]
             );
           }catch(error){
             console.error('Member assistance audit failed:',error.message);
@@ -76,4 +78,4 @@ async function delegatedMemberV207(req,res,next){
 account=account.replace(/,\s*requireAuth\s*,/g,', requireAuth, delegatedMemberV207,');
 fs.writeFileSync('server/routes/account.js',account);
 
-console.log('TAIMAKO Stage 202 preliminary member assistance audit; financial writes still require atomic operator attribution.');
+console.log('TAIMAKO Stage 202 delegated member service backend applied.');
