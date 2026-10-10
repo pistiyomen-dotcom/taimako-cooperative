@@ -200,3 +200,5 @@ require('./stage212-create-account-dialog-restore.js');
 require('./stage213-create-account-role-reminders.js');
 
 require('./stage214-create-account-role-switch-order.js');
+
+require('./stage215-create-account-role-switch-final.js');
