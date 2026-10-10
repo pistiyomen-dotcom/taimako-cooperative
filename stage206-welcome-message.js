@@ -10,11 +10,11 @@ const css=`<style>
 @import url('https://fonts.cdnfonts.com/css/kingthings-petrock');
 .hero .tmcs-welcome-title-v206{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%;max-width:none;margin:0 auto;color:#191919;gap:0;line-height:1.03;}
 .tmcs-welcome-title-v206 span{display:block;text-align:center;width:100%;}
-.tmcs-welcome-title-v206 .tmcs-welcome-ornate-v206{font-family:'Kingthings Petrock',Georgia,serif;font-weight:400;font-size:clamp(2.5rem,9vw,4.5rem);letter-spacing:.02em;line-height:1.16;}
-.tmcs-welcome-title-v206 .tmcs-welcome-to-v206{font-family:'Kingthings Petrock',Georgia,serif;font-size:clamp(2.5rem,9vw,4.5rem);font-weight:400;line-height:.95;}
-.tmcs-welcome-title-v206 .tmcs-welcome-name-v206{font-family:'Aclonica',sans-serif;font-size:clamp(2.6rem,9.5vw,5rem);font-weight:400;letter-spacing:-.025em;white-space:nowrap;line-height:1.18;margin-bottom:.12em;}
-.tmcs-welcome-title-v206 .tmcs-welcome-caption-v206{font-family:'Kingthings Petrock','Trebuchet MS',serif;font-size:clamp(1.5rem,5.7vw,2.7rem);font-weight:400;line-height:1.22;letter-spacing:-.015em;}
-@media(max-width:390px){.tmcs-welcome-title-v206 .tmcs-welcome-name-v206{font-size:clamp(2.25rem,8.7vw,3.8rem)}}
+.tmcs-welcome-title-v206 .tmcs-welcome-ornate-v206{font-family:'Kingthings Petrock',Georgia,serif;font-weight:400;font-size:clamp(3.1rem,11vw,5.4rem);letter-spacing:.02em;line-height:1.16;}
+.tmcs-welcome-title-v206 .tmcs-welcome-to-v206{font-family:'Kingthings Petrock',Georgia,serif;font-size:clamp(3.1rem,11vw,5.4rem);font-weight:400;line-height:.95;}
+.tmcs-welcome-title-v206 .tmcs-welcome-name-v206{font-family:'Aclonica',sans-serif;font-size:clamp(2.8rem,10.5vw,5.6rem);font-weight:400;letter-spacing:-.025em;white-space:nowrap;line-height:1.18;margin-bottom:.12em;}
+.tmcs-welcome-title-v206 .tmcs-welcome-caption-v206{font-family:'Kingthings Petrock','Trebuchet MS',serif;font-size:clamp(1.9rem,7.3vw,3.35rem);font-weight:400;line-height:1.22;letter-spacing:-.015em;}
+@media(max-width:390px){.tmcs-welcome-title-v206 .tmcs-welcome-name-v206{font-size:clamp(2.4rem,9vw,4rem)}}
 </style>
 `;
 if(!html.includes('</head>'))throw Error('Head tag missing');
