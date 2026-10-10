@@ -2,7 +2,7 @@ name: Member Search source inspection
 on:
   push:
     branches: [fix/member-search-only]
-    paths: ['.github/workflows/source-diagnostics.yml']
+    paths: ['.github/workflows/source-diagnostics.yml', 'member-search-source-inspection.js']
   workflow_dispatch:
 jobs:
   inspect:
