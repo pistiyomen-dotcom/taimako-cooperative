@@ -3,9 +3,9 @@ let app=fs.readFileSync('www/app.js','utf8');
 let html=fs.readFileSync('www/index.html','utf8');
 let admin=fs.readFileSync('server/routes/admin.js','utf8');
 // Remove all dedicated Member Search UI created by the prior stage.
+// Remove legacy Member Search without recreating Stage 200.
 const mark=app.indexOf('/* tmcsMemberSearchFreshV203 */');
-if(mark<0)throw Error('Member Search Stage 200 block missing');
-app=app.slice(0,mark);
+if(mark>=0)app=app.slice(0,mark);
 app=app.replace(/^.*\['MEMBER SEARCH',[^\n]*\n/gm,'');
 app=app.replace(/^.*if \(title === 'MEMBER SEARCH'\) \{[^\n]*\n/gm,'');
 app=app.replace(/^.*const memberSearch(?:Dialog|Form|Error|Result) = document\.getElementById\([^\n]*\n/gm,'');
