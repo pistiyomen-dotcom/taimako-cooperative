@@ -11,5 +11,8 @@ assert.match(stage,/tmcsOpenAssistedMemberV210/);
 assert.match(view,/RETURN TO ADMIN/);
 assert.match(router,/router\.get\('\/dashboard'/);
 assert.match(router,/readOnly:true/);
+assert.match(router,/router\.get\('\/history'/);
+assert.match(router,/WHERE a\.member_account_id=\$1/);
+assert.match(router,/performed_by/);
 assert.doesNotMatch(chain,/require\('\.\/assisted-access\/stage210-dev-integration\.js'\)/);
 console.log('PASS: staged read-only assisted Member Search integration checks.');
