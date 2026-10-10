@@ -25,6 +25,8 @@ async function main(){
  assert.equal(member.member_account_id,20);
  await recordAction(client,member,'WITHDRAWAL_REQUEST',{amount:1000},99);
  assert.ok(calls.some(c=>c.sql.startsWith('INSERT INTO member_assistance_actions')&&c.args[1]===7&&c.args[2]===20));
+ await assert.rejects(()=>recordAction(client,{id:42},'WITHDRAWAL_REQUEST',{}),/Verified assistance session required/);
+ await assert.rejects(()=>recordAction(client,member,'bad action',{}),/Invalid audit action/);
  assert.equal(await end(pool,created.token,7),true);
  await assert.rejects(()=>start(pool,7,'../../admin'),/Invalid member username/);
  await assert.rejects(()=>resolve(pool,'bad-token',7),/Invalid assistance session/);
