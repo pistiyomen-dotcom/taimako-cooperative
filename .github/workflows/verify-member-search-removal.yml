@@ -47,3 +47,10 @@ jobs:
       - name: Inspect create-account success handler
         run: |
           grep -n -A65 -B12 -E "createAccountForm.addEventListener|createAccountSuccess.textContent|createAccountForm.reset" www/app.js | tail -180 || true
+
+      - name: Inspect username reminder runtime
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');const a=fs.readFileSync('www/app.js','utf8');
+          for(const term of ["function updateAccountHints()", "tmcsRestoreCreatedUsernameV213", "createAccountForm.addEventListener('submit'", "newRole.addEventListener('change'"]){const i=a.indexOf(term);console.log('SNAPSHOT',term,'at',i, a.slice(Math.max(0,i-150),i+1500));}
+          NODE
