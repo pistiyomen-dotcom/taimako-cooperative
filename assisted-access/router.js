@@ -50,6 +50,26 @@ function createAssistanceRouter({pool, requireAuth}) {
       res.status(500).json({error:'Unable to load member dashboard'});
     }
   });
+  // Read-only audit history for the current member. Scoped by the verified
+  // admin assistance session; no caller-supplied account ID is accepted.
+  router.get('/history', assistanceContext({pool}), async (req,res)=>{
+    try {
+      const ctx=req.assistance;
+      const result=await pool.query(
+        `SELECT a.id,a.action_code,a.transaction_id,a.details,a.created_at,
+          operator.username AS performed_by
+          FROM member_assistance_actions a
+          JOIN accounts operator ON operator.id=a.operator_account_id
+          WHERE a.member_account_id=$1
+          ORDER BY a.created_at DESC,a.id DESC LIMIT 100`,
+        [ctx.memberAccountId]);
+      res.set('Cache-Control','no-store');
+      res.json({memberUsername:ctx.memberUsername,actions:result.rows});
+    }catch(error){
+      console.error('Assisted action history failed',error);
+      res.status(500).json({error:'Unable to load assisted account history'});
+    }
+  });
   router.post('/end', async (req,res)=>{
     if (!adminId(req)) return res.status(403).json({error:'Administrator login required'});
     const ended=await sessionService.end(pool,req.headers['x-tmcs-assistance-token'],adminId(req));
