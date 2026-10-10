@@ -182,3 +182,5 @@ require('./stage199-patch.js');
 
 
 require('./stage205-remove-member-search.js');
+
+require('./stage206-welcome-message.js');
