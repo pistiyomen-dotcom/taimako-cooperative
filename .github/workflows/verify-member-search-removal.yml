@@ -1,0 +1,28 @@
+name: Verify Member Search Removal
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'stage205-remove-member-search.js'
+      - 'stage51-patch.js'
+      - '.github/workflows/verify-member-search-removal.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - run: node unpack-parts.js
+      - run: node --check www/app.js
+      - run: node --check server/routes/admin.js
+      - name: Confirm deleted features
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),a=fs.readFileSync('www/app.js','utf8'),h=fs.readFileSync('www/index.html','utf8'),r=fs.readFileSync('server/routes/admin.js','utf8');
+          if(a.includes("['MEMBER SEARCH'") || a.includes('memberLookupFresh') || h.includes('memberLookupFreshDialog') || r.includes("router.get('/members/search'"))throw Error('Member Search still exists');
+          console.log('PASS: Member Search tile, fresh dialog and dedicated API removed');
+          NODE
