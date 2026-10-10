@@ -30,3 +30,7 @@ jobs:
       - name: Inspect public welcome markup
         run: |
           grep -in -C 7 -E 'welcome to|financial independence|cooperative movement' www/index.html www/app.js www/styles.css | head -115 || true
+
+      - name: Inspect scoped informational elements
+        run: |
+          grep -in -C 4 -E 'One secure system|Built for both mobile|Stage 10 development|connectionStatus|Shared server connected|function renderApp|dashboardContent.append' www/index.html www/app.js | tail -115 || true
