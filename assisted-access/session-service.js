@@ -2,7 +2,6 @@
 // Isolated assisted-access service. Not wired to production routes until
 // every financial mutation supports atomic actor attribution.
 const crypto = require('node:crypto');
-const TTL_MS = 15 * 60 * 1000;
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 
 async function start(pool, operatorId, memberUsername) {
@@ -63,10 +62,14 @@ async function end(pool, token, operatorId) {
 // Call inside the SAME db transaction as the financial write, before COMMIT.
 // Do not backfill, infer ownership by timestamp, or mutate historic records.
 async function recordAction(client, session, action, details, transactionId=null) {
-  if (!session || !session.id) throw new Error('Assistance session required');
+  if (!session || !session.id || !session.operator_account_id || !session.member_account_id)
+    throw new Error('Verified assistance session required');
+  if (!client || typeof client.query !== 'function') throw new Error('Database transaction required');
+  const code = String(action||'').trim();
+  if (!/^[A-Z][A-Z0-9_]{1,79}$/.test(code)) throw new Error('Invalid audit action');
   await client.query(
     'INSERT INTO member_assistance_actions(session_id,operator_account_id,member_account_id,action_code,transaction_id,details) VALUES($1,$2,$3,$4,$5,$6::jsonb)',
     [session.id,session.operator_account_id,session.member_account_id,
-      String(action).slice(0,80),transactionId,JSON.stringify(details||{})]);
+      code,transactionId,JSON.stringify(details||{})]);
 }
 module.exports = {start,resolve,end,recordAction};
