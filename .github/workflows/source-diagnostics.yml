@@ -1,20 +1,18 @@
-name: Source diagnostics
+name: Member Search source inspection
 on:
   push:
-    paths:
-      - '.github/workflows/source-diagnostics.yml'
+    branches: [fix/member-search-only]
+    paths: ['.github/workflows/source-diagnostics.yml']
   workflow_dispatch:
 jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm install adm-zip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
       - run: node unpack-parts.js
-      - run: |
-          echo "=== RESET HTML ==="
-          grep -n -A120 -B20 "adminResetDialog\|resetCredentialConfirm\|deleteAccountConfirm\|resetTemporaryCredential\|deleteAccountUsername" www/index.html | head -360 || true
-          echo "=== RESET CSS ==="
-          grep -n -A120 -B20 "reset-section\|secondary\|danger\|dialog-card" www/styles.css | head -360 || true
-          echo "=== RESET JS ==="
-          grep -n -A220 -B20 "openAdminResetV111\|confirmResetCredentialAccountV111\|confirmDeleteAccountV111\|resetCredentialV111\|deleteAccountV111" www/app.js | head -520 || true
+      - name: Inspect only relevant app routes
+        run: node member-search-source-inspection.js
