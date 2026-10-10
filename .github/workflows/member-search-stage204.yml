@@ -1,0 +1,23 @@
+name: Member Search Stage 204 Check
+on:
+  push:
+    branches: [fix/member-search-only]
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - name: Reconstruct original app
+        run: node unpack-parts.js
+      - name: Apply Stage 204 only for verification
+        run: node stage204-member-search-patch.js
+      - name: Syntax check generated browser app
+        run: node --check www/app.js
+      - name: Assert member search opening action
+        run: |
+          node -e "const fs=require('fs'),s=fs.readFileSync('www/app.js','utf8');if(!s.includes('memberSearchOpen204')||!s.includes('OPEN MEMBER ACCOUNT'))process.exit(1);console.log('Member Search opens account view code present')"
