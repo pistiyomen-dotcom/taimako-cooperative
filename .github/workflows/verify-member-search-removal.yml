@@ -43,3 +43,7 @@ jobs:
           for(const value of ['>Welcome</span>','>to</span>','>TMCS LTD</span>','>a cooperative movement</span>','>for achieving</span>','>financial independence</span>',"font-family:'Aclonica'","font-family:'Kingthings Petrock'","clamp(1.9rem,7.3vw,3.35rem)"]){if(!html.includes(value))throw Error('Welcome typography missing: '+value);}
           console.log('PASS: Enlarged six-line welcome message and both font families present.');
           NODE
+
+      - name: Inspect create-account success handler
+        run: |
+          grep -n -A65 -B12 -E "createAccountForm.addEventListener|createAccountSuccess.textContent|createAccountForm.reset" www/app.js | tail -180 || true
