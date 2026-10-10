@@ -186,3 +186,5 @@ require('./stage205-remove-member-search.js');
 require('./stage206-welcome-message.js');
 
 require('./stage207-admin-information.js');
+
+require('./stage208-setup-confirm-fix.js');
