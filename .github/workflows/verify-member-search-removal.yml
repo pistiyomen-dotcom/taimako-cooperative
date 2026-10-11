@@ -64,3 +64,9 @@ jobs:
           node - <<'NODE'
           const fs=require('fs');for(const [p,start,end] of [['www/app.js',"withdrawalForm.addEventListener('submit'","function openTransferDialog"],['server/routes/account.js',"router.post('/withdrawal-requests'","router.get('/withdrawal-requests'"]]){const a=fs.readFileSync(p,'utf8');let i=a.indexOf(start),j=a.indexOf(end,i+start.length);console.log('SECTION',p,a.slice(i,j>i?j:i+9000));}
           NODE
+
+      - name: Diagnose withdrawal form HTML and submit interception
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');for(const p of ['www/index.html','www/app.js']){const a=fs.readFileSync(p,'utf8');for(const term of ['id="withdrawalForm"','id="withdrawalDialog"',"withdrawalForm.addEventListener('submit'","document.addEventListener('submit'"]){let i=a.indexOf(term);console.log('FIND',p,term,i,a.slice(Math.max(0,i-450),i+1800));}}
+          NODE
