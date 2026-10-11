@@ -206,3 +206,5 @@ require('./stage215-create-account-role-switch-final.js');
 require('./stage216-last-created-accounts-from-database.js');
 
 require('./stage217-flexible-withdrawal-submit-guard.js');
+
+require('./stage218-withdrawal-independent-action.js');
