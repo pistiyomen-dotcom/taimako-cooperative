@@ -1,0 +1,15 @@
+const fs=require('fs');
+const p='www/index.html';
+let s=fs.readFileSync(p,'utf8');
+const begin='      <div id="tmcsWithdrawalChargeV221"';
+const i=s.indexOf(begin);
+const j=s.indexOf('</div>',i);
+if(i<0||j<0)throw Error('Charge panel not found');
+const panel=s.slice(i,j+6);
+s=s.slice(0,i)+s.slice(j+6);
+const marker='      <label>Account Details<input id="withdrawalNote" /></label>';
+if(!s.includes(marker))throw Error('Account Details field not found');
+s=s.replace(marker,panel+'\n'+marker);
+if(s.indexOf('tmcsWithdrawalChargeV221')>s.indexOf('id="withdrawalNote"'))throw Error('Charge panel incorrectly ordered');
+fs.writeFileSync(p,s);
+console.log('20% charge acceptance panel moved below Amount, before Account Details.');
