@@ -85,3 +85,9 @@ jobs:
           console.log('SCRIPT TAGS:',h.split('\n').filter(line=>line.includes('app.js')));
           console.log('BUTTON:',h.split('\n').filter(line=>line.includes('tmcsWithdrawalSubmitV218')));
           NODE
+
+      - name: Inspect withdrawal approval and flexible terms
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');for(const p of ['server/routes/account.js','server/routes/admin.js','www/app.js']){const a=fs.readFileSync(p,'utf8');for(const t of ['flexibleWithdrawalTerms','withdrawal-requests','withdrawalRuleHelp','flexible_start_date','management_balance']){let from=0,count=0;while(count<4){let i=a.indexOf(t,from);if(i<0)break;console.log('SECTION',p,t,i,JSON.stringify(a.slice(Math.max(0,i-380),i+1500)));from=i+t.length;count++;}}}
+          NODE
