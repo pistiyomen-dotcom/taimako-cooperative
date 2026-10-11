@@ -101,3 +101,14 @@ jobs:
           if(i<0||j<0) throw new Error('Approval route not found');
           console.log('ADMIN_WITHDRAWAL_APPROVAL',a.slice(i,j).slice(0,13000));
           NODE
+
+      - name: Find management balance storage
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          for(const p of ['server/routes/admin.js','server/db/schema.sql','server/routes/account.js']){
+            const s=fs.readFileSync(p,'utf8');
+            const re=/management[_ ]balance|management_balance|management_balance_ledger|management_fund/ig;
+            let m,n=0;while((m=re.exec(s))&&n++<20){console.log('MANAGEMENT',p,m.index,JSON.stringify(s.slice(Math.max(0,m.index-280),m.index+450)));}
+          }
+          NODE
