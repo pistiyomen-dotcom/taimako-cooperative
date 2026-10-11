@@ -54,3 +54,7 @@ jobs:
           const fs=require('fs');const a=fs.readFileSync('www/app.js','utf8');
           for(const term of ["function updateAccountHints()", "tmcsRestoreCreatedUsernameV213", "createAccountForm.addEventListener('submit'", "newRole.addEventListener('change'"]){const i=a.indexOf(term);console.log('SNAPSHOT',term,'at',i, a.slice(Math.max(0,i-150),i+1500));}
           NODE
+
+      - name: Diagnose Flexible withdrawal routes and UI
+        run: |
+          grep -in -C 9 -E 'flexible.*withdraw|withdraw.*flexible|withdrawalForm|withdrawalRequest' www/app.js server/routes/*.js | head -330 || true
