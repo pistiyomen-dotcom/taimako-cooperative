@@ -71,3 +71,14 @@ jobs:
           node - <<'NODE'
           const fs=require('fs');for(const p of ['www/index.html','www/app.js']){const a=fs.readFileSync(p,'utf8');for(const term of ['id="withdrawalForm"','id="withdrawalDialog"',"withdrawalForm.addEventListener('submit'","document.addEventListener('submit'"]){let i=a.indexOf(term);console.log('FIND',p,term,i,a.slice(Math.max(0,i-450),i+1800));}}
           NODE
+
+      - name: Validate withdrawal button matches handler and its script
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),h=fs.readFileSync('www/index.html','utf8'),a=fs.readFileSync('www/app.js','utf8');
+          console.log('button',h.match(/<button[^>]*SUBMIT WITHDRAWAL REQUEST<\\/button>/g));
+          console.log('app scripts',h.match(/<script[^>]*app\\.js[^>]*><\\/script>/g));
+          console.log('handler',a.includes("document.getElementById('tmcsWithdrawalSubmitV218')?.addEventListener('click'"));
+          console.log('interceptors',a.match(/stopImmediatePropagation|tmcsGuard|addEventListener\\('click'/g)?.length);
+          if(!h.includes('id="tmcsWithdrawalSubmitV218"')||!a.includes("document.getElementById('tmcsWithdrawalSubmitV218')?.addEventListener('click'"))throw Error('Withdrawal button not wired');
+          NODE
