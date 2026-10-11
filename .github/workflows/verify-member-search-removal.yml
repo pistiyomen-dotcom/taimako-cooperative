@@ -91,3 +91,13 @@ jobs:
           node - <<'NODE'
           const fs=require('fs');for(const p of ['server/routes/account.js','server/routes/admin.js','www/app.js']){const a=fs.readFileSync(p,'utf8');for(const t of ['flexibleWithdrawalTerms','withdrawal-requests','withdrawalRuleHelp','flexible_start_date','management_balance']){let from=0,count=0;while(count<4){let i=a.indexOf(t,from);if(i<0)break;console.log('SECTION',p,t,i,JSON.stringify(a.slice(Math.max(0,i-380),i+1500)));from=i+t.length;count++;}}}
           NODE
+
+      - name: Verify Admin withdrawal approval accounting
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'); const a=fs.readFileSync('server/routes/admin.js','utf8');
+          const i=a.indexOf("router.post('/withdrawal-requests/:id/approve'");
+          const j=a.indexOf("router.post('/withdrawal-requests/:id/reject'",i);
+          if(i<0||j<0) throw new Error('Approval route not found');
+          console.log('ADMIN_WITHDRAWAL_APPROVAL',a.slice(i,j).slice(0,13000));
+          NODE
