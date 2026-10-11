@@ -58,3 +58,9 @@ jobs:
       - name: Diagnose Flexible withdrawal routes and UI
         run: |
           grep -in -C 9 -E 'flexible.*withdraw|withdraw.*flexible|withdrawalForm|withdrawalRequest' www/app.js server/routes/*.js | head -330 || true
+
+      - name: Inspect withdrawal submission and account route
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');for(const [p,start,end] of [['www/app.js',"withdrawalForm.addEventListener('submit'","function openTransferDialog"],['server/routes/account.js',"router.post('/withdrawal-requests'","router.get('/withdrawal-requests'"]]){const a=fs.readFileSync(p,'utf8');let i=a.indexOf(start),j=a.indexOf(end,i+start.length);console.log('SECTION',p,a.slice(i,j>i?j:i+9000));}
+          NODE
