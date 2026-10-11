@@ -1,0 +1,14 @@
+const fs=require('fs');
+const htmlPath='www/index.html',swPath='www/sw.js',appPath='www/app.js';
+let html=fs.readFileSync(htmlPath,'utf8');
+let app=fs.readFileSync(appPath,'utf8');
+let sw=fs.readFileSync(swPath,'utf8');
+if(!html.includes('tmcsWithdrawalSubmitV218')||!app.includes("document.getElementById('tmcsWithdrawalSubmitV218')?.addEventListener('click'"))throw Error('Withdrawal action missing');
+if(!/app\.js\?v=\d+/.test(html))throw Error('App script cache marker missing');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=219');
+html=html.replace(/styles\.css\?v=\d+/g,'styles.css?v=219');
+html=html.replace(/bank-transfer-v129\.js\?v=\d+/g,'bank-transfer-v129.js?v=219');
+sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v219';");
+app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=219'");
+fs.writeFileSync(htmlPath,html);fs.writeFileSync(swPath,sw);fs.writeFileSync(appPath,app);
+console.log('Withdrawal script and service worker cache revision 219 applied.');
