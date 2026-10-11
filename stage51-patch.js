@@ -208,3 +208,5 @@ require('./stage216-last-created-accounts-from-database.js');
 require('./stage217-flexible-withdrawal-submit-guard.js');
 
 require('./stage218-withdrawal-independent-action.js');
+
+require('./stage219-withdrawal-cache-refresh.js');
