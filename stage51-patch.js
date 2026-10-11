@@ -214,3 +214,5 @@ require('./stage219-withdrawal-cache-refresh.js');
 require('./stage220-withdrawal-click-bridge.js');
 
 require('./stage221-flexible-withdrawal-rules.js');
+
+require('./stage222-flexible-management-charge.js');
