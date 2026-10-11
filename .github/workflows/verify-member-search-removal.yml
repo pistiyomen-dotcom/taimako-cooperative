@@ -19,6 +19,7 @@ jobs:
       - run: node unpack-parts.js
       - run: node --check www/app.js
       - run: node --check server/routes/admin.js
+      - run: node --check server/routes/account.js
       - name: Confirm deleted features
         run: |
           node - <<'NODE'
