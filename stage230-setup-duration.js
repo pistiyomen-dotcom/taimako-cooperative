@@ -62,16 +62,14 @@ const openEnd=html.indexOf('>',at);
 const close=html.indexOf('</dialog>',openEnd);
 if(close<0)throw Error('Settings close not found');
 html=html.slice(0,close)+panel+html.slice(close);
-const script=`<script id="tmcsSetupDurationControlsV230">
+const script=`/* tmcsSetupDurationControlsV230 */
 (function(){
  const fields={TARGET:'tmcsTargetMinV230',WELFARE:'tmcsWelfareMinV230',CONSTANT:'tmcsConstantMinV230'};
  const floors={TARGET:6,WELFARE:12,CONSTANT:36};
  const notice=()=>document.getElementById('tmcsSetupMinimumNoticeV230');
  async function load(){
   try{
-   const r=await fetch('/api/admin/setup-duration-settings-v230',{credentials:'same-origin'});
-   if(!r.ok)return;
-   const data=await r.json();
+   const data=await api('/api/admin/setup-duration-settings-v230',{cache:'no-store'});
    for(const key of Object.keys(fields))document.getElementById(fields[key]).value=data.minimumMonths[key];
   }catch(_){}
  }
@@ -84,9 +82,7 @@ const script=`<script id="tmcsSetupDurationControlsV230">
     values[key]=n;
    }
    try{
-    const token=localStorage.getItem('taimako_token')||localStorage.getItem('token')||'';
-    const r=await fetch('/api/admin/setup-duration-settings-v230',{method:'PUT',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify({minimumMonths:values})});
-    const data=await r.json();if(!r.ok)throw Error(data.error||'Unable to save');
+    const data=await api('/api/admin/setup-duration-settings-v230',{method:'PUT',body:JSON.stringify({minimumMonths:values})});
     notice().textContent='SETUP DURATION SAVED';
    }catch(err){notice().textContent=err.message;}
   }
@@ -106,8 +102,9 @@ const script=`<script id="tmcsSetupDurationControlsV230">
  document.addEventListener('click',e=>{if(e.target?.closest?.('[data-action="settings"]'))load();},true);
  const obs=new MutationObserver(()=>{if(document.getElementById('adminSettingsDialog')?.open&&!window.tmcsDurationLoadedV230){window.tmcsDurationLoadedV230=true;load();}if(!document.getElementById('adminSettingsDialog')?.open)window.tmcsDurationLoadedV230=false;});
  document.addEventListener('DOMContentLoaded',()=>obs.observe(document.body,{attributes:true,subtree:true,attributeFilter:['open']}));
-})();
-</script>`;
-html=html.replace('</body>',script+'</body>');
+})();`;
 fs.writeFileSync('www/index.html',html);
+let app=fs.readFileSync('www/app.js','utf8');
+app+='\n'+script+'\n';
+fs.writeFileSync('www/app.js',app);
 console.log('Stage 230 minimum setup duration settings and server validation installed.');
