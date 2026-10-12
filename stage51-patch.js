@@ -218,3 +218,5 @@ require('./stage221-flexible-withdrawal-rules.js');
 require('./stage222-flexible-management-charge.js');
 
 require('./stage223-withdrawal-charge-position.js');
+
+require('./stage224-faq-menu.js');
