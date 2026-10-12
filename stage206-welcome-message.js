@@ -57,6 +57,36 @@ const css=`<style>
   .hero .tmcs-welcome-title-v206{margin:12px auto;padding:27px 14px;border-radius:19px}
   .hero .tmcs-welcome-title-v206 .tmcs-welcome-name-v206{font-size:clamp(1.65rem,8.3vw,2.5rem)}
 }
+/* Larger welcome lettering, fitted closely to the available panel area. */
+.hero .tmcs-welcome-title-v206{
+  max-width:1100px;
+  padding:clamp(14px,2.5vw,26px) clamp(10px,2.2vw,24px);
+  gap:clamp(2px,.35vw,5px);
+}
+.hero .tmcs-welcome-title-v206 .tmcs-welcome-ornate-v206{
+  font-size:clamp(3.7rem,10vw,7.4rem);
+  line-height:1.02;
+}
+.hero .tmcs-welcome-title-v206 .tmcs-welcome-to-v206{
+  font-size:clamp(2.9rem,7vw,5.2rem);
+  line-height:1.01;
+}
+.hero .tmcs-welcome-title-v206 .tmcs-welcome-name-v206{
+  font-size:clamp(2.6rem,8.8vw,6.5rem);
+  line-height:1.07;
+}
+.hero .tmcs-welcome-title-v206 .tmcs-welcome-caption-v206{
+  font-size:clamp(2rem,5.9vw,4.15rem);
+  line-height:1.11;
+}
+@media(max-width:480px){
+ .hero .tmcs-welcome-title-v206{padding:17px 9px}
+ .hero .tmcs-welcome-title-v206 .tmcs-welcome-ornate-v206{font-size:clamp(3.2rem,14vw,5rem)}
+ .hero .tmcs-welcome-title-v206 .tmcs-welcome-to-v206{font-size:clamp(2.6rem,11vw,4rem)}
+ .hero .tmcs-welcome-title-v206 .tmcs-welcome-name-v206{font-size:clamp(2.1rem,10vw,3.5rem)}
+ .hero .tmcs-welcome-title-v206 .tmcs-welcome-caption-v206{font-size:clamp(1.75rem,7.8vw,2.7rem)}
+}
+
 </style>
 `;
 if(!html.includes('</head>'))throw Error('Head tag missing');
