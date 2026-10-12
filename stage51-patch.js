@@ -222,3 +222,5 @@ require('./stage223-withdrawal-charge-position.js');
 require('./stage224-faq-menu.js');
 
 require('./stage226-contact-success.js');
+
+require('./stage227-approved-home-picture.js');
