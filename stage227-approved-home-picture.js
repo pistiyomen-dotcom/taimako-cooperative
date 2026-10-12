@@ -23,18 +23,22 @@ const script=`<script id="tmcsApprovedPictureV227">
  function install(){
   if(document.getElementById('tmcsApprovedPictureV227'))return;
   const welcome=document.querySelector('.tmcs-welcome-title-v206');
-  const hero=welcome?.closest('.hero');
-  if(!hero)return;
+  if(!welcome)return;
   const picture=document.createElement('section');
   picture.id='tmcsApprovedPictureV227';
   picture.setAttribute('aria-label','TAIMAKO Cooperative approved home picture');
   picture.innerHTML='<div class="tmcs-approved-picture-frame"><img src="./images/taimako_cooperative_group_portrait.png" alt="TAIMAKO cooperative approved group picture" decoding="async" loading="eager"></div>';
-  hero.insertAdjacentElement('afterend',picture);
+  welcome.insertAdjacentElement('afterend',picture);
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
  else install();
 })();
 </script>`;
 html=html.replace('</head>',css+'</head>').replace('</body>',script+'</body>');
+html=html.replace(/app\\.js\\?v=\\d+/g,'app.js?v=228');
+html=html.replace(/styles\\.css\\?v=\\d+/g,'styles.css?v=228');
+let sw=fs.readFileSync('www/sw.js','utf8');
+sw=sw.replace(/const CACHE = 'taimako-v\\d+';/,"const CACHE = 'taimako-v228';");
+fs.writeFileSync('www/sw.js',sw);
 fs.writeFileSync('www/index.html',html);
-console.log('Stage 227: exact approved image placed below existing welcome panel, with all other page sections preserved.');
+console.log('Stage 227: exact approved image placed immediately after welcome text, with cache refreshed and all other sections preserved.');
