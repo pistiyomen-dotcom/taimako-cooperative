@@ -23,7 +23,7 @@ const js=String.raw`<script id="tmcsSetupDateFormatV229">
    input.setAttribute('aria-label',id==='setupStartV173'?'Start Date, day month year':'End Date, day month year');
    const update=()=>{
     const v=input.value;
-    const ok=/^\\d{4}-\\d{2}-\\d{2}$/.test(v);
+    const ok=/^\d{4}-\d{2}-\d{2}$/.test(v);
     readout.dataset.empty=String(!ok);
     readout.querySelector('.tmcs-date-value-v229').textContent=ok?v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4):'dd/mm/yyyy';
    };
