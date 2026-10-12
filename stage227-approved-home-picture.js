@@ -18,7 +18,7 @@ const css=`<style id="tmcsApprovedPictureStyleV227">
 #tmcsApprovedPictureV227 img{display:block;width:100%;height:auto;object-fit:contain}
 @media(max-width:600px){#tmcsApprovedPictureV227{margin:12px auto 18px;padding:0 6px}#tmcsApprovedPictureV227 .tmcs-approved-picture-frame{border-width:2px;border-radius:16px}}
 </style>`;
-const script=`<script id="tmcsApprovedPictureV227">
+const script=`<script id="tmcsApprovedPictureLoaderV227">
 (function(){
  function install(){
   if(document.getElementById('tmcsApprovedPictureV227'))return;
