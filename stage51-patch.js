@@ -226,3 +226,5 @@ require('./stage226-contact-success.js');
 require('./stage227-approved-home-picture.js');
 
 require('./stage228-date-display.js');
+
+require('./stage229-setup-date-format.js');
