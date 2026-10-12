@@ -49,6 +49,22 @@ jobs:
       - name: Sync Android
         run: npx cap sync android
 
+      - name: Set Android launcher app name
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('android/app/src/main/res/values/strings.xml')
+          s = p.read_text(encoding='utf-8')
+          for key in ('app_name', 'title_activity_main'):
+              pattern = rf'(<string name="{key}">).*?(</string>)'
+              s, count = re.subn(pattern, lambda m: m.group(1) + r'TAIMAKO\nCOOPERATIVE' + m.group(2), s, count=1, flags=re.S)
+              if count != 1:
+                  raise SystemExit(f'Android label resource {key} not found')
+          p.write_text(s, encoding='utf-8')
+          print('Android app label set to TAIMAKO / COOPERATIVE.')
+          PY
+
       - name: Install TAIMAKO official APK icon
         run: |
           python -m pip install Pillow
