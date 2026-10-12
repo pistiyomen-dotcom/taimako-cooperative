@@ -108,3 +108,6 @@ let app=fs.readFileSync('www/app.js','utf8');
 app+='\n'+script+'\n';
 fs.writeFileSync('www/app.js',app);
 console.log('Stage 230 minimum setup duration settings and server validation installed.');
+
+// Keep Advance Cash Credit date presentation in DD/MM/YYYY without changing posting logic.
+require('./stage226-patch.js');
