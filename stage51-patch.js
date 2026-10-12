@@ -232,3 +232,5 @@ require('./stage229-setup-date-format.js');
 require('./stage230-setup-duration.js');
 
 require('./stage231-admin-permissions-load-fix.js');
+
+require('./stage232-admin-permission-initialization.js');
