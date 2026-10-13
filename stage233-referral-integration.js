@@ -9,7 +9,7 @@ if(!schema.includes('tmcs_referral_first_saving_v233')){
 }
 let account=fs.readFileSync('server/routes/account.js','utf8');
 if(!account.includes("router.get('/referral-bonus'")){
-  const anchor="const express = require('express');";
+  const anchor='module.exports = router;';
   if(!account.includes(anchor))throw Error('Referral account API anchor not found.');
   const route = [
     "router.get('/referral-bonus', requireAuth, async(req,res)=>{",
@@ -20,7 +20,7 @@ if(!account.includes("router.get('/referral-bonus'")){
     "  }catch(e){res.status(500).json({error:'Unable to read referral bonus.'});}",
     "});"
   ].join('\n');
-  account=account.replace(anchor,anchor+'\n'+route);
+  account=account.replace(anchor,route+'\n'+anchor);
   fs.writeFileSync('server/routes/account.js',account);
 }
 console.log('Stage 233 referral migration and authenticated bonus balance route installed.');
