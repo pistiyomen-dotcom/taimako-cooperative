@@ -4,7 +4,7 @@ const sql=fs.readFileSync('server/db/referral-bonus-v233.sql','utf8');
 let schema=fs.readFileSync('server/db/schema.sql','utf8');
 if(!schema.includes('tmcs_referral_first_saving_v233')){
   if(!schema.includes('\nCOMMIT;')) throw Error('Referral schema insertion point not found.');
-  schema=schema.replace('\nCOMMIT;','\n'+sql+'\nCOMMIT;');
+  const commitAt=schema.lastIndexOf('\nCOMMIT;');\n  schema=schema.slice(0,commitAt)+'\n'+sql+schema.slice(commitAt);
   fs.writeFileSync('server/db/schema.sql',schema);
 }
 let account=fs.readFileSync('server/routes/account.js','utf8');
