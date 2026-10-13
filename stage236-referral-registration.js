@@ -12,7 +12,7 @@ const route=[
 " const found=await client.query('SELECT id,username,role,is_active,created_at FROM accounts WHERE username IN ($1,$2) ORDER BY id FOR UPDATE',[referred,referrer]);",
 " const child=found.rows.find(x=>x.username===referred),sponsor=found.rows.find(x=>x.username===referrer);",
 " if(!child||!sponsor||child.role!=='regular'||sponsor.role!=='regular'||!sponsor.is_active){await client.query('ROLLBACK');return res.status(400).json({error:'Active Regular referrer and new Regular member required.'});}",
-" if(Date.now()-new Date(child.created_at).getTime()>15*60000){await client.query('ROLLBACK');return res.status(409).json({error:'Referral must be recorded when creating the account.'});}",
+
 " const prior=await client.query(\"SELECT 1 FROM transactions WHERE account_id=$1 AND destination IN ('REGULAR','TARGET','CONSTANT','WELFARE') AND amount>0 AND status IN ('approved','completed') LIMIT 1\",[child.id]);",
 " if(prior.rowCount){await client.query('ROLLBACK');return res.status(409).json({error:'Referral cannot be assigned after the first savings deposit.'});}",
 " const link=await client.query('INSERT INTO member_referrals(referred_account_id,referrer_account_id) VALUES($1,$2) ON CONFLICT DO NOTHING RETURNING referred_account_id',[child.id,sponsor.id]);",
