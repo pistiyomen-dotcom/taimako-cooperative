@@ -1,0 +1,60 @@
+name: Verify Referral Bonus Integration
+on:
+  push:
+    branches: [feature/referral-bonus-500]
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: referral_test
+          POSTGRES_PASSWORD: referral_test
+          POSTGRES_DB: referral_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U referral_test -d referral_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install unpack dependencies
+        run: npm install
+      - name: Extract and apply all staged changes
+        run: node unpack-parts.js
+      - name: Verify JavaScript syntax
+        run: |
+          node --check www/app.js
+          node --check server/routes/account.js
+          node --check server/routes/admin.js
+      - name: Test one-time bonus against PostgreSQL
+        env:
+          PGPASSWORD: referral_test
+        run: |
+          psql -v ON_ERROR_STOP=1 -h localhost -U referral_test -d referral_test -f tests/referral-bonus-v233.sql
+      - name: Verify referral integration points
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),assert=require('assert');
+          const app=fs.readFileSync('www/app.js','utf8');
+          const html=fs.readFileSync('www/index.html','utf8');
+          const schema=fs.readFileSync('server/db/schema.sql','utf8');
+          const admin=fs.readFileSync('server/routes/admin.js','utf8');
+          const account=fs.readFileSync('server/routes/account.js','utf8');
+          for(const [name,ok] of Object.entries({
+            referralField:html.includes('id="newReferredByV235"'),
+            referralTile:app.includes("['REFERRAL BONUS', '']"),
+            registrationCapture:app.includes('tmcsReferralCaptureV236'),
+            referralRoute:admin.includes("router.post('/referral-link-v236'"),
+            authenticatedBalanceRoute:account.includes("router.get('/referral-bonus'"),
+            uniqueAwardTable:schema.includes('referred_account_id BIGINT PRIMARY KEY REFERENCES accounts(id)'),
+            savingsTrigger:schema.includes('tmcs_referral_first_saving_v233')
+          })){console.log(name,ok?'OK':'MISSING');assert(ok,name);}
+          NODE
