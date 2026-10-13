@@ -50,7 +50,7 @@ jobs:
           const account=fs.readFileSync('server/routes/account.js','utf8');
           for(const [name,ok] of Object.entries({
             referralField:html.includes('id="newReferredByV235"'),
-            referralTile:app.includes("['REFERRAL BONUS', 'View referral bonus balance']"),
+            referralTile:app.includes("['REFERRAL BONUS', '']"),
             registrationCapture:app.includes('tmcsReferralCaptureV236'),
             referralRoute:admin.includes("router.post('/referral-link-v236'"),
             authenticatedBalanceRoute:account.includes("router.get('/referral-bonus'"),
