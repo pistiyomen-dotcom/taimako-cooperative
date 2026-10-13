@@ -31,7 +31,7 @@ const inputAnchor="document.getElementById('newUsername').addEventListener('inpu
 if(!app.includes(inputAnchor))throw Error('Create Account input listener missing');
 const capture="let tmcsReferralCaptureV236='';\ncreateAccountForm.addEventListener('submit',()=>{tmcsReferralCaptureV236=String(document.getElementById('newReferredByV235')?.value||'').trim();},true);\n";
 app=app.replace(inputAnchor,capture+inputAnchor);
-const save=" if(selectedRole==='regular'&&tmcsReferralCaptureV236){try{await api('/api/admin/referral-link-v236',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({referredUsername:createdUsername,referrerUsername:tmcsReferralCaptureV236})});}catch(refError){createAccountError.textContent='Account created but referral NOT saved: '+(refError?.message||'Please retry through support.');}}tmcsReferralCaptureV236='';";
+const save=" if(selectedRole==='regular'&&tmcsReferralCaptureV236){try{await api('/api/admin/referral-link-v236',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({referredUsername:createdUsername,referrerUsername:tmcsReferralCaptureV236})});}catch(refError){createAccountError.textContent='Account created but referral NOT saved: '+(refError?.message||'Contact administrator.');}}tmcsReferralCaptureV236='';";
 app=app.replace(marker,marker+save);fs.writeFileSync('www/app.js',app);
 }
 console.log('Referral create account validation and saving wired.');
