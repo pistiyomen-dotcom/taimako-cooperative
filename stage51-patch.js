@@ -237,3 +237,6 @@ require('./stage232-admin-permission-initialization.js');
 
 require('./stage233-referral-integration.js');
 require('./stage234-referral-member-tile.js');
+
+require('./stage235-referral-create-account-field.js');
+require('./stage236-referral-registration.js');
