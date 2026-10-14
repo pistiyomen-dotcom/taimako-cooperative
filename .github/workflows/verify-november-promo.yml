@@ -1,0 +1,57 @@
+name: Verify November Promotion Shares
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'stage51-patch.js'
+      - 'stage237-november-promo-shares.js'
+      - 'server/db/november-promo-v237.sql'
+      - 'tests/november-promo-v237.sql'
+      - '.github/workflows/verify-november-promo.yml'
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: promo_test
+          POSTGRES_PASSWORD: promo_test
+          POSTGRES_DB: promo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U promo_test -d promo_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install source unpack dependency
+        run: npm install
+      - name: Extract and apply staged changes
+        run: node unpack-parts.js
+      - name: Verify JavaScript syntax
+        run: |
+          node --check www/app.js
+          node --check server/routes/account.js
+          node --check server/routes/admin.js
+      - name: Test November promotion rules
+        env:
+          PGPASSWORD: promo_test
+        run: psql -v ON_ERROR_STOP=1 -h localhost -U promo_test -d promo_test -f tests/november-promo-v237.sql
+      - name: Verify integration points
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),assert=require('assert');
+          const account=fs.readFileSync('server/routes/account.js','utf8');
+          const schema=fs.readFileSync('server/db/schema.sql','utf8');
+          assert(schema.includes('tmcs_november_promo_eligibility_v237'),'promotion trigger missing from schema');
+          assert(account.includes('promoSharesMapV237'),'monthly promotion shares missing from member share calculation');
+          assert(account.includes('tmcs_november_promo_share_allocations_v237'),'monthly promotion share query missing');
+          console.log('November promotion integration checks passed.');
+          NODE
