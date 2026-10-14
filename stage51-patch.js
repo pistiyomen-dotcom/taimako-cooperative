@@ -240,3 +240,5 @@ require('./stage234-referral-member-tile.js');
 
 require('./stage235-referral-create-account-field.js');
 require('./stage236-referral-registration.js');
+
+require('./stage237-november-promo-shares.js');
