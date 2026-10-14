@@ -5,7 +5,9 @@ on:
     paths:
       - 'stage51-patch.js'
       - 'stage237-november-promo-shares.js'
+      - 'stage238-november-promo-shares.js'
       - 'server/db/november-promo-v237.sql'
+      - 'server/db/november-promo-v238.sql'
       - 'tests/november-promo-v237.sql'
       - '.github/workflows/verify-november-promo.yml'
   workflow_dispatch:
@@ -51,6 +53,7 @@ jobs:
           const account=fs.readFileSync('server/routes/account.js','utf8');
           const schema=fs.readFileSync('server/db/schema.sql','utf8');
           assert(schema.includes('tmcs_november_promo_eligibility_v237'),'promotion trigger missing from schema');
+          assert(schema.includes('monthly_shares_v'),'corrected monthly share-unit logic missing from schema');
           assert(account.includes('promoSharesMapV237'),'monthly promotion shares missing from member share calculation');
           assert(account.includes('tmcs_november_promo_share_allocations_v237'),'monthly promotion share query missing');
           console.log('November promotion integration checks passed.');
