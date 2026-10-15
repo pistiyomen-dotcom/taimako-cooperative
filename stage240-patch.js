@@ -150,9 +150,14 @@ if(managementLabel<0) throw new Error('Stage 240: existing MANAGEMENT BALANCE ti
 const managementLineStart=app.lastIndexOf('\n',managementLabel)+1;
 let managementLineEnd=app.indexOf('\n',managementLabel);
 if(managementLineEnd<0) managementLineEnd=app.length;
-const managementLine=app.slice(managementLineStart,managementLineEnd);
+let managementLine=app.slice(managementLineStart,managementLineEnd);
 if(!managementLine.includes('naira(b.managementBalance)')) throw new Error('Stage 240: MANAGEMENT BALANCE line did not contain the expected value expression');
 if(!app.includes("['TMCS LTD BALANCE', naira(b.tmcsLTDCooperativeBalance)]")){
+  if(!managementLine.trimEnd().endsWith(',')){
+    app=app.slice(0,managementLineEnd)+','+app.slice(managementLineEnd);
+    managementLineEnd++;
+    managementLine+=',';
+  }
   app=app.slice(0,managementLineEnd)+"\n    ['TMCS LTD BALANCE', naira(b.tmcsLTDCooperativeBalance)],\n    ['TMCS LTD LOAN', naira(b.tmcsLTDLoanBalance)],"+app.slice(managementLineEnd);
 }
 app=app.replace("!['MANAGEMENT BALANCE'].includes(title)","!['MANAGEMENT BALANCE','TMCS LTD BALANCE','TMCS LTD LOAN'].includes(title)");
