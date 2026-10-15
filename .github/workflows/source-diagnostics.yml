@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - '.github/workflows/source-diagnostics.yml'
+      - 'stage240-patch.js'
+      - 'stage239-admin-check-assisted-account.js'
   pull_request:
     paths:
       - '.github/workflows/source-diagnostics.yml'
