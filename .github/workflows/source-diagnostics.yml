@@ -12,9 +12,13 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== RESET HTML ==="
-          grep -n -A120 -B20 "adminResetDialog\|resetCredentialConfirm\|deleteAccountConfirm\|resetTemporaryCredential\|deleteAccountUsername" www/index.html | head -360 || true
-          echo "=== RESET CSS ==="
-          grep -n -A120 -B20 "reset-section\|secondary\|danger\|dialog-card" www/styles.css | head -360 || true
-          echo "=== RESET JS ==="
-          grep -n -A220 -B20 "openAdminResetV111\|confirmResetCredentialAccountV111\|confirmDeleteAccountV111\|resetCredentialV111\|deleteAccountV111" www/app.js | head -520 || true
+          echo "=== ADMIN ROUTES HEAD ==="
+          sed -n '1,260p' server/routes/admin.js
+          echo "=== APP ADMIN DASHBOARD REFERENCES ==="
+          grep -n -A100 -B20 "renderDashboard\|adminCards\|ADMIN'\|admin-dashboard\|dashboard-grid" www/app.js | head -800 || true
+          echo "=== APP API HELPER AND LOGIN ==="
+          grep -n -A80 -B20 "async function api\|function api(\|function renderDashboard\|async function loadDashboard" www/app.js | head -500 || true
+          echo "=== APP ROUTE MAP / ACTIONS ==="
+          grep -n -A30 -B20 "admin-action-card\|actionMap\|titleToAction\|openAccount\|openDashboard" www/app.js | head -700 || true
+          echo "=== SCHEMA ACCOUNT AND TRANSACTION FIELDS ==="
+          grep -n -A45 -B10 "CREATE TABLE.*accounts\|CREATE TABLE.*transactions\|CREATE TABLE.*audit_logs\|CREATE TABLE.*admin_audit" server/db/schema.sql | head -700 || true
