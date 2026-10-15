@@ -19,6 +19,7 @@ jobs:
           node --check server/middleware/auth.js
           node --check server/routes/account.js
           node --check server/routes/admin.js
+          node --check stage240-patch.js
           echo "=== INTEREST / LOAN SERVICE ==="
           sed -n '1,320p' server/services-loans.js || true
           echo "=== ACCOUNT LOAN AND INTEREST ROUTES ==="
@@ -30,4 +31,8 @@ jobs:
           grep -q "adminCheckDialogV239" www/index.html
           grep -q "CHECK" www/app.js
           grep -q "ASSISTED_MEMBER_ACTION" server/middleware/auth.js
+          grep -q "TMCS_COOPERATIVE_LEDGER_V240" server/db/schema.sql
+          grep -q "tmcsLTDCooperativeBalance" server/routes/account.js
+          grep -q "TMCS LTD BALANCE" www/app.js
+          grep -q "currentMonthInterest" www/app.js
           echo "Stage 239 syntax and CHECK feature markers verified."
