@@ -38,4 +38,4 @@ jobs:
           grep -q "tmcsLTDCooperativeBalance" server/routes/account.js
           grep -q "TMCS LTD BALANCE" www/app.js
           grep -q "currentMonthInterest" www/app.js
-          echo "Stage 239 syntax and CHECK feature markers verified."
+          echo "Stage 240 accounting syntax and cooperative ledger markers verified; dividend logic preserved."
