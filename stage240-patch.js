@@ -145,10 +145,16 @@ const interestPattern=/(\[tmcsMonthName\(0\)\.slice\(0,3\)\+' INTEREST',\s*)nair
 const interestBefore=app;
 app=app.replace(interestPattern,"$1naira(b.currentMonthInterest)$2");
 if(app===interestBefore) throw new Error('Stage 240: current-month INTEREST tile marker missing');
-const managementPattern=/(\['MANAGEMENT BALANCE',\s*naira\(b\.managementBalance\)\],)/g;
+const managementPattern=/(['MANAGEMENT BALANCE',\s*naira\(b\.managementBalance\)\],)/g;
+const managementBefore=app;
 app=app.replace(managementPattern,"$1\n    ['TMCS LTD BALANCE', naira(b.tmcsLTDCooperativeBalance)],\n    ['TMCS LTD LOAN', naira(b.tmcsLTDLoanBalance)],");
-/* Keep the original predicate: excluding the two ledger titles here hides them from the Admin balances renderer. */
-app=app.replace("!['MANAGEMENT BALANCE','TMCS LTD BALANCE','TMCS LTD LOAN'].includes(title)","!['MANAGEMENT BALANCE'].includes(title)");
+if(app===managementBefore){
+  const sharesPattern=/([ tmcsMonthName)/;
+  const anchor=/([tmcsMonthName\(0\)\.slice\(0,3\)\+' SHARES',\s*naira\(b\.membershipCard\)\],)/;
+  if(!anchor.test(app)) throw new Error('Stage 240: no existing Admin balance tile insertion anchor found');
+  app=app.replace(anchor,"$1\n    ['TMCS LTD BALANCE', naira(b.tmcsLTDCooperativeBalance)],\n    ['TMCS LTD LOAN', naira(b.tmcsLTDLoanBalance)],");
+}
+app=app.replace("!['MANAGEMENT BALANCE'].includes(title)","!['MANAGEMENT BALANCE','TMCS LTD BALANCE','TMCS LTD LOAN'].includes(title)");
 if(!app.includes("naira(b.currentMonthInterest)")||!app.includes("TMCS LTD BALANCE")||!app.includes("TMCS LTD LOAN")) throw new Error('Stage 240: final Admin balance UI verification failed');
 /* Ensure the browser checks the new service-worker script URL, not the old v154/v239 URL. */
 app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g, "serviceWorker.register('./sw.js?v=240'");
