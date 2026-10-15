@@ -18,10 +18,10 @@ const orderPatch = "/* TAIMAKO_ADMIN_TILE_ORDER_V244 */\n(function(){\n const al
 let app242=fs.readFileSync('www/app.js','utf8');
 app242=app242.replace(/\/\* TAIMAKO_ADMIN_TILE_ORDER_V242 \*\/[\s\S]*?\}\)\(\);\s*/g,'');
 if(!app242.includes('TAIMAKO_ADMIN_TILE_ORDER_V244')) app242 += '\n' + orderPatch + '\n';
-app242=app242.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=243'");
+app242=app242.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=244'");
 fs.writeFileSync('www/app.js',app242);
 html=fs.readFileSync('www/index.html','utf8');
-html=html.replace(/app\.js\?v=\d+/g,'app.js?v=243').replace(/styles\.css\?v=\d+/g,'styles.css?v=243').replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=243');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=244').replace(/styles\.css\?v=\d+/g,'styles.css?v=244').replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=244');
 fs.writeFileSync('www/index.html',html);
 sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v244';");
 fs.writeFileSync('www/sw.js',sw);
