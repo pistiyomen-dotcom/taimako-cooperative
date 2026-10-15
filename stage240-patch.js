@@ -149,6 +149,8 @@ const managementPattern=/(\['MANAGEMENT BALANCE',\s*naira\(b\.managementBalance\
 app=app.replace(managementPattern,"$1\n    ['TMCS LTD BALANCE', naira(b.tmcsLTDCooperativeBalance)],\n    ['TMCS LTD LOAN', naira(b.tmcsLTDLoanBalance)],");
 app=app.replace("!['MANAGEMENT BALANCE'].includes(title)","!['MANAGEMENT BALANCE','TMCS LTD BALANCE','TMCS LTD LOAN'].includes(title)");
 if(!app.includes("naira(b.currentMonthInterest)")||!app.includes("TMCS LTD BALANCE")||!app.includes("TMCS LTD LOAN")) throw new Error('Stage 240: final Admin balance UI verification failed');
+/* Ensure the browser checks the new service-worker script URL, not the old v154/v239 URL. */
+app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g, "serviceWorker.register('./sw.js?v=240'");
 fs.writeFileSync(appPath,app);
 
 /* Bust the existing v239 browser and service-worker caches so members receive the new Admin tiles. */
