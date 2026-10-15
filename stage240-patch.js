@@ -11,7 +11,7 @@ function replaceOnce(source,oldText,newText,label){
 const schemaPath='server/db/schema.sql';
 let schema=fs.readFileSync(schemaPath,'utf8');
 if(!schema.includes('TMCS_COOPERATIVE_LEDGER_V240')){
-  schema+=String.raw\`
+  schema+=String.raw`
 
 -- TMCS_COOPERATIVE_LEDGER_V240
 CREATE TABLE IF NOT EXISTS tmcs_cooperative_ledger (
@@ -100,7 +100,7 @@ DROP TRIGGER IF EXISTS tmcs_cooperative_ledger_v240 ON transactions;
 CREATE TRIGGER tmcs_cooperative_ledger_v240
 AFTER INSERT OR UPDATE OF status,amount,destination,transaction_type ON transactions
 FOR EACH ROW EXECUTE FUNCTION tmcs_apply_cooperative_ledger_v240();
-\`;
+`;
   fs.writeFileSync(schemaPath,schema);
 }
 
@@ -112,9 +112,9 @@ account=replaceOnce(account,
   "let adminFeeTotals={applicationForm:0,flexibleCard:0,membershipCard:0,currentMonthInterest:0,tmcsLTDCooperativeBalance:0,tmcsLTDLoanBalance:0};",
   'admin fee totals initialization');
 
-const oldAdminBlock=String.raw\`    const managementResult=await pool.query('SELECT management_balance FROM cooperative_financials WHERE id=1');
-    adminFeeTotals.managementBalance=money(managementResult.rows[0]?.management_balance);\`;
-const newAdminBlock=String.raw\`    const interestResult=await pool.query(
+const oldAdminBlock=String.raw`    const managementResult=await pool.query('SELECT management_balance FROM cooperative_financials WHERE id=1');
+    adminFeeTotals.managementBalance=money(managementResult.rows[0]?.management_balance);`;
+const newAdminBlock=String.raw`    const interestResult=await pool.query(
       "SELECT COALESCE(SUM(amount),0) AS total FROM transactions WHERE status IN ('approved','completed') AND transaction_type='bank_transfer' AND destination='INTEREST' AND COALESCE(approved_at,created_at) >= date_trunc('month',CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Lagos') AND COALESCE(approved_at,created_at) < date_trunc('month',CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Lagos') + INTERVAL '1 month'"
     );
     adminFeeTotals.currentMonthInterest=money(interestResult.rows[0]?.total);
@@ -122,7 +122,7 @@ const newAdminBlock=String.raw\`    const interestResult=await pool.query(
     adminFeeTotals.tmcsLTDCooperativeBalance=money(cooperativeLedgerResult.rows[0]?.available_balance);
     adminFeeTotals.tmcsLTDLoanBalance=money(cooperativeLedgerResult.rows[0]?.loan_balance);
     const managementResult=await pool.query('SELECT management_balance FROM cooperative_financials WHERE id=1');
-    adminFeeTotals.managementBalance=money(managementResult.rows[0]?.management_balance);\`;
+    adminFeeTotals.managementBalance=money(managementResult.rows[0]?.management_balance);`;
 account=replaceOnce(account,oldAdminBlock,newAdminBlock,'admin balances ledger query');
 const oldResponse="applicationForm: adminFeeTotals.applicationForm, flexibleCard: adminFeeTotals.flexibleCard, membershipCard: adminFeeTotals.membershipCard, managementBalance: adminFeeTotals.managementBalance||0";
 const newResponse="applicationForm: adminFeeTotals.applicationForm, flexibleCard: adminFeeTotals.flexibleCard, membershipCard: adminFeeTotals.membershipCard, managementBalance: adminFeeTotals.managementBalance||0, currentMonthInterest: adminFeeTotals.currentMonthInterest||0, tmcsLTDCooperativeBalance: adminFeeTotals.tmcsLTDCooperativeBalance||0, tmcsLTDLoanBalance: adminFeeTotals.tmcsLTDLoanBalance||0";
