@@ -244,3 +244,5 @@ require('./stage236-referral-registration.js');
 require('./stage237-november-promo-shares.js');
 
 require('./stage238-november-promo-shares.js');
+
+require('./stage239-admin-check-assisted-account.js');
