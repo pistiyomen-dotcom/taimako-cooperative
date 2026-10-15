@@ -38,4 +38,4 @@ jobs:
           grep -q "tmcsLTDCooperativeBalance" server/routes/account.js
           grep -q "TMCS LTD BALANCE" www/app.js
           grep -q "currentMonthInterest" www/app.js
-          echo "Stage 240 accounting source checks completed; dividend-sharing logic remains unchanged."
+          echo "Stage 240 syntax and Admin ledger tiles verified; dividend-sharing logic preserved."
