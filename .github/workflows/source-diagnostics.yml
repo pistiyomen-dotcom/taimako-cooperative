@@ -12,9 +12,11 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== RESET HTML ==="
-          grep -n -A120 -B20 "adminResetDialog\|resetCredentialConfirm\|deleteAccountConfirm\|resetTemporaryCredential\|deleteAccountUsername" www/index.html | head -360 || true
-          echo "=== RESET CSS ==="
-          grep -n -A120 -B20 "reset-section\|secondary\|danger\|dialog-card" www/styles.css | head -360 || true
-          echo "=== RESET JS ==="
-          grep -n -A220 -B20 "openAdminResetV111\|confirmResetCredentialAccountV111\|confirmDeleteAccountV111\|resetCredentialV111\|deleteAccountV111" www/app.js | head -520 || true
+          node --check www/app.js
+          node --check server/middleware/auth.js
+          node --check server/routes/account.js
+          node --check server/routes/admin.js
+          grep -q "adminCheckDialogV239" www/index.html
+          grep -q "CHECK" www/app.js
+          grep -q "ASSISTED_MEMBER_ACTION" server/middleware/auth.js
+          echo "Stage 239 syntax and CHECK feature markers verified."
