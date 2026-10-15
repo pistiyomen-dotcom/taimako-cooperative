@@ -163,3 +163,5 @@ fs.writeFileSync('www/index.html',html);
 let sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v239';");
 fs.writeFileSync('www/sw.js',sw);
 console.log('TAIMAKO Stage 239 CHECK assisted member account access applied.');
+
+require('./stage240-patch.js');
