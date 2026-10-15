@@ -132,7 +132,7 @@ if(!app.includes('assisted-member-banner-v239')){
  "  if(state.assistedAccountId){",
  "    const banner=document.createElement('div');banner.className='assisted-member-banner-v239';banner.style.cssText='display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px;margin-bottom:14px;border:2px solid #b7791f;border-radius:10px;background:#fff8e7;color:#3b2a0a;font-weight:700';",
  "    const label=document.createElement('span');label.textContent='ASSISTED MEMBER ACCOUNT — Administrator: '+String(state.assistedAdminSnapshot&&state.assistedAdminSnapshot.user&&state.assistedAdminSnapshot.user.username||'Admin');",
- "    const exit=document.createElement('button');exit.type='button';exit.className='secondary';exit.textContent='EXIT ASSISTED ACCOUNT';exit.addEventListener('click',exitAssistedAccountV239);",
+ "    const exit=document.createElement('button');exit.type='button';exit.className='secondary';exit.textContent='EXIT ASSISTED ACCOUNT';exit.style.cssText='display:inline-flex!important;align-items:center!important;justify-content:center!important;background:#145c36!important;color:#ffffff!important;border:2px solid #0b4427!important;border-radius:8px!important;padding:12px 18px!important;min-height:44px!important;font-weight:800!important;opacity:1!important;visibility:visible!important;cursor:pointer!important;white-space:nowrap!important;position:relative!important;z-index:5!important;';exit.addEventListener('click',exitAssistedAccountV239);",
  "    banner.append(label,exit);dashboardContent.appendChild(banner);",
  "  }"
  ].join('\n');
