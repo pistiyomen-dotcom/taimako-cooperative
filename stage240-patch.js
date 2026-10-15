@@ -145,7 +145,7 @@ const interestPattern=/(\[tmcsMonthName\(0\)\.slice\(0,3\)\+' INTEREST',\s*)nair
 const interestBefore=app;
 app=app.replace(interestPattern,"$1naira(b.currentMonthInterest)$2");
 if(app===interestBefore) throw new Error('Stage 240: current-month INTEREST tile marker missing');
-const managementPattern=/(['MANAGEMENT BALANCE',\s*naira\(b\.managementBalance\)\],)/g;
+const managementPattern=/(\['MANAGEMENT BALANCE',\s*naira\(b\.managementBalance\)\],)/g;
 const managementBefore=app;
 app=app.replace(managementPattern,"$1\n    ['TMCS LTD BALANCE', naira(b.tmcsLTDCooperativeBalance)],\n    ['TMCS LTD LOAN', naira(b.tmcsLTDLoanBalance)],");
 if(app===managementBefore){
