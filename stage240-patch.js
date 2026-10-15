@@ -120,7 +120,7 @@ if(account.includes(adminFeeInitBase)){
 const oldAdminBlock=String.raw`    const managementResult=await pool.query('SELECT management_balance FROM cooperative_financials WHERE id=1');
     adminFeeTotals.managementBalance=money(managementResult.rows[0]?.management_balance);`;
 const newAdminBlock=String.raw`    const interestResult=await pool.query(
-      "SELECT COALESCE(SUM(amount),0) AS total FROM transactions WHERE status IN ('approved','completed') AND transaction_type='bank_transfer' AND destination='INTEREST' AND COALESCE(approved_at,created_at) >= date_trunc('month',CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Lagos') AND COALESCE(approved_at,created_at) < date_trunc('month',CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Lagos') + INTERVAL '1 month'"
+      "SELECT COALESCE(SUM(amount),0) AS total FROM transactions WHERE status IN ('approved','completed') AND transaction_type IN ('bank_transfer','cash_credit') AND destination='INTEREST' AND COALESCE(approved_at,created_at) >= date_trunc('month',CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Lagos') AND COALESCE(approved_at,created_at) < date_trunc('month',CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Lagos') + INTERVAL '1 month'"
     );
     adminFeeTotals.currentMonthInterest=money(interestResult.rows[0]?.total);
     const cooperativeLedgerResult=await pool.query('SELECT available_balance,loan_balance FROM tmcs_cooperative_ledger WHERE id=1');
