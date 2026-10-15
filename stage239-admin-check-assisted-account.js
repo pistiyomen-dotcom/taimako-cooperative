@@ -84,6 +84,9 @@ while((pos=account.indexOf('INSERT INTO transactions',pos))>=0){
  }
  pos=end;
 }
+account=account.replace("VALUES($1,$2,$2,'flexible_transfer_out','FLEXIBLE',$3,'completed',$4,NOW())","VALUES($1,$2,$3,'flexible_transfer_out','FLEXIBLE',$4,'completed',$5,NOW())");
+account=account.replace("[`${reference}-D`, source.id, amount, `Transfer ${reference} to ${target.username} ${destination}${note ? ` • ${note}` : ''}`]","[`${reference}-D`, source.id, (req.auth.actorSub || source.id), amount, `Transfer ${reference} to ${target.username} ${destination}${note ? ` • ${note}` : ''}`]");
+account=account.replace("[`${reference}-C`, target.id, source.id, destination, amount, `Transfer ${reference} from ${source.username}${note ? ` • ${note}` : ''}`]","[`${reference}-C`, target.id, (req.auth.actorSub || source.id), destination, amount, `Transfer ${reference} from ${source.username}${note ? ` • ${note}` : ''}`]");
 fs.writeFileSync('server/routes/account.js',account);
 
 let app=fs.readFileSync('www/app.js','utf8');
