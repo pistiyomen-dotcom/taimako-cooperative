@@ -20,6 +20,7 @@ jobs:
           node --check server/routes/account.js
           node --check server/routes/admin.js
           node --check stage240-patch.js
+          node -e "const fs=require('fs'); const s=fs.readFileSync('stage240-patch.js','utf8'); if(!s.includes('TMCS_COOPERATIVE_LEDGER_V240') || !s.includes('currentMonthInterest')) process.exit(1); console.log('Stage 240 accounting markers verified.')"
           echo "=== INTEREST / LOAN SERVICE ==="
           sed -n '1,320p' server/services-loans.js || true
           echo "=== ACCOUNT LOAN AND INTEREST ROUTES ==="
