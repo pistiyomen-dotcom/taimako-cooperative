@@ -107,10 +107,15 @@ FOR EACH ROW EXECUTE FUNCTION tmcs_apply_cooperative_ledger_v240();
 /* Correct the Admin INTEREST tile and expose the two cooperative ledger balances. */
 const accountPath='server/routes/account.js';
 let account=fs.readFileSync(accountPath,'utf8');
-account=replaceOnce(account,
-  "let adminFeeTotals={applicationForm:0,flexibleCard:0,membershipCard:0};",
-  "let adminFeeTotals={applicationForm:0,flexibleCard:0,membershipCard:0,currentMonthInterest:0,tmcsLTDCooperativeBalance:0,tmcsLTDLoanBalance:0};",
-  'admin fee totals initialization');
+const adminFeeInitBase="let adminFeeTotals={applicationForm:0,flexibleCard:0,membershipCard:0};";
+const adminFeeInitV154="let adminFeeTotals={applicationForm:0,flexibleCard:0,membershipCard:0,previousMonthProfit:0,previousMonthInterest:0,previousMonthShares:0};";
+if(account.includes(adminFeeInitBase)){
+  account=replaceOnce(account,adminFeeInitBase,"let adminFeeTotals={applicationForm:0,flexibleCard:0,membershipCard:0,currentMonthInterest:0,tmcsLTDCooperativeBalance:0,tmcsLTDLoanBalance:0};",'admin fee totals initialization');
+}else if(account.includes(adminFeeInitV154)){
+  account=replaceOnce(account,adminFeeInitV154,"let adminFeeTotals={applicationForm:0,flexibleCard:0,membershipCard:0,previousMonthProfit:0,previousMonthInterest:0,previousMonthShares:0,currentMonthInterest:0,tmcsLTDCooperativeBalance:0,tmcsLTDLoanBalance:0};",'Stage 154 admin fee totals initialization');
+}else if(!account.includes('currentMonthInterest:0,tmcsLTDCooperativeBalance:0')){
+  throw new Error('Stage 240: admin fee totals initialization marker missing');
+}
 
 const oldAdminBlock=String.raw`    const managementResult=await pool.query('SELECT management_balance FROM cooperative_financials WHERE id=1');
     adminFeeTotals.managementBalance=money(managementResult.rows[0]?.management_balance);`;
@@ -139,8 +144,8 @@ let app=fs.readFileSync(appPath,'utf8');
 const oldInterest="[tmcsMonthName(0).slice(0,3)+' INTEREST',naira(b.flexibleCard)],";
 const newInterest="[tmcsMonthName(0).slice(0,3)+' INTEREST',naira(b.currentMonthInterest)],";
 app=replaceOnce(app,oldInterest,newInterest,'current-month interest tile');
-const oldManagement="    ['MANAGEMENT BALANCE',naira(b.managementBalance)]\n  ];";
-const newManagement="    ['MANAGEMENT BALANCE',naira(b.managementBalance)],\n    ['TMCS LTD BALANCE',naira(b.tmcsLTDCooperativeBalance)],\n    ['TMCS LTD LOAN',naira(b.tmcsLTDLoanBalance)]\n  ];";
+const oldManagement="    ['MANAGEMENT BALANCE',naira(b.managementBalance)],";
+const newManagement="    ['MANAGEMENT BALANCE',naira(b.managementBalance)],\n    ['TMCS LTD BALANCE',naira(b.tmcsLTDCooperativeBalance)],\n    ['TMCS LTD LOAN',naira(b.tmcsLTDLoanBalance)],";
 app=replaceOnce(app,oldManagement,newManagement,'Admin balances tile list');
 app=app.replace("!['MANAGEMENT BALANCE'].includes(title)","!['MANAGEMENT BALANCE','TMCS LTD BALANCE','TMCS LTD LOAN'].includes(title)");
 if(!app.includes("naira(b.currentMonthInterest)")||!app.includes("TMCS LTD BALANCE")||!app.includes("TMCS LTD LOAN")) throw new Error('Stage 240: final Admin balance UI verification failed');
