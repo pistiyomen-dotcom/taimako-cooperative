@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - '.github/workflows/source-diagnostics.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/source-diagnostics.yml'
   workflow_dispatch:
 jobs:
   inspect:
@@ -16,6 +19,14 @@ jobs:
           node --check server/middleware/auth.js
           node --check server/routes/account.js
           node --check server/routes/admin.js
+          echo "=== INTEREST / LOAN SERVICE ==="
+          sed -n '1,320p' server/services-loans.js || true
+          echo "=== ACCOUNT LOAN AND INTEREST ROUTES ==="
+          grep -n -i -E -A45 -B20 "loan|interest|repay|repayment" server/routes/account.js | head -800 || true
+          echo "=== ADMIN APPROVAL AND WITHDRAWAL ROUTES ==="
+          grep -n -i -E -A65 -B25 "loan|interest|repay|repayment|withdrawal|payment-requests/:id/approve" server/routes/admin.js | head -1200 || true
+          echo "=== TRANSACTION AND FINANCIAL SCHEMA ==="
+          grep -n -i -E -A12 -B8 "CREATE TABLE.*(transactions|member_balances|cooperative_financials|loans)|transaction_type|loan_interest|loan_principal|management_balance" server/db/schema.sql | head -800 || true
           grep -q "adminCheckDialogV239" www/index.html
           grep -q "CHECK" www/app.js
           grep -q "ASSISTED_MEMBER_ACTION" server/middleware/auth.js
