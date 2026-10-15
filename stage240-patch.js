@@ -154,13 +154,13 @@ fs.writeFileSync(appPath,app);
 /* Bust the existing v239 browser and service-worker caches so members receive the new Admin tiles. */
 const htmlPath='www/index.html';
 let html=fs.readFileSync(htmlPath,'utf8');
-html=html.replace(/app\\.js\\?v=\\d+/g,'app.js?v=240')
-         .replace(/styles\\.css\\?v=\\d+/g,'styles.css?v=240')
-         .replace(/bank-transfer-v129\\.js\\?v=\\d+/g,'bank-transfer-v129.js?v=240')
-         .replace(/cash-credit-v66\\.js\\?v=\\d+/g,'cash-credit-v66.js?v=240');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=240')
+         .replace(/styles\.css\?v=\d+/g,'styles.css?v=240')
+         .replace(/bank-transfer-v129\.js\?v=\d+/g,'bank-transfer-v129.js?v=240')
+         .replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=240');
 fs.writeFileSync(htmlPath,html);
 const swPath='www/sw.js';
-let sw=fs.readFileSync(swPath,'utf8').replace(/const CACHE = 'taimako-v\\d+';/,"const CACHE = 'taimako-v240';");
+let sw=fs.readFileSync(swPath,'utf8').replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v240';");
 fs.writeFileSync(swPath,sw);
 
 
