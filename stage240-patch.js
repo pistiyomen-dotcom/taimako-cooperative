@@ -149,8 +149,7 @@ const managementPattern=/(['MANAGEMENT BALANCE',\s*naira\(b\.managementBalance\)
 const managementBefore=app;
 app=app.replace(managementPattern,"$1\n    ['TMCS LTD BALANCE', naira(b.tmcsLTDCooperativeBalance)],\n    ['TMCS LTD LOAN', naira(b.tmcsLTDLoanBalance)],");
 if(app===managementBefore){
-  const sharesPattern=/([ tmcsMonthName)/;
-  const anchor=/([tmcsMonthName\(0\)\.slice\(0,3\)\+' SHARES',\s*naira\(b\.membershipCard\)\],)/;
+  const anchor=/(\[tmcsMonthName\(0\)\.slice\(0,3\)\+' SHARES',\s*naira\(b\.membershipCard\)\],)/;
   if(!anchor.test(app)) throw new Error('Stage 240: no existing Admin balance tile insertion anchor found');
   app=app.replace(anchor,"$1\n    ['TMCS LTD BALANCE', naira(b.tmcsLTDCooperativeBalance)],\n    ['TMCS LTD LOAN', naira(b.tmcsLTDLoanBalance)],");
 }
