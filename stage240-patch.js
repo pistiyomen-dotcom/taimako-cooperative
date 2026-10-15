@@ -180,3 +180,5 @@ fs.writeFileSync(swPath,sw);
 
 
 console.log('TAIMAKO Stage 240 cooperative ledgers and current-month interest tile applied; dividend-sharing logic untouched.');
+
+require('./stage241-patch.js');
