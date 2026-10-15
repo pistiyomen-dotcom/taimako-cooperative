@@ -12,13 +12,13 @@ jobs:
       - run: npm install adm-zip
       - run: node unpack-parts.js
       - run: |
-          echo "=== ADMIN ROUTES HEAD ==="
-          sed -n '1,260p' server/routes/admin.js
-          echo "=== APP ADMIN DASHBOARD REFERENCES ==="
-          grep -n -A100 -B20 "renderDashboard\|adminCards\|ADMIN'\|admin-dashboard\|dashboard-grid" www/app.js | head -800 || true
-          echo "=== APP API HELPER AND LOGIN ==="
-          grep -n -A80 -B20 "async function api\|function api(\|function renderDashboard\|async function loadDashboard" www/app.js | head -500 || true
-          echo "=== APP ROUTE MAP / ACTIONS ==="
-          grep -n -A30 -B20 "admin-action-card\|actionMap\|titleToAction\|openAccount\|openDashboard" www/app.js | head -700 || true
-          echo "=== SCHEMA ACCOUNT AND TRANSACTION FIELDS ==="
-          grep -n -A45 -B10 "CREATE TABLE.*accounts\|CREATE TABLE.*transactions\|CREATE TABLE.*audit_logs\|CREATE TABLE.*admin_audit" server/db/schema.sql | head -700 || true
+          echo "=== AUTH MIDDLEWARE ==="
+          cat server/middleware/auth.js
+          echo "=== ADMIN MIDDLEWARE ==="
+          cat server/middleware/admin.js
+          echo "=== ACCOUNT ROUTES INSERTS ==="
+          grep -n -A8 -B6 "created_by_account_id\|req.auth.sub\|module.exports" server/routes/account.js | head -1200 || true
+          echo "=== FRONTEND ADMIN TILE / ACTION ==="
+          grep -n -A60 -B15 "function dashboardCards\|function adminAction\|function api(path" www/app.js | head -600 || true
+          echo "=== HTML DIALOG MARKERS ==="
+          grep -n -A20 -B5 "</body>\|adminPermissionsDialog\|memberSearchDialog" www/index.html | tail -300 || true
