@@ -27,4 +27,3 @@ sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v\d+';/,"
 fs.writeFileSync('www/sw.js',sw);
 console.log('TAIMAKO Stage 242 Admin dashboard tile order applied.');
 
-require('./stage242-patch.js');
