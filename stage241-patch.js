@@ -1,0 +1,15 @@
+const fs=require('fs');
+let html=fs.readFileSync('www/index.html','utf8');
+const inputPattern=/<input\b(?=[^>]*\bid=["']loanGuarantorV94["'])[^>]*>/i;
+const match=html.match(inputPattern);
+if(!match)throw new Error('Stage 241: loan guarantor input not found.');
+let input=match[0].replace(/\sdisabled(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?/ig,'').replace(/\sreadonly(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?/ig,'');
+if(!/\btype\s*=\s*["']text["']/i.test(input))input=input.replace('<input','<input type="text"');
+html=html.replace(inputPattern,input).replace(/app\.js\?v=\d+/g,'app.js?v=241').replace(/styles\.css\?v=\d+/g,'styles.css?v=241').replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=241');
+fs.writeFileSync('www/index.html',html);
+let app=fs.readFileSync('www/app.js','utf8');
+app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=241'");
+fs.writeFileSync('www/app.js',app);
+let sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v241';");
+fs.writeFileSync('www/sw.js',sw);
+console.log('TAIMAKO Stage 241 removed the hard-disabled/read-only state from the guarantor username input.');
