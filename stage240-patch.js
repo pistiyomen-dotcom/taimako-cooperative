@@ -180,3 +180,48 @@ fs.writeFileSync(swPath,sw);
 
 
 console.log('TAIMAKO Stage 240 cooperative ledgers and current-month interest tile applied; dividend-sharing logic untouched.');
+
+
+/* Stage 241: make the guarantor username field reliably editable above 90% entitlement. */
+let loanHtml241=fs.readFileSync('www/index.html','utf8');
+const guarantorInput241='<input id="loanGuarantorV94" type="text" placeholder="5-digit Regular username" inputmode="numeric" maxlength="5" autocomplete="off" readonly />';
+if(/<input\b(?=[^>]*\bid=["']loanGuarantorV94["'])[^>]*>/i.test(loanHtml241)){
+  loanHtml241=loanHtml241.replace(/<input\b(?=[^>]*\bid=["']loanGuarantorV94["'])[^>]*>/i,guarantorInput241);
+}else{
+  throw new Error('Stage 241: loan guarantor username input not found in www/index.html');
+}
+loanHtml241=loanHtml241.replace(/app\.js\?v=\d+/g,'app.js?v=241')
+  .replace(/styles\.css\?v=\d+/g,'styles.css?v=241')
+  .replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=241');
+fs.writeFileSync('www/index.html',loanHtml241);
+
+let loanApp241=fs.readFileSync('www/app.js','utf8');
+if(!loanApp241.includes('TMCS_GUARANTOR_FIELD_INTERACTION_V241')){
+loanApp241 += '\n/* TMCS_GUARANTOR_FIELD_INTERACTION_V241 */\n(function(){\n'+
+"  function refreshGuarantorField241(){\n"+
+"    const amountEl=document.getElementById('loanAmountV94');\n"+
+"    const guarantorEl=document.getElementById('loanGuarantorV94');\n"+
+"    if(!amountEl||!guarantorEl)return;\n"+
+"    const b=(typeof state!=='undefined'&&state&&state.balances)||{};\n"+
+"    const savings=Number(b.regular||0)+Number(b.target||0)+Number(b.constant||0)+Number(b.welfare||0);\n"+
+"    const amount=Number(amountEl.value||0);\n"+
+"    const needs=Number.isFinite(amount)&&amount>Number((savings*0.90).toFixed(2));\n"+
+"    guarantorEl.disabled=false;guarantorEl.readOnly=!needs;guarantorEl.required=needs;\n"+
+"    guarantorEl.style.pointerEvents='auto';guarantorEl.style.userSelect='text';guarantorEl.style.webkitUserSelect='text';\n"+
+"    guarantorEl.style.opacity=needs?'1':'0.55';guarantorEl.setAttribute('aria-readonly',String(!needs));\n"+
+"    guarantorEl.placeholder=needs?'Enter 5-digit Regular username':'Available above 90% entitlement';\n"+
+"    if(!needs)guarantorEl.value='';\n"+
+"  }\n"+
+"  document.addEventListener('input',function(e){if(e.target&&e.target.id==='loanAmountV94')refreshGuarantorField241();},true);\n"+
+"  document.addEventListener('change',function(e){if(e.target&&e.target.id==='loanAmountV94')refreshGuarantorField241();},true);\n"+
+"  document.addEventListener('focusin',function(e){if(e.target&&e.target.id==='loanGuarantorV94')refreshGuarantorField241();},true);\n"+
+"  document.addEventListener('DOMContentLoaded',refreshGuarantorField241);\n"+
+"  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refreshGuarantorField241,{once:true});else refreshGuarantorField241();\n"+
+"  const observer241=new MutationObserver(function(){refreshGuarantorField241();});observer241.observe(document.documentElement,{childList:true,subtree:true});\n"+
+"})();\n';
+}
+loanApp241=loanApp241.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=241'");
+fs.writeFileSync('www/app.js',loanApp241);
+let loanSw241=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v241';");
+fs.writeFileSync('www/sw.js',loanSw241);
+console.log('TAIMAKO Stage 241 guarantor username field made reliably editable above 90% entitlement.');
