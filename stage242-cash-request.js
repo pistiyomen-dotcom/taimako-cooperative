@@ -94,14 +94,15 @@ router.get('/expenditure-report-v242', requireAdminPermission('manage_accounts')
 const appPath='www/app.js';
 let app=fs.readFileSync(appPath,'utf8');
 if(!app.includes("['CASH REQUEST', 'Submit a cash requisition']")){
- const labelAt=app.indexOf('MANAGEMENT BALANCE');
- const lineStart=labelAt<0?-1:app.lastIndexOf('\n',labelAt)+1;
- let lineEnd=labelAt<0?-1:app.indexOf('\n',labelAt);
- if(lineEnd<0)lineEnd=app.length;
- if(labelAt<0||!app.slice(lineStart,lineEnd).includes('naira(b.managementBalance)'))throw new Error('Stage 242: Admin dashboard tile anchor missing');
- let line=app.slice(lineStart,lineEnd);
- if(!line.trimEnd().endsWith(',')){app=app.slice(0,lineEnd)+','+app.slice(lineEnd);lineEnd++;line+=',';}
- app=app.slice(0,lineEnd)+"\n    ['CASH REQUEST', 'Submit a cash requisition'],\n    ['EXPENDITURE REPORT', 'View approved cash expenditure'],"+app.slice(lineEnd);
+ const anchor="['CASH CREDIT', 'Post cash directly to Regular or Flexible account'],";
+ if(!app.includes(anchor))throw new Error('Stage 242: Admin action-tile insertion point missing');
+ app=replaceOnceV242(app,anchor,anchor+"\n    ['CASH REQUEST', 'Submit a cash requisition'],\n    ['EXPENDITURE REPORT', 'View approved cash expenditure'],",'Admin action tile collection');
+}
+if(app.includes("'CREATE ACCOUNT':'manage_accounts',")&&!app.includes("'CASH REQUEST':'manage_accounts',")){
+ app=app.replace("'CREATE ACCOUNT':'manage_accounts',","'CREATE ACCOUNT':'manage_accounts',\n    'CASH REQUEST':'manage_accounts',\n    'EXPENDITURE REPORT':'manage_accounts',");
+}
+if(app.includes("'CREATE ACCOUNT','ADMIN PERMISSIONS','CASH CREDIT'")&&!app.includes("'EXPENDITURE REPORT','CREATE ACCOUNT'")){
+ app=app.replace("'CREATE ACCOUNT','ADMIN PERMISSIONS','CASH CREDIT'","'CREATE ACCOUNT','ADMIN PERMISSIONS','CASH CREDIT','CASH REQUEST','EXPENDITURE REPORT'");
 }
 const htmlPath='www/index.html';
 let html=fs.readFileSync(htmlPath,'utf8');
