@@ -104,6 +104,12 @@ if(app.includes("'CREATE ACCOUNT':'manage_accounts',")&&!app.includes("'CASH REQ
 if(app.includes("'CREATE ACCOUNT','ADMIN PERMISSIONS','CASH CREDIT'")&&!app.includes("'EXPENDITURE REPORT','CREATE ACCOUNT'")){
  app=app.replace("'CREATE ACCOUNT','ADMIN PERMISSIONS','CASH CREDIT'","'CREATE ACCOUNT','ADMIN PERMISSIONS','CASH CREDIT','CASH REQUEST','EXPENDITURE REPORT'");
 }
+if(!app.includes("if (title === 'CASH REQUEST')")){
+ const actionAnchor="if (title === 'CASH CREDIT') { window.openCashCreditV67?.(); }";
+ if(!app.includes(actionAnchor))throw new Error('Stage 242: Existing Admin tile click dispatcher not found');
+ app=app.replace(actionAnchor,actionAnchor+"\n  if (title === 'CASH REQUEST') { window.openCashRequestV242?.(); }\n  if (title === 'EXPENDITURE REPORT') { window.openExpenditureReportV242?.(); }");
+}
+
 const htmlPath='www/index.html';
 let html=fs.readFileSync(htmlPath,'utf8');
 if(!html.includes('tmcsCashRequestDialogV242')){
@@ -134,6 +140,9 @@ if(!app.includes('TAIMAKO_CASH_REQUEST_UI_V242')){
  const money=n=>'₦'+Number(n||0).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2});
  const fullDate=v=>{if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?'—':d.toLocaleString('en-GB',{timeZone:'Africa/Lagos',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true});};
  function openCashRequest(){const d=byId('tmcsCashRequestDialogV242');if(d){byId('tmcsCashRequestNoticeV242').textContent='';byId('tmcsCashRequestFormV242').reset();if(!d.open)d.showModal();}}
+ function openExpenditureReport(){const d=byId('tmcsExpenditureDialogV242');if(d&&!d.open)d.showModal();loadExpenditure();}
+ window.openCashRequestV242=openCashRequest;
+ window.openExpenditureReportV242=openExpenditureReport;
  async function loadExpenditure(){
   const notice=byId('tmcsExpenditureNoticeV242');if(notice)notice.textContent='Loading report…';
   try{
