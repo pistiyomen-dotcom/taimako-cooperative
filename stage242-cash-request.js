@@ -239,11 +239,11 @@ if(!app.includes('TAIMAKO_CASH_REQUEST_UI_V242')){
  fs.writeFileSync(appPath,app);
 }
 let finalApp=fs.readFileSync(appPath,'utf8');
-finalApp=finalApp.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=254'");
+finalApp=finalApp.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=256'");
 fs.writeFileSync(appPath,finalApp);
 html=fs.readFileSync(htmlPath,'utf8');
-html=html.replace(/app\.js\?v=\d+/g,'app.js?v=254').replace(/styles\.css\?v=\d+/g,'styles.css?v=254').replace(/bank-transfer-v129\.js\?v=\d+/g,'bank-transfer-v129.js?v=254').replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=254');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=256').replace(/styles\.css\?v=\d+/g,'styles.css?v=256').replace(/bank-transfer-v129\.js\?v=\d+/g,'bank-transfer-v129.js?v=256').replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=256');
 fs.writeFileSync(htmlPath,html);
-let sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v254';");
+let sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v256';");
 fs.writeFileSync('www/sw.js',sw);
 console.log('TAIMAKO Stage 242 CASH REQUEST and EXPENDITURE REPORT routes/UI installed.');
