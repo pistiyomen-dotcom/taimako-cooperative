@@ -130,6 +130,36 @@ if(!html.includes('tmcsCashRequestDialogV242')){
 `;
  if(!html.includes('</body>'))throw new Error('Stage 242: HTML body closing marker missing');
  html=html.replace('</body>',dialogs+'\n</body>');
+ if(!html.includes('TAIMAKO_CASH_TILE_CLICK_FALLBACK_V242')){
+  const fallback=String.raw`
+<script>
+/* TAIMAKO_CASH_TILE_CLICK_FALLBACK_V242 */
+(function(){
+ function norm(v){return String(v||'').replace(/\\s+/g,' ').trim().toUpperCase();}
+ function tileLabel(event){
+  const path=typeof event.composedPath==='function'?event.composedPath():[];
+  if(!path.length){let n=event.target;while(n&&n!==document){path.push(n);n=n.parentElement;}}
+  for(const node of path){
+   if(!node||!node.textContent||!node.tagName)continue;
+   const text=norm(node.innerText||node.textContent);if(text.length>240)continue;
+   if(text==='CASH REQUEST'||text.startsWith('CASH REQUEST SUBMIT A CASH REQUISITION'))return 'CASH REQUEST';
+   if(text==='EXPENDITURE REPORT'||text.startsWith('EXPENDITURE REPORT VIEW APPROVED CASH EXPENDITURE'))return 'EXPENDITURE REPORT';
+  }
+  return '';
+ }
+ document.addEventListener('click',function(event){
+  const label=tileLabel(event);if(!label)return;
+  const dialog=document.getElementById(label==='CASH REQUEST'?'tmcsCashRequestDialogV242':'tmcsExpenditureDialogV242');if(!dialog)return;
+  event.preventDefault();
+  try{if(!dialog.open)dialog.showModal();}catch(_){dialog.setAttribute('open','');}
+  if(label==='CASH REQUEST'){const notice=document.getElementById('tmcsCashRequestNoticeV242');if(notice)notice.textContent='';const form=document.getElementById('tmcsCashRequestFormV242');if(form)form.reset();}
+  else{const notice=document.getElementById('tmcsExpenditureNoticeV242');if(notice)notice.textContent='Use REFRESH REPORT to load the latest figures.';}
+ },true);
+})();
+</script>
+`;
+  html=html.replace('</body>',fallback+'\\n</body>');
+ }
 }
 if(!app.includes('TAIMAKO_CASH_REQUEST_UI_V242')){
  app+=String.raw`
