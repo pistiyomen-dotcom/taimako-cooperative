@@ -135,7 +135,7 @@ if(!html.includes('tmcsCashRequestDialogV242')){
 <script>
 /* TAIMAKO_CASH_TILE_CLICK_FALLBACK_V242 */
 (function(){
- function norm(v){return String(v||'').replace(/\\s+/g,' ').trim().toUpperCase();}
+ function norm(v){return String(v||'').replace(/\s+/g,' ').trim().toUpperCase();}
  function tileLabel(event){
   const path=typeof event.composedPath==='function'?event.composedPath():[];
   if(!path.length){let n=event.target;while(n&&n!==document){path.push(n);n=n.parentElement;}}
@@ -158,7 +158,7 @@ if(!html.includes('tmcsCashRequestDialogV242')){
 })();
 </script>
 `;
-  html=html.replace('</body>',fallback+'\\n</body>');
+  html=html.replace('</body>',fallback+'\n</body>');
  }
 }
 if(!app.includes('TAIMAKO_CASH_REQUEST_UI_V242')){
