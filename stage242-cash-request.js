@@ -171,7 +171,7 @@ if(!app.includes('TAIMAKO_CASH_REQUEST_UI_V242')){
   for(const h of heads){if(!/PENDING WITHDRAWAL/.test(normal(h.textContent)))continue;if(h.closest('.admin-action-card,.dashboard-card,.tile'))continue;const p=h.closest('dialog,[role="dialog"],main,section')||h.parentElement?.parentElement;if(p&&p!==document.body)return p;}
   return null;
  }
- function scanPending(){const host=findPendingHost();if(host)renderPendingRequests(host);}
+ function scanPending(){const host=findPendingHost();if(host&&!host.querySelector('#tmcsPendingCashRequestsV242'))renderPendingRequests(host);}
  function findTileNode(target,label){let n=target;for(let i=0;n&&n!==document.body&&i<7;i++,n=n.parentElement){const t=normal(n.innerText||n.textContent);if(t===label||(t.startsWith(label+' ')&&t.length<180))return n;}return null;}
  document.addEventListener('click',function(e){
   if(findTileNode(e.target,'CASH REQUEST')){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();openCashRequest();return;}
