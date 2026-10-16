@@ -93,10 +93,15 @@ router.get('/expenditure-report-v242', requireAdminPermission('manage_accounts')
 }
 const appPath='www/app.js';
 let app=fs.readFileSync(appPath,'utf8');
-const tileAnchor="['MANAGEMENT BALANCE', naira(b.managementBalance)],";
 if(!app.includes("['CASH REQUEST', 'Submit a cash requisition']")){
- if(!app.includes(tileAnchor))throw new Error('Stage 242: Admin dashboard tile anchor missing');
- app=replaceOnceV242(app,tileAnchor,tileAnchor+"\n    ['CASH REQUEST', 'Submit a cash requisition'],\n    ['EXPENDITURE REPORT', 'View approved cash expenditure'],",'Admin balance tile collection');
+ const labelAt=app.indexOf('MANAGEMENT BALANCE');
+ const lineStart=labelAt<0?-1:app.lastIndexOf('\n',labelAt)+1;
+ let lineEnd=labelAt<0?-1:app.indexOf('\n',labelAt);
+ if(lineEnd<0)lineEnd=app.length;
+ if(labelAt<0||!app.slice(lineStart,lineEnd).includes('naira(b.managementBalance)'))throw new Error('Stage 242: Admin dashboard tile anchor missing');
+ let line=app.slice(lineStart,lineEnd);
+ if(!line.trimEnd().endsWith(',')){app=app.slice(0,lineEnd)+','+app.slice(lineEnd);lineEnd++;line+=',';}
+ app=app.slice(0,lineEnd)+"\n    ['CASH REQUEST', 'Submit a cash requisition'],\n    ['EXPENDITURE REPORT', 'View approved cash expenditure'],"+app.slice(lineEnd);
 }
 const htmlPath='www/index.html';
 let html=fs.readFileSync(htmlPath,'utf8');
