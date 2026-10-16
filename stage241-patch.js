@@ -18,7 +18,7 @@ const orderPatch = String.raw`
 /* TAIMAKO_ADMIN_TILE_ORDER_V252 */
 (function(){
   const priority=['CASH CREDIT','CHECK','ADVANCE CASH CREDIT','LOANS','BALANCES','PENDING APPROVALS','CONTACT REQUESTS','CREATE ACCOUNT','SETUP','SUMMARY REPORT'];
-  const norm=s=>String(s||'').replace(/\\s+/g,' ').trim().toUpperCase();
+  const norm=s=>String(s||'').replace(/\s+/g,' ').trim().toUpperCase();
   function arrange(){
     const all=Array.from(document.querySelectorAll('body *'));
     const matches={};
