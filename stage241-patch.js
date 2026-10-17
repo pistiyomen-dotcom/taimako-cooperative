@@ -26,4 +26,4 @@ sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v\d+';/,"
 fs.writeFileSync('www/sw.js',sw);
 console.log('TAIMAKO Stage 241 retained existing guarantor input fix and removed all Admin tile-order scripts.');
 
-require('./stage242-cash-request.js');
+console.log('TAIMAKO Stage 241 complete; obsolete requisition/expenditure feature is not loaded.');
