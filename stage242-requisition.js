@@ -154,13 +154,16 @@ if(!app.includes(tile)){
   const anchor="    ['CASH CREDIT', 'Post cash directly to Regular or Flexible account'],";
   app=mustReplace(app,anchor,anchor+'\n'+tile,'Admin tile list');
 }
-/* Share the existing Cash Credit permission gate for the new requisition action. */
-const cashCreditPermission = app.match(/(['"])CASH CREDIT\\1\\s*:\\s*(['"])cash_credit\\2\\s*,?/);
-if(!cashCreditPermission) throw new Error('Stage 242: existing Cash Credit permission mapping was not found.');
-if(!/(['"])REQUISITION\\1\\s*:\\s*(['"])cash_credit\\2/.test(app)){
-  app=app.replace(cashCreditPermission[0],cashCreditPermission[0]+"\\n    'REQUISITION': 'cash_credit',");
+/* Add REQUISITION to the same action-permission map used by the Admin dashboard. */
+const permissionStart = app.indexOf('function adminPermissionForAction(title){');
+const permissionEnd = permissionStart < 0 ? -1 : app.indexOf('\nfunction adminActionAllowed(title)', permissionStart);
+if(permissionStart < 0 || permissionEnd < 0) throw new Error('Stage 242: Admin action permission function was not found.');
+let permissionFn = app.slice(permissionStart, permissionEnd);
+if(!permissionFn.includes("'REQUISITION'")){
+  permissionFn = permissionFn.replace("'CASH CREDIT':'cash_credit',", "'CASH CREDIT':'cash_credit',\n    'REQUISITION':'cash_credit',");
+  if(!permissionFn.includes("'REQUISITION':'cash_credit'")) throw new Error('Stage 242: could not add REQUISITION permission entry.');
+  app = app.slice(0, permissionStart) + permissionFn + app.slice(permissionEnd);
 }
-
 if(!app.includes("if (title === 'REQUISITION') { window.openRequisitionV242?.(); }")){
   const anchor="  if (title === 'CASH CREDIT') { window.openCashCreditV67?.(); }";
   app=mustReplace(app,anchor,anchor+"\n  if (title === 'REQUISITION') { window.openRequisitionV242?.(); }",'native Admin action dispatcher');
