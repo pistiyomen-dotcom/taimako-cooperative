@@ -21,13 +21,13 @@ if(!app.includes(approval)){if(!app.includes(tile))throw Error('Stage 243: REQUI
 if(!app.includes("'REQUISITION APPROVAL & SUMMARY':'cash_credit'")){if(!app.includes("'REQUISITION':'cash_credit',"))throw Error('Stage 243: REQUISITION permission entry not found.');app=rep(app,"'REQUISITION':'cash_credit',","'REQUISITION':'cash_credit',\n    'REQUISITION APPROVAL & SUMMARY':'cash_credit',",'permission map');}
 const disp="if (title === 'REQUISITION') { window.openRequisitionV242?.(); }";
 if(!app.includes("title === 'REQUISITION APPROVAL & SUMMARY'")){if(!app.includes(disp))throw Error('Stage 243: REQUISITION dispatcher anchor not found.');app=rep(app,disp,disp+"\n  if (title === 'REQUISITION APPROVAL & SUMMARY') { window.openRequisitionApprovalV243?.(); }",'dispatcher');}
-app=app.replaceAll("serviceWorker.register('./sw.js?v=260'","serviceWorker.register('./sw.js?v=261'");
+app=app.replaceAll("serviceWorker.register('./sw.js?v=260'","serviceWorker.register('./sw.js?v=262'");
 fs.writeFileSync('www/app.js',app);
 let html=fs.readFileSync('www/index.html','utf8');
 if(!html.includes('id="requisitionApprovalV243Dialog"')){
-const dialog='<dialog id="requisitionApprovalV243Dialog"><section class="dialog-card" style="max-width:900px;width:min(94vw,900px);max-height:88vh;overflow:auto"><div class="dialog-head"><h3>REQUISITION APPROVAL & SUMMARY</h3><button type="button" class="icon-btn" id="requisitionApprovalV243Close">×</button></div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0"><label for="requisitionApprovalV243Filter">Requests</label><select id="requisitionApprovalV243Filter"><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="all">All Requests</option></select><button type="button" class="primary" id="requisitionApprovalV243Refresh">REFRESH</button></div><p id="requisitionApprovalV243Message" role="status" aria-live="polite"></p><div id="requisitionApprovalV243List"></div></section></dialog>';
-html=html.replace('</body>',dialog+'\n<script src="requisition-approval-v243.js?v=261"></script>\n</body>');}
-html=html.replaceAll('app.js?v=260','app.js?v=261').replaceAll('styles.css?v=260','styles.css?v=261').replaceAll('requisition-v242.js?v=260','requisition-v242.js?v=261');
+const dialog='<dialog id="requisitionApprovalV243Dialog" style="box-sizing:border-box;width:min(900px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:92vh;padding:0;overflow-x:hidden;overflow-y:auto;border:0;border-radius:12px"><section class="dialog-card" style="box-sizing:border-box;width:100%;min-width:0;max-width:100%;max-height:none;overflow-x:hidden;overflow-y:visible;padding:clamp(12px,2.5vw,24px)"><div class="dialog-head"><h3>REQUISITION APPROVAL & SUMMARY</h3><button type="button" class="icon-btn" id="requisitionApprovalV243Close">×</button></div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0"><label for="requisitionApprovalV243Filter">Requests</label><select id="requisitionApprovalV243Filter"><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="all">All Requests</option></select><button type="button" class="primary" id="requisitionApprovalV243Refresh">REFRESH</button></div><p id="requisitionApprovalV243Message" role="status" aria-live="polite"></p><div id="requisitionApprovalV243List"></div></section></dialog>';
+html=html.replace('</body>',dialog+'\n<script src="requisition-approval-v243.js?v=262"></script>\n</body>');}
+html=html.replaceAll('app.js?v=260','app.js?v=262').replaceAll('styles.css?v=260','styles.css?v=262').replaceAll('requisition-v242.js?v=260','requisition-v242.js?v=262');
 fs.writeFileSync('www/index.html',html);
 const client=[
 "(()=>{const $=id=>document.getElementById(id);",
@@ -42,6 +42,6 @@ const client=[
 "if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init()})();"
 ].join('\n');
 fs.writeFileSync('www/requisition-approval-v243.js',client);
-let sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v[0-9]+';/,"const CACHE = 'taimako-v261';").replaceAll('app.js?v=260','app.js?v=261').replaceAll('styles.css?v=260','styles.css?v=261').replaceAll('requisition-v242.js?v=260','requisition-v242.js?v=261');
+let sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v[0-9]+';/,"const CACHE = 'taimako-v262';").replaceAll('app.js?v=260','app.js?v=261').replaceAll('styles.css?v=260','styles.css?v=261').replaceAll('requisition-v242.js?v=260','requisition-v242.js?v=261');
 if(!sw.includes("'./requisition-approval-v243.js'"))sw=sw.replace("'./requisition-v242.js'","'./requisition-v242.js','./requisition-approval-v243.js'");fs.writeFileSync('www/sw.js',sw);
 console.log('Stage 243 separate requisition approval tile added.');
