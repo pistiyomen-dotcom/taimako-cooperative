@@ -238,6 +238,32 @@ if(!app.includes('TAIMAKO_CASH_REQUEST_UI_V242')){
 `;
  fs.writeFileSync(appPath,app);
 }
+/* TAIMAKO_CASH_TILE_CLICK_FALLBACK_V243: independent of dialog insertion and app.js execution */
+html=fs.readFileSync(htmlPath,'utf8');
+if(!html.includes('TAIMAKO_CASH_TILE_CLICK_FALLBACK_V243')){
+ const fallbackV243=String.raw`
+<script>
+/* TAIMAKO_CASH_TILE_CLICK_FALLBACK_V243 */
+(function(){
+ function norm(v){return String(v||'').replace(/\s+/g,' ').trim().toUpperCase();}
+ function findLabel(e){
+  const path=typeof e.composedPath==='function'?e.composedPath():[];
+  for(const n of path){if(!n||!n.tagName)continue;const t=norm(n.innerText||n.textContent);if(t==='CASH REQUEST'||t.startsWith('CASH REQUEST SUBMIT A CASH REQUISITION'))return 'CASH REQUEST';if(t==='EXPENDITURE REPORT'||t.startsWith('EXPENDITURE REPORT VIEW APPROVED CASH EXPENDITURE'))return 'EXPENDITURE REPORT';}
+  let n=e.target;for(let i=0;n&&n!==document.body&&i<8;i++,n=n.parentElement){const hs=n.querySelectorAll?n.querySelectorAll('h1,h2,h3,h4,h5,strong,b,[role="heading"]'):[];for(const h of hs){const t=norm(h.innerText||h.textContent);if(t==='CASH REQUEST')return 'CASH REQUEST';if(t==='EXPENDITURE REPORT')return 'EXPENDITURE REPORT';}}
+  return '';
+ }
+ window.addEventListener('click',function(e){
+  const label=findLabel(e);if(!label)return;const id=label==='CASH REQUEST'?'tmcsCashRequestDialogV242':'tmcsExpenditureDialogV242';const d=document.getElementById(id);if(!d)return;
+  e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();
+  try{if(!d.open)d.showModal();}catch(_){d.setAttribute('open','');}
+  if(label==='CASH REQUEST'){const f=document.getElementById('tmcsCashRequestFormV242');if(f)f.reset();const n=document.getElementById('tmcsCashRequestNoticeV242');if(n)n.textContent='';}
+  else if(typeof window.openExpenditureReportV242==='function')window.openExpenditureReportV242();
+ },true);
+})();
+</script>
+`;
+ html=html.replace('</body>',fallbackV243+'\n</body>');
+}
 let finalApp=fs.readFileSync(appPath,'utf8');
 finalApp=finalApp.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=257'");
 fs.writeFileSync(appPath,finalApp);
