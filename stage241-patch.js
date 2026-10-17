@@ -27,3 +27,4 @@ fs.writeFileSync('www/sw.js',sw);
 console.log('TAIMAKO Stage 241 retained existing guarantor input fix and removed all Admin tile-order scripts.');
 
 console.log('TAIMAKO Stage 241 complete; obsolete requisition/expenditure feature is not loaded.');
+require('./stage242-requisition.js');
