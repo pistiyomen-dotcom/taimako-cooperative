@@ -210,7 +210,7 @@ if(!loader.includes("api('/api/admin/requisition-requests-v242?status=pending')"
 }
 
 /* Persist the Admin tile, permission map, dispatcher, and Pending Approvals loader edits. */
-app=app.replace(/serviceWorker\\.register\\(['\"]\\.\\/sw\\.js\\?v=\\d+['\"]/g, "serviceWorker.register('./sw.js?v=260'");
+app=app.replace("serviceWorker.register('./sw.js?v=259'", "serviceWorker.register('./sw.js?v=260'");
 fs.writeFileSync('www/app.js',app);
 
 /* The form has one submit path and calls the API directly; no delegated tile click listeners. */
