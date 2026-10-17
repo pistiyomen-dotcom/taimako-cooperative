@@ -38,6 +38,6 @@ const client=[
 "function open(){const d=$('requisitionApprovalV243Dialog');if(!d)return;if(d.showModal)d.showModal();else d.setAttribute('open','');load()}window.openRequisitionApprovalV243=open;function init(){if(!$('requisitionApprovalV243Dialog'))return;$('requisitionApprovalV243Close').onclick=()=>$('requisitionApprovalV243Dialog').close();$('requisitionApprovalV243Refresh').onclick=load;$('requisitionApprovalV243Filter').onchange=load}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init()})();"
 ].join('\n');
 fs.writeFileSync('www/requisition-approval-v243.js',client);
-let sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v\\d+';/,"const CACHE = 'taimako-v261';").replaceAll('app.js?v=260','app.js?v=261').replaceAll('styles.css?v=260','styles.css?v=261').replaceAll('requisition-v242.js?v=260','requisition-v242.js?v=261');
+let sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v[0-9]+';/,"const CACHE = 'taimako-v261';").replaceAll('app.js?v=260','app.js?v=261').replaceAll('styles.css?v=260','styles.css?v=261').replaceAll('requisition-v242.js?v=260','requisition-v242.js?v=261');
 if(!sw.includes("'./requisition-approval-v243.js'"))sw=sw.replace("'./requisition-v242.js'","'./requisition-v242.js','./requisition-approval-v243.js'");fs.writeFileSync('www/sw.js',sw);
 console.log('Stage 243 separate requisition approval tile added.');
