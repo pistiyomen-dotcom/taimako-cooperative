@@ -273,3 +273,5 @@ fs.writeFileSync(htmlPath,html);
 let sw=fs.readFileSync('www/sw.js','utf8').replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v257';");
 fs.writeFileSync('www/sw.js',sw);
 console.log('TAIMAKO Stage 242 CASH REQUEST and EXPENDITURE REPORT routes/UI installed.');
+
+require('./stage243-shared-cash-tile-dispatch.js');
