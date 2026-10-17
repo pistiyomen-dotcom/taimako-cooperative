@@ -311,3 +311,5 @@ sw=sw.replace(/const CACHE = 'taimako-v\\d+';/,"const CACHE = 'taimako-v260';")
 if(!sw.includes("'./requisition-v242.js'"))sw=sw.replace("'./manifest.webmanifest'","'./manifest.webmanifest','./requisition-v242.js'");
 fs.writeFileSync('www/sw.js',sw);
 console.log('TAIMAKO Stage 242 fresh REQUISITION form and Pending Approvals integration applied.');
+
+require('./stage243-requisition-approval.js');
