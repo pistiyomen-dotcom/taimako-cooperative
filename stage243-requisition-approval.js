@@ -1,18 +1,16 @@
 const fs=require('fs');
 function rep(s,a,b,n){if(!s.includes(a))throw Error('Stage 243 missing '+n);return s.replace(a,b)}
 let app=fs.readFileSync('www/app.js','utf8');
-// Undo the earlier requisition insertion into member-payment Pending Approvals.
+// Keep member-payment Pending Approvals unchanged; requisitions have their own tile.
 {
  const a=app.indexOf('async function loadPendingApprovals() {');
  const b=app.indexOf('\nasync function viewReceipt(id)',a);
  if(a>=0&&b>a){
   let loader=app.slice(a,b);
-  loader=loader.replace("const [payments,loans,requisitions]=await Promise.all([\n      api('/api/admin/payment-requests?status=pending'),\n      api('/api/admin/loan-applications?status=pending'),\n      api('/api/admin/requisition-requests-v242?status=pending')\n    ]);","const [payments,loans]=await Promise.all([\n      api('/api/admin/payment-requests?status=pending'),\n      api('/api/admin/loan-applications?status=pending')\n    ]);");
-  loader=loader.replace("const requisitionRequests=requisitions.requests||[];\n    ","");
-  loader=loader.replace("if (!paymentRequests.length && !loanApplications.length && !requisitionRequests.length)","if (!paymentRequests.length && !loanApplications.length)");
-  const rs=loader.indexOf('    requisitionRequests.forEach(request => {');
-  const re=loader.indexOf('\n  } catch(error) {',rs);
-  if(rs>=0&&re>rs)loader=loader.slice(0,rs)+loader.slice(re);
+  loader=loader.replace(/const \[payments,loans,requisitions\]=await Promise\.all\(\[[\s\S]*?\]\);/, "const [payments,loans]=await Promise.all([\n      api('/api/admin/payment-requests?status=pending'),\n      api('/api/admin/loan-applications?status=pending')\n    ]);");
+  loader=loader.replace(/\s*const requisitionRequests=requisitions\.requests\|\|\[\];/, '');
+  loader=loader.replace(/if \(!paymentRequests\.length && !loanApplications\.length && !requisitionRequests\.length\)/, "if (!paymentRequests.length && !loanApplications.length)");
+  loader=loader.replace(/\s*requisitionRequests\.forEach\(request => \{[\s\S]*?\n    \}\);\s*/, '\n');
   app=app.slice(0,a)+loader+app.slice(b);
  }
 }
