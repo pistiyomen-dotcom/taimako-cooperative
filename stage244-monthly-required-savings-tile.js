@@ -4,7 +4,7 @@ const fs=require('fs');
    Read setup metadata only; never post this value to member_balances. */
 let app=fs.readFileSync('www/app.js','utf8');
 const marker="      ['PLANNED AMOUNT',setup?.plannedAmount==null?'Not set':naira(setup.plannedAmount)],";
-const tile="      ['MONTHLY REQUIRED SAVINGS',setup?.monthlyRequiredSavings==null?'Not set':naira(setup.monthlyRequiredSavings)],";
+const tile="      ...(type==='TARGET'||type==='CONSTANT' ? [['MONTHLY REQUIRED SAVINGS',setup?.monthlyRequiredSavings==null?'Not set':naira(setup.monthlyRequiredSavings)]] : []),";
 if(!app.includes(tile)){
   if(!app.includes(marker)) throw Error('Stage 244: savings setup detail marker not found; refusing to build.');
   app=app.replace(marker,marker+'\n'+tile);
