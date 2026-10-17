@@ -5,9 +5,13 @@ on:
       - '.github/workflows/source-diagnostics.yml'
       - 'stage240-patch.js'
       - 'stage239-admin-check-assisted-account.js'
+      - 'stage242-requisition.js'
+      - 'stage243-requisition-approval.js'
   pull_request:
     paths:
       - '.github/workflows/source-diagnostics.yml'
+      - 'stage242-requisition.js'
+      - 'stage243-requisition-approval.js'
   workflow_dispatch:
 jobs:
   inspect:
@@ -22,20 +26,19 @@ jobs:
           node --check server/routes/account.js
           node --check server/routes/admin.js
           node --check stage240-patch.js
+          node --check stage242-requisition.js
+          node --check stage243-requisition-approval.js
+          node --check www/requisition-v242.js
+          node --check www/requisition-approval-v243.js
           node -e "const fs=require('fs'); const s=fs.readFileSync('stage240-patch.js','utf8'); if(!s.includes('TMCS_COOPERATIVE_LEDGER_V240') || !s.includes('currentMonthInterest')) process.exit(1); console.log('Stage 240 accounting markers verified.')"
-          echo "=== INTEREST / LOAN SERVICE ==="
-          sed -n '1,320p' server/services-loans.js || true
-          echo "=== ACCOUNT LOAN AND INTEREST ROUTES ==="
-          grep -n -i -E -A45 -B20 "loan|interest|repay|repayment" server/routes/account.js | head -800 || true
-          echo "=== ADMIN APPROVAL AND WITHDRAWAL ROUTES ==="
-          grep -n -i -E -A65 -B25 "loan|interest|repay|repayment|withdrawal|payment-requests/:id/approve" server/routes/admin.js | head -1200 || true
-          echo "=== TRANSACTION AND FINANCIAL SCHEMA ==="
-          grep -n -i -E -A12 -B8 "CREATE TABLE.*(transactions|member_balances|cooperative_financials|loans)|transaction_type|loan_interest|loan_principal|management_balance" server/db/schema.sql | head -800 || true
-          grep -q "adminCheckDialogV239" www/index.html
-          grep -q "CHECK" www/app.js
-          grep -q "ASSISTED_MEMBER_ACTION" server/middleware/auth.js
-          grep -q "TMCS_COOPERATIVE_LEDGER_V240" server/db/schema.sql
-          grep -q "tmcsLTDCooperativeBalance" server/routes/account.js
-          grep -q "TMCS LTD BALANCE" www/app.js
-          grep -q "currentMonthInterest" www/app.js
-          echo "Stage 240 checks passed: syntax, ledger schema, Admin tiles; dividend code unchanged."
+          echo "=== REQUISITION ROUTES AND FINANCIAL COLUMNS ==="
+          grep -n -i -E -A30 -B12 "requisition-requests-v242|management_balance|tmcs_cooperative_ledger|available_balance" server/routes/account.js server/routes/admin.js | head -1000
+          grep -q "cash_requisition_requests" server/db/schema.sql
+          grep -q "management_balance" server/db/schema.sql
+          grep -q "available_balance" server/db/schema.sql
+          grep -q "REQUISITION APPROVAL & SUMMARY" www/app.js
+          grep -q "openRequisitionApprovalV243" www/app.js
+          grep -q "requisition-approval-v243.js" www/index.html
+          grep -q "requisition-approval-v243.js" www/sw.js
+          ! grep -q "requisitionRequests" <(sed -n '/async function loadPendingApprovals()/,/async function viewReceipt(id)/p' www/app.js)
+          echo "Requisition syntax, dedicated approval UI, and balance-column markers verified."
