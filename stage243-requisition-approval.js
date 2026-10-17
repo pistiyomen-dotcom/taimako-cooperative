@@ -11,15 +11,16 @@ let app=fs.readFileSync('www/app.js','utf8');
   loader=loader.replace(/\s*const requisitionRequests=requisitions\.requests\|\|\[\];/, '');
   loader=loader.replace(/if \(!paymentRequests\.length && !loanApplications\.length && !requisitionRequests\.length\)/, "if (!paymentRequests.length && !loanApplications.length)");
   loader=loader.replace(/\s*requisitionRequests\.forEach\(request => \{[\s\S]*?\n    \}\);\s*/, '\n');
+  if(loader.includes('requisitionRequests')||loader.includes('/api/admin/requisition-requests-v242'))throw Error('Stage 243: requisitions could not be removed from Pending Approvals.');
   app=app.slice(0,a)+loader+app.slice(b);
  }
 }
 const tile="    ['REQUISITION', 'Submit a cash request for approval'],";
 const approval="    ['REQUISITION APPROVAL & SUMMARY', 'Review cash requests and account balances'],";
-if(app.includes(tile)&&!app.includes(approval))app=rep(app,tile,tile+'\n'+approval,'tile anchor');
-if(app.includes("'REQUISITION':'cash_credit',")&&!app.includes("'REQUISITION APPROVAL & SUMMARY':'cash_credit'"))app=rep(app,"'REQUISITION':'cash_credit',","'REQUISITION':'cash_credit',\n    'REQUISITION APPROVAL & SUMMARY':'cash_credit',",'permission map');
+if(!app.includes(approval)){if(!app.includes(tile))throw Error('Stage 243: REQUISITION tile anchor not found.');app=rep(app,tile,tile+'\n'+approval,'tile anchor');}
+if(!app.includes("'REQUISITION APPROVAL & SUMMARY':'cash_credit'")){if(!app.includes("'REQUISITION':'cash_credit',"))throw Error('Stage 243: REQUISITION permission entry not found.');app=rep(app,"'REQUISITION':'cash_credit',","'REQUISITION':'cash_credit',\n    'REQUISITION APPROVAL & SUMMARY':'cash_credit',",'permission map');}
 const disp="if (title === 'REQUISITION') { window.openRequisitionV242?.(); }";
-if(app.includes(disp)&&!app.includes("title === 'REQUISITION APPROVAL & SUMMARY'"))app=rep(app,disp,disp+"\n  if (title === 'REQUISITION APPROVAL & SUMMARY') { window.openRequisitionApprovalV243?.(); }",'dispatcher');
+if(!app.includes("title === 'REQUISITION APPROVAL & SUMMARY'")){if(!app.includes(disp))throw Error('Stage 243: REQUISITION dispatcher anchor not found.');app=rep(app,disp,disp+"\n  if (title === 'REQUISITION APPROVAL & SUMMARY') { window.openRequisitionApprovalV243?.(); }",'dispatcher');}
 app=app.replaceAll("serviceWorker.register('./sw.js?v=260'","serviceWorker.register('./sw.js?v=261'");
 fs.writeFileSync('www/app.js',app);
 let html=fs.readFileSync('www/index.html','utf8');
