@@ -155,7 +155,11 @@ if(!app.includes(tile)){
   app=mustReplace(app,anchor,anchor+'\n'+tile,'Admin tile list');
 }
 /* Share the existing Cash Credit permission gate for the new requisition action. */
-if(app.includes("'CASH CREDIT':'cash_credit',") && !app.includes("'REQUISITION':'cash_credit',")) app=app.replace("'CASH CREDIT':'cash_credit',","'CASH CREDIT':'cash_credit',\n    'REQUISITION':'cash_credit',");
+const cashCreditPermission = app.match(/(['"])CASH CREDIT\\1\\s*:\\s*(['"])cash_credit\\2\\s*,?/);
+if(!cashCreditPermission) throw new Error('Stage 242: existing Cash Credit permission mapping was not found.');
+if(!/(['"])REQUISITION\\1\\s*:\\s*(['"])cash_credit\\2/.test(app)){
+  app=app.replace(cashCreditPermission[0],cashCreditPermission[0]+"\\n    'REQUISITION': 'cash_credit',");
+}
 
 if(!app.includes("if (title === 'REQUISITION') { window.openRequisitionV242?.(); }")){
   const anchor="  if (title === 'CASH CREDIT') { window.openCashCreditV67?.(); }";
