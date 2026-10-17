@@ -154,6 +154,9 @@ if(!app.includes(tile)){
   const anchor="    ['CASH CREDIT', 'Post cash directly to Regular or Flexible account'],";
   app=mustReplace(app,anchor,anchor+'\n'+tile,'Admin tile list');
 }
+/* Share the existing Cash Credit permission gate for the new requisition action. */
+if(app.includes("'CASH CREDIT':'cash_credit',") && !app.includes("'REQUISITION':'cash_credit',")) app=app.replace("'CASH CREDIT':'cash_credit',","'CASH CREDIT':'cash_credit',\n    'REQUISITION':'cash_credit',");
+
 if(!app.includes("if (title === 'REQUISITION') { window.openRequisitionV242?.(); }")){
   const anchor="  if (title === 'CASH CREDIT') { window.openCashCreditV67?.(); }";
   app=mustReplace(app,anchor,anchor+"\n  if (title === 'REQUISITION') { window.openRequisitionV242?.(); }",'native Admin action dispatcher');
