@@ -209,6 +209,10 @@ if(!loader.includes("api('/api/admin/requisition-requests-v242?status=pending')"
   app=app.slice(0,loadStart)+loader+app.slice(loadEnd);
 }
 
+/* Persist the Admin tile, permission map, dispatcher, and Pending Approvals loader edits. */
+app=app.replace(/serviceWorker\\.register\\(['\"]\\.\\/sw\\.js\\?v=\\d+['\"]/g, "serviceWorker.register('./sw.js?v=260'");
+fs.writeFileSync('www/app.js',app);
+
 /* The form has one submit path and calls the API directly; no delegated tile click listeners. */
 let html=fs.readFileSync('www/index.html','utf8');
 if(!html.includes('id="requisitionV242Dialog"')){
@@ -300,7 +304,10 @@ const client=String.raw`
 fs.writeFileSync('www/requisition-v242.js',client);
 
 let sw=fs.readFileSync('www/sw.js','utf8');
-sw=sw.replace(/const CACHE = 'taimako-v\\d+';/,"const CACHE = 'taimako-v260';");
+sw=sw.replace(/const CACHE = 'taimako-v\\d+';/,"const CACHE = 'taimako-v260';")
+  .replace(/app\\.js\\?v=\\d+/g,'app.js?v=260')
+  .replace(/styles\\.css\\?v=\\d+/g,'styles.css?v=260')
+  .replace(/cash-credit-v66\\.js\\?v=\\d+/g,'cash-credit-v66.js?v=260');
 if(!sw.includes("'./requisition-v242.js'"))sw=sw.replace("'./manifest.webmanifest'","'./manifest.webmanifest','./requisition-v242.js'");
 fs.writeFileSync('www/sw.js',sw);
 console.log('TAIMAKO Stage 242 fresh REQUISITION form and Pending Approvals integration applied.');
