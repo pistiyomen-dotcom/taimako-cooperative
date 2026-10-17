@@ -9,7 +9,7 @@ function mustReplace(source,oldText,newText,label){
 const schemaPath='server/db/schema.sql';
 let schema=fs.readFileSync(schemaPath,'utf8');
 if(!schema.includes('TMCS_REQUISITION_REQUESTS_V242')){
-  schema += String.raw\`
+  schema += String.raw`
 
 -- TMCS_REQUISITION_REQUESTS_V242
 CREATE TABLE IF NOT EXISTS cash_requisition_requests (
@@ -30,14 +30,14 @@ CREATE TABLE IF NOT EXISTS cash_requisition_requests (
 );
 CREATE INDEX IF NOT EXISTS cash_requisition_pending_idx
   ON cash_requisition_requests(status,created_at DESC);
-\`;
+`;
   fs.writeFileSync(schemaPath,schema);
 }
 
 /* Submission endpoint uses the signed-in Admin identity and never deducts a balance. */
 let account=fs.readFileSync('server/routes/account.js','utf8');
 if(!account.includes("router.post('/requisition-requests-v242'")){
-  const route=String.raw\`
+  const route=String.raw`
 router.post('/requisition-requests-v242', requireAuth, async (req,res)=>{
   const description=String(req.body?.description||'').trim();
   const amount=Number(req.body?.amount);
@@ -56,7 +56,7 @@ router.post('/requisition-requests-v242', requireAuth, async (req,res)=>{
   );
   res.status(201).json({request:result.rows[0]});
 });
-\`;
+`;
   account=mustReplace(account,'\nmodule.exports = router;',route+'\nmodule.exports = router;','account route export');
   fs.writeFileSync('server/routes/account.js',account);
 }
@@ -64,7 +64,7 @@ router.post('/requisition-requests-v242', requireAuth, async (req,res)=>{
 /* Admin list and decision endpoints; balance is debited only after approval, atomically. */
 let admin=fs.readFileSync('server/routes/admin.js','utf8');
 if(!admin.includes("router.get('/requisition-requests-v242'")){
-  const routes=String.raw\`
+  const routes=String.raw`
 router.get('/requisition-requests-v242', requireAdminPermission('cash_credit'), async(req,res)=>{
   const status=String(req.query.status||'pending').toLowerCase();
   if(!['pending','approved','rejected','all'].includes(status)) return res.status(400).json({error:'Invalid requisition status.'});
@@ -142,7 +142,7 @@ router.post('/requisition-requests-v242/:id/reject', requireAdminPermission('cas
     throw error;
   }finally{client.release();}
 });
-\`;
+`;
   admin=mustReplace(admin,'\nmodule.exports = router;',routes+'\nmodule.exports = router;','admin route export');
   fs.writeFileSync('server/routes/admin.js',admin);
 }
@@ -173,7 +173,7 @@ if(!loader.includes("api('/api/admin/requisition-requests-v242?status=pending')"
   loader=loader.replace("if (!paymentRequests.length && !loanApplications.length)","if (!paymentRequests.length && !loanApplications.length && !requisitionRequests.length)");
   const insertAt=loader.lastIndexOf('  } catch(error) {');
   if(insertAt<0) throw new Error('Stage 242: Pending Approvals render boundary missing.');
-  const render=String.raw\`
+  const render=String.raw`
     requisitionRequests.forEach(request => {
       const item=document.createElement('article');
       item.className='approval-item';
@@ -194,7 +194,7 @@ if(!loader.includes("api('/api/admin/requisition-requests-v242?status=pending')"
       });
       approvalsList.appendChild(item);
     });
-\`;
+`;
   loader=loader.slice(0,insertAt)+render+loader.slice(insertAt);
   app=app.slice(0,loadStart)+loader+app.slice(loadEnd);
 }
@@ -202,7 +202,7 @@ if(!loader.includes("api('/api/admin/requisition-requests-v242?status=pending')"
 /* The form has one submit path and calls the API directly; no delegated tile click listeners. */
 let html=fs.readFileSync('www/index.html','utf8');
 if(!html.includes('id="requisitionV242Dialog"')){
-  const dialog=String.raw\`
+  const dialog=String.raw`
 <dialog id="requisitionV242Dialog">
   <form class="dialog-card" id="requisitionV242Form" autocomplete="off">
     <div class="dialog-head">
@@ -227,7 +227,7 @@ if(!html.includes('id="requisitionV242Dialog"')){
     <div style="margin-top:12px"><button class="primary" id="requisitionV242Submit" type="submit">SUBMIT</button></div>
   </form>
 </dialog>
-\`;
+`;
   html=html.replace('</body>',dialog+'\n<script src="requisition-v242.js?v=260"></script>\n</body>');
 }
 html=html.replace(/app\.js\?v=\d+/g,'app.js?v=260')
@@ -235,7 +235,7 @@ html=html.replace(/app\.js\?v=\d+/g,'app.js?v=260')
          .replace(/cash-credit-v66\.js\?v=\d+/g,'cash-credit-v66.js?v=260');
 fs.writeFileSync('www/index.html',html);
 
-const client=String.raw\`
+const client=String.raw`
 (()=>{
   function el(id){return document.getElementById(id);}
   function session(){try{return JSON.parse(sessionStorage.getItem('tmcs-session')||'{}');}catch(_){return {};}}
@@ -286,7 +286,7 @@ const client=String.raw\`
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
-\`;
+`;
 fs.writeFileSync('www/requisition-v242.js',client);
 
 let sw=fs.readFileSync('www/sw.js','utf8');
