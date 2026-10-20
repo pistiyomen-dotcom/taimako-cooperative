@@ -28,3 +28,5 @@ sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v263';")
 fs.writeFileSync('www/sw.js',sw);
 
 console.log('TAIMAKO Stage 244: Monthly Required Savings tile added for TARGET and CONSTANT; no balance posting added.');
+
+require('./stage245-existing-registered-member.js');
