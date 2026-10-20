@@ -44,10 +44,21 @@ if(!app.includes('tmcsExistingRegistrationCaptureV245')){
   const save=" if(tmcsExistingRegistrationCaptureV245){try{await api('/api/admin/existing-registration-v245',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:createdUsername})});}catch(existingRegError){createAccountError.textContent='Account created, but existing registration status was NOT saved: '+(existingRegError?.message||'Contact administrator.');tmcsExistingRegistrationCaptureV245=false;return;}} tmcsExistingRegistrationCaptureV245=false;";
   app=app.replace(createMarker,createMarker+save);
 }
-const regTilePattern=/\[\s*['"]REGISTRATION['"]\s*,\s*(?:naira\(b\.registration\)|b\.registration)\s*\]/;
-const regTileNew="['REGISTRATION', b.registrationPaidExisting ? 'COMPLETED ✓' : naira(b.registration)]";
-if(regTilePattern.test(app))app=app.replace(regTilePattern,regTileNew);
-else if(!app.includes(regTileNew))throw Error('Stage 245: REGISTRATION tile render marker missing.');
+/* Update the existing tile after each dashboard render without rewriting its balance logic. */
+if(!app.includes('applyExistingRegistrationStatusV245')){
+  app += String.raw`
+function applyExistingRegistrationStatusV245(){
+  if(!(state.balances&&state.balances.registrationPaidExisting===true))return;
+  document.querySelectorAll('#dashboardContent .dashboard-card').forEach(card=>{
+    const heading=card.querySelector('h4'),value=card.querySelector('p');
+    if(heading&&value&&(heading.textContent||'').trim().toUpperCase()==='REGISTRATION')value.textContent='COMPLETED ✓';
+  });
+}
+const existingRegistrationObserverV245=new MutationObserver(()=>applyExistingRegistrationStatusV245());
+if(typeof dashboardContent!=='undefined'&&dashboardContent)existingRegistrationObserverV245.observe(dashboardContent,{childList:true,subtree:true,characterData:true});
+applyExistingRegistrationStatusV245();
+`;
+}
 app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=264'");
 fs.writeFileSync('www/app.js',app);
 let html=fs.readFileSync('www/index.html','utf8');
