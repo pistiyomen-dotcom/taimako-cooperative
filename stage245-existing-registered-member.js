@@ -16,7 +16,8 @@ if(!admin.includes("router.post('/existing-registration-v245'")){
 " const client=await pool.connect();try{await client.query('BEGIN');",
 " const found=await client.query(\"SELECT id,username,role FROM accounts WHERE username=$1 AND role IN ('regular','flexible') FOR UPDATE\",[username]);",
 " if(!found.rows[0]){await client.query('ROLLBACK');return res.status(404).json({error:'New Regular or Flexible account not found.'});}",
-" await client.query('UPDATE member_balances SET registration_paid_existing=TRUE WHERE account_id=$1',[found.rows[0].id]);",
+" const saved=await client.query('UPDATE member_balances SET registration_paid_existing=TRUE WHERE account_id=$1',[found.rows[0].id]);",
+" if(saved.rowCount!==1){await client.query('ROLLBACK');return res.status(409).json({error:'Account exists but its member-balance record was not found; registration status was not saved.'});}",
 " await client.query('COMMIT');res.set('Cache-Control','no-store');res.json({saved:true,username:found.rows[0].username});",
 " }catch(error){await client.query('ROLLBACK').catch(()=>{});console.error('Existing registration status save failed:',error.message);res.status(500).json({error:'Could not save existing registration status.'});}finally{client.release();}",
 "});"
@@ -74,7 +75,7 @@ function applyExistingRegistrationStatusV245(){
     const candidates=card.querySelectorAll('p,span,strong,div');
     for(const value of candidates){
      const text=(value.textContent||'').trim();
-     if(value!==label&&value.children.length===0&&(/^(₦|NGN)/.test(text)||/^0(?:\.00)?$/.test(text))){value.textContent='COMPLETED ✓';return;}
+"     if(value!==label&&value.children.length===0&&(/^(₦|NGN)\\s*[\\d,]+(?:\\.\\d{1,2})?$/.test(text)||/^\\d[\\d,]*(?:\\.\\d{1,2})?$/.test(text))){value.textContent='COMPLETED ✓';return;}"
     }
    }
   }
