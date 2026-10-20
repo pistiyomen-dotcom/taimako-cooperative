@@ -75,7 +75,7 @@ function applyExistingRegistrationStatusV245(){
     const candidates=card.querySelectorAll('p,span,strong,div');
     for(const value of candidates){
      const text=(value.textContent||'').trim();
-"     if(value!==label&&value.children.length===0&&(/^(₦|NGN)\\s*[\\d,]+(?:\\.\\d{1,2})?$/.test(text)||/^\\d[\\d,]*(?:\\.\\d{1,2})?$/.test(text))){value.textContent='COMPLETED ✓';return;}"
+"     if(value!==label&&value.children.length===0&&(/^(₦|NGN)\s*[\d,]+(?:\.\d{1,2})?$/.test(text)||/^\d[\d,]*(?:\.\d{1,2})?$/.test(text))){value.textContent='COMPLETED ✓';return;}"
     }
    }
   }
