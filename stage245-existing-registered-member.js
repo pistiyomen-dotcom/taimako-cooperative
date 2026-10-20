@@ -75,7 +75,7 @@ function applyExistingRegistrationStatusV245(){
     const candidates=card.querySelectorAll('p,span,strong,div');
     for(const value of candidates){
      const text=(value.textContent||'').trim();
-"     if(value!==label&&value.children.length===0&&(/^(₦|NGN)\s*[\d,]+(?:\.\d{1,2})?$/.test(text)||/^\d[\d,]*(?:\.\d{1,2})?$/.test(text))){value.textContent='COMPLETED ✓';return;}"
+     if(value!==label&&value.children.length===0&&(/^(₦|NGN)\s*[\d,]+(?:\.\d{1,2})?$/.test(text)||/^\d[\d,]*(?:\.\d{1,2})?$/.test(text))){value.textContent='COMPLETED ✓';return;}
     }
    }
   }
@@ -102,7 +102,7 @@ if(typeof renderDashboard==='function'){
 loadExistingRegistrationStatusV245();
 `;
 }
-app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=264'");
+app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=265'");
 fs.writeFileSync('www/app.js',app);
 let html=fs.readFileSync('www/index.html','utf8');
 if(!html.includes('id="existingRegisteredMemberV245"')){
@@ -111,9 +111,9 @@ if(!html.includes('id="existingRegisteredMemberV245"')){
   const checkbox='<label class="existing-registered-member-v245" style="display:flex;align-items:center;gap:10px;margin:10px 0;font-weight:700"><input id="existingRegisteredMemberV245" name="existingRegisteredMember" type="checkbox" style="width:auto;min-width:18px;min-height:18px"> Existing Registered Member — registration already paid</label>';
   html=html.replace(input,m=>m+'\n'+checkbox);
 }
-html=html.replace(/app\.js\?v=\d+/g,'app.js?v=264').replace(/styles\.css\?v=\d+/g,'styles.css?v=264');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=265').replace(/styles\.css\?v=\d+/g,'styles.css?v=265');
 fs.writeFileSync('www/index.html',html);
 let sw=fs.readFileSync('www/sw.js','utf8');
-sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v264';").replace(/app\.js\?v=\d+/g,'app.js?v=264').replace(/styles\.css\?v=\d+/g,'styles.css?v=264');
+sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v265';").replace(/app\.js\?v=\d+/g,'app.js?v=265').replace(/styles\.css\?v=\d+/g,'styles.css?v=265');
 fs.writeFileSync('www/sw.js',sw);
 console.log('TAIMAKO Stage 245: existing registration checkbox and persisted status wired.');
