@@ -246,3 +246,5 @@ require('./stage237-november-promo-shares.js');
 require('./stage238-november-promo-shares.js');
 
 require('./stage239-admin-check-assisted-account.js');
+
+require('./stage245-existing-registered-member.js');
