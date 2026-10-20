@@ -66,7 +66,7 @@ if(!app.includes('loadExistingRegistrationStatusV245')){
 let existingRegistrationStatusRequestV245=false;
 function applyExistingRegistrationStatusV245(){
  if(!(state.balances&&state.balances.registrationPaidExisting===true))return;
- const root=document.getElementById('dashboardContent')||document.body;
+ const root=document.body;
  root.querySelectorAll('*').forEach(label=>{
   if(label.children.length===0&&(label.textContent||'').trim().toUpperCase()==='REGISTRATION'){
    let card=label.parentElement;
@@ -92,7 +92,7 @@ async function loadExistingRegistrationStatusV245(){
  }catch(_error){}finally{existingRegistrationStatusRequestV245=false;}
 }
 const existingRegistrationObserverV245=new MutationObserver(()=>{applyExistingRegistrationStatusV245();if(!state.balances||state.balances.registrationPaidExisting!==true)loadExistingRegistrationStatusV245();});
-const existingRegistrationRootV245=document.getElementById('dashboardContent');
+const existingRegistrationRootV245=document.body;
 if(existingRegistrationRootV245)existingRegistrationObserverV245.observe(existingRegistrationRootV245,{childList:true,subtree:true,characterData:true});
 if(typeof renderDashboard==='function'){
  const originalRenderDashboardV245=renderDashboard;
