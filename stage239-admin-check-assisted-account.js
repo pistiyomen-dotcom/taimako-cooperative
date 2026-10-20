@@ -140,6 +140,12 @@ if(!app.includes('assisted-member-banner-v239')){
 }
 app=app.replace("'CREATE ACCOUNT':'manage_accounts',","'CREATE ACCOUNT':'manage_accounts',\n    'CHECK':'manage_accounts',");
 app=app.replace("'CREATE ACCOUNT','ADMIN PERMISSIONS','CASH CREDIT'","'CREATE ACCOUNT','CHECK','ADMIN PERMISSIONS','CASH CREDIT'");
+/* FLEXIBLE is not one of the regular savings tiles intentionally shown as names-only. Restore its live balance value. */
+const flexTileNamesOnlyV183 = "['FLEXIBLE', '']";
+const flexTileWithBalanceV245 = "['FLEXIBLE', naira(b.flexible)]";
+if (app.includes(flexTileNamesOnlyV183)) app = app.replace(flexTileNamesOnlyV183, flexTileWithBalanceV245);
+else if (!app.includes(flexTileWithBalanceV245)) throw Error('Stage 239: FLEXIBLE balance tile marker missing.');
+
 fs.writeFileSync('www/app.js',app);
 
 let html=fs.readFileSync('www/index.html','utf8');
