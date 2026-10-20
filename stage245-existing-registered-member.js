@@ -42,10 +42,11 @@ if(!accountRoute.includes("router.get('/registration-status-v245'")){
  " res.set('Cache-Control','no-store');res.json({registrationPaidExisting:r.rows[0]?.registration_paid_existing===true});",
  " }catch(error){console.error('Registration status read failed:',error.message);res.status(500).json({error:'Could not read registration status.'});}",
  "});"
- ].join('\\n');
- const exportAnchor='\\nmodule.exports = router;';
- if(!accountRoute.includes(exportAnchor))throw Error('Stage 245: account router export marker missing for status endpoint.');
- accountRoute=accountRoute.replace(exportAnchor,'\\n'+routeText+exportAnchor);
+ ].join('\n');
+ const marker='module.exports = router;';
+ const at=accountRoute.lastIndexOf(marker);
+ if(at<0)throw Error('Stage 245: account router export marker missing for status endpoint.');
+ accountRoute=accountRoute.slice(0,at)+routeText+'\n\n'+accountRoute.slice(at);
  fs.writeFileSync('server/routes/account.js',accountRoute);
 }
 
