@@ -23,16 +23,15 @@ if(!admin.includes("router.post('/existing-registration-v245'")){
 ].join('\n');
   admin=admin.replace(anchor,'\n'+route+anchor);fs.writeFileSync('server/routes/admin.js',admin);
 }
-/* Include the persisted flag in Admin CHECK's explicit member-balance query too. */
+/* Include the persisted flag in Admin CHECK's explicit query and response. */
 admin=fs.readFileSync('server/routes/admin.js','utf8');
 admin=admin.replace('b.application_form FROM accounts a LEFT JOIN member_balances b','b.application_form,b.registration_paid_existing FROM accounts a LEFT JOIN member_balances b');
+admin=admin.replace('balances:balanceView(row)','balances:{...balanceView(row),registrationPaidExisting:row.registration_paid_existing===true}');
 fs.writeFileSync('server/routes/admin.js',admin);
 
 let account=fs.readFileSync('server/routes/account.js','utf8');
-/* Preserve the balanceView implementation: augment its response at the call site. */
 account=account.replace(/b\.application_form(?!,b\.registration_paid_existing)/g,'b.application_form,b.registration_paid_existing');
-account=account.replace(/balances:\s*balanceView\(row\)/g,'balances:{...balanceView(row),registrationPaidExisting:row.registration_paid_existing===true}');
-if(!account.includes('registrationPaidExisting'))throw Error('Stage 245: could not wire existing-registration status into account response.');
+account=account.replace(/balanceView\(([A-Za-z_$][\\w$]*)\)/g,'{...balanceView($1),registrationPaidExisting:$1.registration_paid_existing===true}');
 fs.writeFileSync('server/routes/account.js',account);
 
 let app=fs.readFileSync('www/app.js','utf8');
