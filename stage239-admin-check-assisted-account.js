@@ -108,7 +108,7 @@ if(!app.includes('function openAdminCheckDialogV239()')){
  "   const found=await api('/api/admin/check-account?username='+encodeURIComponent(username),{cache:'no-store'});const account=found.account;",
  "   if(!account||!account.id)throw new Error('Active Regular or Flexible account not found.');",
  "   state.assistedAdminSnapshot={user:state.user,balances:state.balances};state.assistedAccountId=Number(account.id);state.assistedAccountUsername=account.username;",
- "   const member=await api('/api/account/me',{cache:'no-store'});state.user=member.user;state.balances=member.balances;dialog.close();renderDashboard();",
+ "   const member=await api('/api/account/me',{cache:'no-store'});state.user=member.user;state.balances={...(member.balances||{}),...(found.balances||{})};dialog.close();renderDashboard();",
  "  }catch(err){state.assistedAccountId=null;state.assistedAccountUsername=null;state.assistedAdminSnapshot=null;error.textContent=err&&err.message?err.message:'Unable to open member account.';}",
  "  finally{if(button){button.disabled=false;button.textContent='OPEN';}}",
  " };",
