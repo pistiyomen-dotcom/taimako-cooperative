@@ -29,17 +29,12 @@ admin=admin.replace('b.application_form FROM accounts a LEFT JOIN member_balance
 fs.writeFileSync('server/routes/admin.js',admin);
 
 let account=fs.readFileSync('server/routes/account.js','utf8');
-if(!account.includes('registrationPaidExisting')){
-  const start=account.indexOf('function balanceView(');
-  if(start<0)throw Error('Stage 245: balanceView function marker missing.');
-  const end=account.indexOf('\n}',start);
-  if(end<0)throw Error('Stage 245: balanceView function end missing.');
-  let fn=account.slice(start,end);
-  const objEnd=fn.lastIndexOf('}');
-  if(objEnd<0)throw Error('Stage 245: balanceView object return marker missing.');
-  fn=fn.slice(0,objEnd)+",\n    registrationPaidExisting: row.registration_paid_existing === true\n  "+fn.slice(objEnd);
-  account=account.slice(0,start)+fn+account.slice(end);fs.writeFileSync('server/routes/account.js',account);
-}
+/* Preserve the balanceView implementation: augment its response at the call site. */
+account=account.replace(/b\.application_form(?!,b\.registration_paid_existing)/g,'b.application_form,b.registration_paid_existing');
+account=account.replace(/balances:\s*balanceView\(row\)/g,'balances:{...balanceView(row),registrationPaidExisting:row.registration_paid_existing===true}');
+if(!account.includes('registrationPaidExisting'))throw Error('Stage 245: could not wire existing-registration status into account response.');
+fs.writeFileSync('server/routes/account.js',account);
+
 let app=fs.readFileSync('www/app.js','utf8');
 const createMarker="const selectedRole = newRole.value; const createdUsername = String(data.account.username||'');";
 if(!app.includes(createMarker))throw Error('Stage 245: Create New Member success marker missing.');
