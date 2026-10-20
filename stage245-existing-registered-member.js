@@ -44,9 +44,9 @@ if(!app.includes('tmcsExistingRegistrationCaptureV245')){
   const save=" if(tmcsExistingRegistrationCaptureV245){try{await api('/api/admin/existing-registration-v245',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:createdUsername})});}catch(existingRegError){createAccountError.textContent='Account created, but existing registration status was NOT saved: '+(existingRegError?.message||'Contact administrator.');tmcsExistingRegistrationCaptureV245=false;return;}} tmcsExistingRegistrationCaptureV245=false;";
   app=app.replace(createMarker,createMarker+save);
 }
-const regTile="['REGISTRATION', naira(b.registration)]";
+const regTilePattern=/\[\s*['"]REGISTRATION['"]\s*,\s*(?:naira\(b\.registration\)|b\.registration)\s*\]/;
 const regTileNew="['REGISTRATION', b.registrationPaidExisting ? 'COMPLETED ✓' : naira(b.registration)]";
-if(app.includes(regTile))app=app.replace(regTile,regTileNew);
+if(regTilePattern.test(app))app=app.replace(regTilePattern,regTileNew);
 else if(!app.includes(regTileNew))throw Error('Stage 245: REGISTRATION tile render marker missing.');
 app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=264'");
 fs.writeFileSync('www/app.js',app);
