@@ -34,6 +34,21 @@ account=account.replace(/b\.application_form(?!,b\.registration_paid_existing)/g
 account=account.replace(/balanceView\(([A-Za-z_$][\w$]*)\)/g,'{...balanceView($1),registrationPaidExisting:$1.registration_paid_existing===true}');
 fs.writeFileSync('server/routes/account.js',account);
 
+let accountRoute=fs.readFileSync('server/routes/account.js','utf8');
+if(!accountRoute.includes("router.get('/registration-status-v245'")){
+ const routeText=[
+ "router.get('/registration-status-v245',async(req,res)=>{",
+ " try{const r=await pool.query('SELECT registration_paid_existing FROM member_balances WHERE account_id=$1',[req.auth.sub]);",
+ " res.set('Cache-Control','no-store');res.json({registrationPaidExisting:r.rows[0]?.registration_paid_existing===true});",
+ " }catch(error){console.error('Registration status read failed:',error.message);res.status(500).json({error:'Could not read registration status.'});}",
+ "});"
+ ].join('\\n');
+ const exportAnchor='\\nmodule.exports = router;';
+ if(!accountRoute.includes(exportAnchor))throw Error('Stage 245: account router export marker missing for status endpoint.');
+ accountRoute=accountRoute.replace(exportAnchor,'\\n'+routeText+exportAnchor);
+ fs.writeFileSync('server/routes/account.js',accountRoute);
+}
+
 let app=fs.readFileSync('www/app.js','utf8');
 const createMarker="const selectedRole = newRole.value; const createdUsername = String(data.account.username||'');";
 if(!app.includes(createMarker))throw Error('Stage 245: Create New Member success marker missing.');
@@ -44,19 +59,45 @@ if(!app.includes('tmcsExistingRegistrationCaptureV245')){
   const save=" if(tmcsExistingRegistrationCaptureV245){try{await api('/api/admin/existing-registration-v245',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:createdUsername})});}catch(existingRegError){createAccountError.textContent='Account created, but existing registration status was NOT saved: '+(existingRegError?.message||'Contact administrator.');tmcsExistingRegistrationCaptureV245=false;return;}} tmcsExistingRegistrationCaptureV245=false;";
   app=app.replace(createMarker,createMarker+save);
 }
-/* Update the existing tile after each dashboard render without rewriting its balance logic. */
-if(!app.includes('applyExistingRegistrationStatusV245')){
-  app += String.raw`
+/* Read the durable flag directly, then update the visible registration tile. */
+if(!app.includes('loadExistingRegistrationStatusV245')){
+ app += String.raw`
+let existingRegistrationStatusRequestV245=false;
 function applyExistingRegistrationStatusV245(){
-  if(!(state.balances&&state.balances.registrationPaidExisting===true))return;
-  document.querySelectorAll('#dashboardContent .dashboard-card').forEach(card=>{
-    const heading=card.querySelector('h4'),value=card.querySelector('p');
-    if(heading&&value&&(heading.textContent||'').trim().toUpperCase()==='REGISTRATION')value.textContent='COMPLETED ✓';
-  });
+ if(!(state.balances&&state.balances.registrationPaidExisting===true))return;
+ const root=document.getElementById('dashboardContent')||document.body;
+ root.querySelectorAll('*').forEach(label=>{
+  if(label.children.length===0&&(label.textContent||'').trim().toUpperCase()==='REGISTRATION'){
+   let card=label.parentElement;
+   for(let i=0;i<4&&card;i++,card=card.parentElement){
+    const candidates=card.querySelectorAll('p,span,strong,div');
+    for(const value of candidates){
+     const text=(value.textContent||'').trim();
+     if(value!==label&&value.children.length===0&&(/^(₦|NGN)/.test(text)||/^0(?:\.00)?$/.test(text))){value.textContent='COMPLETED ✓';return;}
+    }
+   }
+  }
+ });
+}
+async function loadExistingRegistrationStatusV245(){
+ if(existingRegistrationStatusRequestV245)return;
+ existingRegistrationStatusRequestV245=true;
+ try{
+  const result=await api('/api/account/registration-status-v245',{cache:'no-store'});
+  if(result&&result.registrationPaidExisting===true){
+   state.balances={...(state.balances||{}),registrationPaidExisting:true};
+   applyExistingRegistrationStatusV245();
+  }
+ }catch(_error){}finally{existingRegistrationStatusRequestV245=false;}
 }
 const existingRegistrationObserverV245=new MutationObserver(()=>applyExistingRegistrationStatusV245());
-if(typeof dashboardContent!=='undefined'&&dashboardContent)existingRegistrationObserverV245.observe(dashboardContent,{childList:true,subtree:true,characterData:true});
-applyExistingRegistrationStatusV245();
+const existingRegistrationRootV245=document.getElementById('dashboardContent');
+if(existingRegistrationRootV245)existingRegistrationObserverV245.observe(existingRegistrationRootV245,{childList:true,subtree:true,characterData:true});
+if(typeof renderDashboard==='function'){
+ const originalRenderDashboardV245=renderDashboard;
+ renderDashboard=function(){const result=originalRenderDashboardV245.apply(this,arguments);loadExistingRegistrationStatusV245();return result;};
+}
+loadExistingRegistrationStatusV245();
 `;
 }
 app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=264'");
