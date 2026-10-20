@@ -31,7 +31,7 @@ fs.writeFileSync('server/routes/admin.js',admin);
 
 let account=fs.readFileSync('server/routes/account.js','utf8');
 account=account.replace(/b\.application_form(?!,b\.registration_paid_existing)/g,'b.application_form,b.registration_paid_existing');
-account=account.replace(/balanceView\(([A-Za-z_$][\\w$]*)\)/g,'{...balanceView($1),registrationPaidExisting:$1.registration_paid_existing===true}');
+account=account.replace(/balanceView\(([A-Za-z_$][\w$]*)\)/g,'{...balanceView($1),registrationPaidExisting:$1.registration_paid_existing===true}');
 fs.writeFileSync('server/routes/account.js',account);
 
 let app=fs.readFileSync('www/app.js','utf8');
