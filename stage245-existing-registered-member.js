@@ -91,7 +91,7 @@ async function loadExistingRegistrationStatusV245(){
   }
  }catch(_error){}finally{existingRegistrationStatusRequestV245=false;}
 }
-const existingRegistrationObserverV245=new MutationObserver(()=>applyExistingRegistrationStatusV245());
+const existingRegistrationObserverV245=new MutationObserver(()=>{applyExistingRegistrationStatusV245();if(!state.balances||state.balances.registrationPaidExisting!==true)loadExistingRegistrationStatusV245();});
 const existingRegistrationRootV245=document.getElementById('dashboardContent');
 if(existingRegistrationRootV245)existingRegistrationObserverV245.observe(existingRegistrationRootV245,{childList:true,subtree:true,characterData:true});
 if(typeof renderDashboard==='function'){
