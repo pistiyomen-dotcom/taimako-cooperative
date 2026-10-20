@@ -23,6 +23,11 @@ if(!admin.includes("router.post('/existing-registration-v245'")){
 ].join('\n');
   admin=admin.replace(anchor,'\n'+route+anchor);fs.writeFileSync('server/routes/admin.js',admin);
 }
+/* Include the persisted flag in Admin CHECK's explicit member-balance query too. */
+admin=fs.readFileSync('server/routes/admin.js','utf8');
+admin=admin.replace('b.application_form FROM accounts a LEFT JOIN member_balances b','b.application_form,b.registration_paid_existing FROM accounts a LEFT JOIN member_balances b');
+fs.writeFileSync('server/routes/admin.js',admin);
+
 let account=fs.readFileSync('server/routes/account.js','utf8');
 if(!account.includes('registrationPaidExisting')){
   const start=account.indexOf('function balanceView(');
