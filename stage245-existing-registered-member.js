@@ -118,7 +118,13 @@ fs.writeFileSync('www/sw.js',sw);
 let checkHtml=fs.readFileSync('www/index.html','utf8');
 const checkButton='<button class="secondary" id="markExistingRegistrationV246" type="button">MARK REGISTRATION COMPLETED</button><p class="form-error" id="markExistingRegistrationResultV246" role="status"></p>';
 if(checkHtml.includes('id="adminCheckUsernameV239"')&&!checkHtml.includes('id="markExistingRegistrationV246"')){
- checkHtml=checkHtml.replace(/(<input id="adminCheckUsernameV239"[^>]*>\s*<\/label>)/,'$1\n'+checkButton);
+ const inlineButton=checkButton.replace('<button class="secondary"','<button style="display:block!important;width:100%!important;min-height:46px!important;margin:12px 0!important;padding:12px!important;background:#145c36!important;color:#fff!important;border:2px solid #0b4427!important;border-radius:8px!important;font-weight:800!important;visibility:visible!important;opacity:1!important"');
+ const labelPattern=/(<label>Regular \/ Flexible Username<input id="adminCheckUsernameV239"[^>]*>\s*<\/label>)/;
+ if(labelPattern.test(checkHtml)) checkHtml=checkHtml.replace(labelPattern,'$1\n'+inlineButton);
+ else {
+  const openPattern=/(<button class="primary" id="adminCheckOpenV239"[^>]*>OPEN<\/button>)/;
+  if(openPattern.test(checkHtml)) checkHtml=checkHtml.replace(openPattern,inlineButton+'\n$1');
+ }
  fs.writeFileSync('www/index.html',checkHtml);
 }
 let checkApp=fs.readFileSync('www/app.js','utf8');
