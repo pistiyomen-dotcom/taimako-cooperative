@@ -67,19 +67,17 @@ if(!app.includes('loadExistingRegistrationStatusV245')){
 let existingRegistrationStatusRequestV245=false;
 function applyExistingRegistrationStatusV245(){
  if(!(state.balances&&state.balances.registrationPaidExisting===true))return;
- const root=document.body;
- root.querySelectorAll('*').forEach(label=>{
-  if(label.children.length===0&&(label.textContent||'').trim().toUpperCase()==='REGISTRATION'){
-   let card=label.parentElement;
-   for(let i=0;i<4&&card;i++,card=card.parentElement){
-    const candidates=card.querySelectorAll('p,span,strong,div');
-    for(const value of candidates){
-     const text=(value.textContent||'').trim();
-     if(value!==label&&value.children.length===0&&(/^(₦|NGN)\s*[\d,]+(?:\.\d{1,2})?$/.test(text)||/^\d[\d,]*(?:\.\d{1,2})?$/.test(text))){value.textContent='COMPLETED ✓';return;}
-    }
-   }
+ const root=document.getElementById('dashboardContent')||document.body;
+ const isAmount=text=>/^(?:(?:₦|NGN)\\s*)?\\d[\\d,]*(?:\\.\\d{1,2})?$/.test(String(text||'').trim());
+ const labels=[...root.querySelectorAll('*')].filter(el=>el.children.length===0&&(el.textContent||'').trim().toUpperCase()==='REGISTRATION');
+ for(const label of labels){
+  let card=label.parentElement;
+  for(let depth=0;depth<8&&card;depth++,card=card.parentElement){
+   const amount=[...card.querySelectorAll('*')].find(el=>el.children.length===0&&el!==label&&isAmount(el.textContent));
+   if(amount){amount.textContent='COMPLETED ✓';return;}
+   if(card===root)break;
   }
- });
+ }
 }
 async function loadExistingRegistrationStatusV245(){
  if(existingRegistrationStatusRequestV245)return;
