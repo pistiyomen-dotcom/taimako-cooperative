@@ -118,7 +118,7 @@ fs.writeFileSync('www/sw.js',sw);
 let checkHtml=fs.readFileSync('www/index.html','utf8');
 const checkButton='<button class="secondary" id="markExistingRegistrationV246" type="button">MARK REGISTRATION COMPLETED</button><p class="form-error" id="markExistingRegistrationResultV246" role="status"></p>';
 if(checkHtml.includes('id="adminCheckUsernameV239"')&&!checkHtml.includes('id="markExistingRegistrationV246"')){
- checkHtml=checkHtml.replace(/(<input id="adminCheckUsernameV239"[^>]*>)/,'$1\\n'+checkButton);
+ checkHtml=checkHtml.replace(/(<input id="adminCheckUsernameV239"[^>]*>\s*<\/label>)/,'$1\n'+checkButton);
  fs.writeFileSync('www/index.html',checkHtml);
 }
 let checkApp=fs.readFileSync('www/app.js','utf8');
@@ -136,8 +136,8 @@ if(!checkApp.includes('markExistingRegistrationV246')){
  " catch(error){if(result)result.textContent='Not saved: '+(error&&error.message?error.message:'Please try again.');}",
  " finally{button.disabled=false;button.textContent='MARK REGISTRATION COMPLETED';}",
  "});"
- ].join('\\n');
- checkApp += '\\n'+handler+'\\n';
+ ].join('\n');
+ checkApp += '\n'+handler+'\n';
  fs.writeFileSync('www/app.js',checkApp);
 }
 console.log('TAIMAKO Stage 245: existing registration checkbox and persisted status wired.');
