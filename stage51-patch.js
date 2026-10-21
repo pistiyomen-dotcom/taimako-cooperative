@@ -252,3 +252,5 @@ require('./stage245-existing-registered-member.js');
 require('./stage247-registration-button-click-fix.js');
 
 require('./stage248-registration-button-capture-fix.js');
+
+require('./stage249-registration-balance.js');
