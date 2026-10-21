@@ -68,7 +68,7 @@ let existingRegistrationStatusRequestV245=false;
 function applyExistingRegistrationStatusV245(){
  if(!(state.balances&&state.balances.registrationPaidExisting===true))return;
  const root=document.getElementById('dashboardContent')||document.body;
- const isAmount=text=>/^(?:(?:₦|NGN)\\s*)?\\d[\\d,]*(?:\\.\\d{1,2})?$/.test(String(text||'').trim());
+ const isAmount=text=>/^(?:(?:₦|NGN)\s*)?\d[\d,]*(?:\.\d{1,2})?$/.test(String(text||'').trim());
  const labels=[...root.querySelectorAll('*')].filter(el=>el.children.length===0&&(el.textContent||'').trim().toUpperCase()==='REGISTRATION');
  for(const label of labels){
   let card=label.parentElement;
