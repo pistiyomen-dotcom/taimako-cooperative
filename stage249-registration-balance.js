@@ -96,6 +96,7 @@ const permStartV249=app.indexOf('function adminPermissionForAction(title){'),per
 if(permStartV249<0||permEndV249<0)throw Error('Stage 249 Admin permission map not found');
 let pm=app.slice(permStartV249,permEndV249);
 if(!pm.includes("'REGISTRATION BALANCE':'cash_credit'")){pm=rep(pm,"'CASH CREDIT':'cash_credit',","'CASH CREDIT':'cash_credit',\n    'REGISTRATION BALANCE':'cash_credit',",'permission entry');app=app.slice(0,permStartV249)+pm+app.slice(permEndV249);}
+app=app.replace("'CASH CREDIT','PAYMENT REQUESTS'","'CASH CREDIT','REGISTRATION BALANCE','PAYMENT REQUESTS'");
 const dispatch="if (title === 'CASH CREDIT') { window.openCashCreditV67?.(); }";
 if(!app.includes("title === 'REGISTRATION BALANCE'"))app=rep(app,dispatch,dispatch+"\n  if (title === 'REGISTRATION BALANCE') { window.openRegistrationBalanceV249?.(); }",'Admin action dispatcher');
 app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=269'");
