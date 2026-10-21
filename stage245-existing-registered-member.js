@@ -74,7 +74,7 @@ function applyExistingRegistrationStatusV245(){
   let card=label.parentElement;
   for(let depth=0;depth<8&&card;depth++,card=card.parentElement){
    const amount=[...card.querySelectorAll('*')].find(el=>el.children.length===0&&el!==label&&isAmount(el.textContent));
-   if(amount){amount.textContent='COMPLETED ✓';return;}
+   if(amount){amount.textContent='PAID';return;}
    if(card===root)break;
   }
  }
@@ -100,7 +100,7 @@ if(typeof renderDashboard==='function'){
 loadExistingRegistrationStatusV245();
 `;
 }
-app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=265'");
+app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=266'");
 fs.writeFileSync('www/app.js',app);
 let html=fs.readFileSync('www/index.html','utf8');
 if(!html.includes('id="existingRegisteredMemberV245"')){
@@ -109,10 +109,10 @@ if(!html.includes('id="existingRegisteredMemberV245"')){
   const checkbox='<label class="existing-registered-member-v245" style="display:flex;align-items:center;gap:10px;margin:10px 0;font-weight:700"><input id="existingRegisteredMemberV245" name="existingRegisteredMember" type="checkbox" style="width:auto;min-width:18px;min-height:18px"> Existing Registered Member — registration already paid</label>';
   html=html.replace(input,m=>m+'\n'+checkbox);
 }
-html=html.replace(/app\.js\?v=\d+/g,'app.js?v=265').replace(/styles\.css\?v=\d+/g,'styles.css?v=265');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=266').replace(/styles\.css\?v=\d+/g,'styles.css?v=266');
 fs.writeFileSync('www/index.html',html);
 let sw=fs.readFileSync('www/sw.js','utf8');
-sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v265';").replace(/app\.js\?v=\d+/g,'app.js?v=265').replace(/styles\.css\?v=\d+/g,'styles.css?v=265');
+sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v266';").replace(/app\.js\?v=\d+/g,'app.js?v=266').replace(/styles\.css\?v=\d+/g,'styles.css?v=266');
 fs.writeFileSync('www/sw.js',sw);
 /* Stage 246: allow an administrator to mark an already-existing member without recreating the account. */
 let checkHtml=fs.readFileSync('www/index.html','utf8');
