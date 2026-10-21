@@ -114,4 +114,30 @@ fs.writeFileSync('www/index.html',html);
 let sw=fs.readFileSync('www/sw.js','utf8');
 sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v265';").replace(/app\.js\?v=\d+/g,'app.js?v=265').replace(/styles\.css\?v=\d+/g,'styles.css?v=265');
 fs.writeFileSync('www/sw.js',sw);
+/* Stage 246: allow an administrator to mark an already-existing member without recreating the account. */
+let checkHtml=fs.readFileSync('www/index.html','utf8');
+const checkButton='<button class="secondary" id="markExistingRegistrationV246" type="button">MARK REGISTRATION COMPLETED</button><p class="form-error" id="markExistingRegistrationResultV246" role="status"></p>';
+if(checkHtml.includes('id="adminCheckUsernameV239"')&&!checkHtml.includes('id="markExistingRegistrationV246"')){
+ checkHtml=checkHtml.replace(/(<input id="adminCheckUsernameV239"[^>]*>)/,'$1\\n'+checkButton);
+ fs.writeFileSync('www/index.html',checkHtml);
+}
+let checkApp=fs.readFileSync('www/app.js','utf8');
+if(!checkApp.includes('markExistingRegistrationV246')){
+ const handler=[
+ "document.addEventListener('click',async function(event){",
+ " const button=event.target&&event.target.closest?event.target.closest('#markExistingRegistrationV246'):null;",
+ " if(!button)return;",
+ " const input=document.getElementById('adminCheckUsernameV239');",
+ " const result=document.getElementById('markExistingRegistrationResultV246');",
+ " const username=String(input&&input.value||'').trim().toUpperCase();",
+ " if(!username){if(result)result.textContent='Enter the member username first.';return;}",
+ " button.disabled=true;button.textContent='SAVING…';if(result)result.textContent='';",
+ " try{const saved=await api('/api/admin/existing-registration-v245',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username})});if(!saved||saved.saved!==true)throw new Error('The registration status was not confirmed as saved.');if(result)result.textContent='Registration marked COMPLETED for '+username+'. Reopen this member account to refresh the tile.';}",
+ " catch(error){if(result)result.textContent='Not saved: '+(error&&error.message?error.message:'Please try again.');}",
+ " finally{button.disabled=false;button.textContent='MARK REGISTRATION COMPLETED';}",
+ "});"
+ ].join('\\n');
+ checkApp += '\\n'+handler+'\\n';
+ fs.writeFileSync('www/app.js',checkApp);
+}
 console.log('TAIMAKO Stage 245: existing registration checkbox and persisted status wired.');
