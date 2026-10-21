@@ -90,10 +90,10 @@ fs.writeFileSync('www/index.html',html);
 let app=fs.readFileSync('www/app.js','utf8');
 const tile="    ['REGISTRATION BALANCE', 'View registration fees collected and recent transactions'],";
 if(!app.includes(tile))app=rep(app,"    ['CASH CREDIT', 'Post cash directly to Regular or Flexible account'],","    ['CASH CREDIT', 'Post cash directly to Regular or Flexible account'],\n"+tile,'Admin tile list');
-const ps=app.indexOf('function adminPermissionForAction(title){'),pe=ps<0?-1:app.indexOf('\nfunction adminActionAllowed(title)',ps);
-if(ps<0||pe<0)throw Error('Stage 249 Admin permission map not found');
-let pm=app.slice(ps,pe);
-if(!pm.includes("'REGISTRATION BALANCE':'cash_credit'")){pm=rep(pm,"'CASH CREDIT':'cash_credit',","'CASH CREDIT':'cash_credit',\n    'REGISTRATION BALANCE':'cash_credit',",'permission entry');app=app.slice(0,ps)+pm+app.slice(pe);}
+const permStartV249=app.indexOf('function adminPermissionForAction(title){'),permEndV249=permStartV249<0?-1:app.indexOf('\nfunction adminActionAllowed(title)',permStartV249);
+if(permStartV249<0||permEndV249<0)throw Error('Stage 249 Admin permission map not found');
+let pm=app.slice(permStartV249,permEndV249);
+if(!pm.includes("'REGISTRATION BALANCE':'cash_credit'")){pm=rep(pm,"'CASH CREDIT':'cash_credit',","'CASH CREDIT':'cash_credit',\n    'REGISTRATION BALANCE':'cash_credit',",'permission entry');app=app.slice(0,permStartV249)+pm+app.slice(permEndV249);}
 const dispatch="if (title === 'CASH CREDIT') { window.openCashCreditV67?.(); }";
 if(!app.includes("title === 'REGISTRATION BALANCE'"))app=rep(app,dispatch,dispatch+"\n  if (title === 'REGISTRATION BALANCE') { window.openRegistrationBalanceV249?.(); }",'Admin action dispatcher');
 app=app.replace(/serviceWorker\.register\(['"]\.\/sw\.js\?v=\d+['"]/g,"serviceWorker.register('./sw.js?v=269'");
