@@ -247,10 +247,4 @@ require('./stage238-november-promo-shares.js');
 
 require('./stage239-admin-check-assisted-account.js');
 
-require('./stage245-existing-registered-member.js');
-
-require('./stage247-registration-button-click-fix.js');
-
-require('./stage248-registration-button-capture-fix.js');
-
-require('./stage249-registration-balance.js');
+require('./stage250-retire-registration.js');
