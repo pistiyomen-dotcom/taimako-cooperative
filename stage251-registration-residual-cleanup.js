@@ -21,19 +21,25 @@ function removeRegistrationOptions(){
  });
 }
 function removeRegistrationMarks(){
+ const markLeaves=[...document.querySelectorAll('body *')].filter(el=>el.children.length===0&&marks.test(clean(el.textContent)));
+ for(const mark of markLeaves){
+  let card=mark.parentElement, found=false;
+  for(let depth=0;depth<6&&card&&card!==document.body;depth++,card=card.parentElement){
+   const txt=upper(card.textContent);
+   if(txt.includes('REGISTRATION')){
+    if(!/HISTOR|AUDIT|TRANSACTION|REPORT/.test(txt)){
+     mark.remove();
+    }
+    found=true;break;
+   }
+   if(card.matches('main,body,form'))break;
+  }
+ }
+ /* Also remove check glyphs that are literally combined with a registration label. */
  document.querySelectorAll('body *').forEach(el=>{
   if(el.children.length!==0)return;
   const t=clean(el.textContent);
-  if(marks.test(t)||/^(?:REGISTRATION\s*)?[✓✔☑✅✓✔️☑️]+(?:\s*REGISTRATION)?$/u.test(t))el.remove();
- });
- /* Remove any residual check-only text nodes in registration-labelled cards. */
- document.querySelectorAll('body *').forEach(label=>{
-  if(label.children.length||!upper(label.textContent).includes('REGISTRATION'))return;
-  let card=label;
-  for(let i=0;i<5&&card.parentElement;i++)card=card.parentElement;
-  card.querySelectorAll('*').forEach(el=>{
-   if(el.children.length===0&&marks.test(clean(el.textContent)))el.remove();
-  });
+  if(/^(?:REGISTRATION\s*)?[✓✔☑✅✓✔️☑️]+(?:\s*REGISTRATION)?$/u.test(t))el.remove();
  });
 }
 function apply(){try{removeRegistrationOptions();removeRegistrationMarks();}catch(e){console.warn('Registration cleanup:',e&&e.message||e);}}
