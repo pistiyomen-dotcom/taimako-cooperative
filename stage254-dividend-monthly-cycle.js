@@ -17,7 +17,7 @@ if(!service.includes('DIVIDEND_V254_IDEMPOTENT_MEMBER_CREDIT')){
     '      // DIVIDEND_V254_IDEMPOTENT_MEMBER_CREDIT: insert the unique ledger row first.',
     '      // Only update the aggregate dividend balance when this run inserted it.',
     '      const ledger=await client.query(',
-    '        "INSERT INTO transactions(reference,account_id,transaction_type,destination,amount,status,note,approved_at) VALUES($1,$2,\\'dividend_credit\\',\\'DIVIDEND\\',$3,\\'completed\\',$4,NOW()) ON CONFLICT(reference) DO NOTHING RETURNING account_id",',
+    "        `INSERT INTO transactions(reference,account_id,transaction_type,destination,amount,status,note,approved_at) VALUES($1,$2,'dividend_credit','DIVIDEND',$3,'completed',$4,NOW()) ON CONFLICT(reference) DO NOTHING RETURNING account_id`,",
     "        [reference,accountId,total,'Monthly dividend for '+String(periodMonth).slice(0,7)]",
     '      );',
     '      if(ledger.rowCount){',
