@@ -248,3 +248,5 @@ require('./stage238-november-promo-shares.js');
 require('./stage239-admin-check-assisted-account.js');
 
 require('./stage250-retire-registration.js');
+
+require('./stage251-registration-residual-cleanup.js');
