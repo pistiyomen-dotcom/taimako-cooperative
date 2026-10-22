@@ -256,3 +256,5 @@ require('./stage252-remove-registration-ui.js');
 require('./stage253-purge-registration-records.js');
 
 require('./stage254-dividend-monthly-cycle.js');
+
+require('./stage255-dividend-eligibility-guard.js');
