@@ -252,3 +252,5 @@ require('./stage250-retire-registration.js');
 require('./stage251-registration-residual-cleanup.js');
 
 require('./stage252-remove-registration-ui.js');
+
+require('./stage253-purge-registration-records.js');
