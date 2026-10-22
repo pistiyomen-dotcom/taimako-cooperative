@@ -35,15 +35,15 @@ fs.writeFileSync(servicePath,service);
 
 // Bump client asset versions so browsers do not retain stale dividend UI.
 let app=fs.readFileSync('www/app.js','utf8');
-app=app.replace(/serviceWorker\\.register\\('\\.\\/sw\\.js\\?v=\\d+'/, "serviceWorker.register('./sw.js?v=254'");
+app=app.replace(/serviceWorker\.register\('\.\/sw\.js\?v=\d+'/, "serviceWorker.register('./sw.js?v=254'");
 fs.writeFileSync('www/app.js',app);
 let html=fs.readFileSync('www/index.html','utf8');
-html=html.replace(/app\\.js\\?v=\\d+/g,'app.js?v=254');
-html=html.replace(/styles\\.css\\?v=\\d+/g,'styles.css?v=254');
-html=html.replace(/bank-transfer-v129\\.js\\?v=\\d+/g,'bank-transfer-v129.js?v=254');
+html=html.replace(/app\.js\?v=\d+/g,'app.js?v=254');
+html=html.replace(/styles\.css\?v=\d+/g,'styles.css?v=254');
+html=html.replace(/bank-transfer-v129\.js\?v=\d+/g,'bank-transfer-v129.js?v=254');
 fs.writeFileSync('www/index.html',html);
 let sw=fs.readFileSync('www/sw.js','utf8');
-sw=sw.replace(/const CACHE = 'taimako-v\\d+';/,"const CACHE = 'taimako-v254';");
+sw=sw.replace(/const CACHE = 'taimako-v\d+';/,"const CACHE = 'taimako-v254';");
 fs.writeFileSync('www/sw.js',sw);
 
 console.log('TAIMAKO Stage 254 monthly dividend process and duplicate-credit safeguard applied.');
