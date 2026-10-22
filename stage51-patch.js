@@ -250,3 +250,5 @@ require('./stage239-admin-check-assisted-account.js');
 require('./stage250-retire-registration.js');
 
 require('./stage251-registration-residual-cleanup.js');
+
+require('./stage252-remove-registration-ui.js');
